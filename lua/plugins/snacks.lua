@@ -674,6 +674,8 @@ return {
     { "<leader>sc", false },
     { "<leader>sC", false },
     { "<leader>so", false },
+    -- Keep the finished colorscheme fixed during normal work.
+    { "<leader>uC", false },
     -- Disable LazyVim default so diffview.nvim owns <leader>gd
     { "<leader>gd", false },
     { "<leader>gD", false },
