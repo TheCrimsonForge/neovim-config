@@ -106,6 +106,8 @@ and [`todos/snacks-explorer-as-file-browser.md`](todos/snacks-explorer-as-file-b
 The final update fixes dense JS/TS object literals where cyan keys and values
 mixed together. `custom-latest` now keeps brackets bright, delimiters quiet, and
 Type below the old brightness peak. No more colour tweaking is planned.
+`<leader>uC` is disabled through the Snacks plugin key spec, not with
+`vim.keymap.del()`, because the LazyVim mapping may not exist when user keymaps load.
 
 | role | value | contrast |
 | --- | --- | --- |
