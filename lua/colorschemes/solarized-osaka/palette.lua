@@ -142,6 +142,11 @@ local variants = {
     base0 = "#9eabac", -- L* 69.0, BRIGHTER than the keyword it defers to
   },
 
+  comment = {
+    -- Small lift from base01, keeping comments quieter than code on #031219.
+    subtle = "#637981", -- L* 49.4, 4.15:1; previously #576d74 at 3.48:1
+  },
+
   -- Body text: `Normal`, `NormalFloat` and `@variable`, which are the same value
   -- by design here (a plain identifier IS body text in this palette).
   --
@@ -170,6 +175,20 @@ local variants = {
   -- That is what reads as "variables look faded next to upstream". Rule 4: the
   -- variable is not the variable.
   delimiter = {
+    -- Trial 2026-09-07: LCh midpoint between original and saturated Kanagawa.
+    kanagawa_mid = "#96abd3", -- L* 69.7, C* 22.7, 8.21:1 against #031219
+    -- Rejected on appearance; user preferred returning to the blue family.
+    kanagawa_green = "#8db488", -- L* 69.5, C* 28.4, hue 140, 8.16:1 against #031219
+    -- User liked this blue; retained as the stronger end of the comparison.
+    kanagawa_saturated = "#90abdd", -- L* 69.7, C* 28.4, 8.20:1 against #031219
+    -- Previous warmer comparison; user still preferred Kanagawa's tone.
+    pale_yellow = "#cfcea7", -- L* 81.9, C* 20.5, 11.81:1 against #031219
+    -- Previous comparison; closer to variables and cyan Type than Kanagawa.
+    pale_cyan = "#9cc8ca", -- L* 77.7, C* 15.1, 10.44:1 against #031219
+    -- User likes this tone; retained as the reference for further comparisons.
+    kanagawa = "#9cabca", -- L* 69.8, C* 17.6, 8.23:1 against #031219
+    -- Rejected on appearance: separates from variables but looks muddy.
+    warm_taupe = "#b98f79", -- L* 62.8, C* 21.9, 6.58:1 against #031219
     base0 = "#9eabac", -- L* 69.0, 8.23:1 -- the default, identical to @variable
     base00 = "#637981", -- L* 49.4, 4.25:1 -- one rung down; dE 18.0 from base0,
     -- which is the edge that comes back, but it is SUB-AA and only dE 4.7 from
@@ -492,6 +511,8 @@ return {
   -- is only +4.6 and measured under the perceptual floor, i.e. invisible. Same
   -- `false`-not-`nil` rule as `delimiter`.
   body = variants.body.brighter,
+  -- False preserves upstream comments in reference builds and prevents override leakage.
+  comment = false,
   -- Brackets: `(` `)` `[` `]` `{` `}` and Lua's table braces. Split off
   -- `punctuation` on 2026-09-05 and sent to the GREY, not to an accent -- they
   -- are the same "punctuation carrying no meaning worth a hue" class as

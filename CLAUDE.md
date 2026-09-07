@@ -101,23 +101,34 @@ Full reasoning, measurements and the rejected alternatives:
 [`notes/popup-backdrop-darkening-investigation.md`](notes/popup-backdrop-darkening-investigation.md)
 and [`todos/snacks-explorer-as-file-browser.md`](todos/snacks-explorer-as-file-browser.md).
 
-## Syntax palette: CLOSED 2026-09-07
+## Syntax palette: Kanagawa midpoint with neutral tag wrappers, 2026-09-07
 
-The final update fixes dense JS/TS object literals where cyan keys and values
-mixed together. `custom-latest` now keeps brackets bright, delimiters quiet, and
-Type below the old brightness peak. No more colour tweaking is planned.
+The user explicitly overrode the change gate for this session and likes midpoint
+blue `#96abd3`. Review of 13 Go/TS/TSX screenshots supports keeping it for code
+punctuation and retaining body `#b1bebf`; `body.brightest` is not needed.
+HTML/JSX/TSX/Vue tag wrappers (`<`, `>`, `/`) use theme `base0` by explicit
+request, while expression braces and ordinary operators remain blue.
+Cross-language review uses actual background `#031219`. The core palette is
+recommended as settled. Comments received a small approved lift to `#637981`
+(4.15:1) in `custom-latest`; reference builds keep the original comment color.
+Native CSS now links its punctuation/operators to the matching code roles and
+at-rules/pseudo-classes to violet keywords. No parser or runtime hooks were added.
+Dockerfile JSON-form command arrays still fall back to body text. Native CSS
+also keeps its grammar limitations, such as function names and their outer
+parentheses sharing one group. These do not call for retuning the core palette.
 `<leader>uC` is disabled through the Snacks plugin key spec, not with
 `vim.keymap.del()`, because the LazyVim mapping may not exist when user keymaps load.
 
-| role | value | contrast |
-| --- | --- | --- |
-| body / `@variable` | `#b1bebf` | 10.19:1 |
-| bracket / object structure | `#9eabac` | 8.23:1 |
-| type | `#2ac3de` | 9.24:1 |
-| names: params, tags, `${}` | `#aea134` | 7.37:1 |
-| delimiter / operator | `#7f9195` | 5.93:1 |
-| keyword | `#a17bcc` | 5.77:1 |
-| comment | `#576d74` | 3.57:1 |
+| role | value |
+| --- | --- |
+| body / `@variable` | `#b1bebf` |
+| code brackets / delimiters / ordinary operators | `#96abd3` |
+| HTML/JSX/TSX/Vue tag wrappers | `#9eabac` |
+| function | `#359ee9` |
+| type | `#2ac3de` |
+| names: params, JSX tags, `${}` | `#aea134` |
+| keyword | `#a17bcc` |
+| comment | `#637981` |
 
 The 2026-09-06 measurements remain useful history, but their former live values
 are superseded by the `custom-latest` overrides in
