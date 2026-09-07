@@ -83,6 +83,26 @@ local builds = {
       delimiter = palette.variants.delimiter.kanagawa_mid,
       bracket = palette.variants.delimiter.kanagawa_mid,
       func = palette.variants.func.vivid,
+
+      -- NOTE: punctuation + parameter, final call 2026-09-08.
+      -- Two candidates stayed close: terracotta red and subdued yellow.
+      -- AI analysis scored yellow better, and it still reads best in daily use,
+      -- so yellow stays even though it goes against my personal color preference.
+      -- No red variant found so far that beats it, so red stays commented out.
+      -- Verdict: the palette is ~90% done. The last 10% still open:
+      --   - a red or other color that can replace the subdued yellow
+      --   - object member colors
+      --   - object (dict) key and value colors
+      --   - boolean colors
+      -- Not worth more searching now. Stop here; only reopen if one of these
+      -- clearly bothers me in daily use.
+      --
+      -- punctuation = palette.variants.punctuation.terracotta,
+      -- parameter = palette.variants.punctuation.terracotta,
+      -- -- punctuation = palette.variants.punctuation.explored.copper,
+      -- -- parameter = palette.variants.punctuation.explored.copper,
+      -- punctuation = palette.variants.punctuation.copper_mid,
+      -- parameter = palette.variants.punctuation.copper_mid,
       -- comment = palette.variants.comment.subtle,
     },
   },
