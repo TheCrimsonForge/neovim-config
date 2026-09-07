@@ -1,8 +1,8 @@
 -- The solarized-osaka builds, one `:colorscheme` away from each other.
 --
 --   solarized-osaka-custom-latest  the selection we run  <- default
---                                  cyan type, bright brackets, neutral
---                                  delimiters (2026-09-07)
+--                                  cyan type, medium-chroma blue punctuation,
+--                                  vivid blue functions (trial 2026-09-07)
 --   solarized-osaka-custom-v1      the copper build custom-latest replaced
 --   solarized-osaka-custom-v2      custom-v1 on the warm keyword (yellow)
 --   solarized-osaka-custom-v3      custom-v1 on the softer terracotta punctuation
@@ -74,19 +74,16 @@ local builds = {
   -- you saw could be ours or could be a side effect of the reset.
   original = { config = { on_highlights = function() end } },
 
-  -- The active selection. Dense JS/TS object literals exposed the final issue:
-  -- cyan keys and values mixed together and made object structure hard to scan.
-  -- These overrides keep brackets bright, delimiters quiet, and Type below the
-  -- old `#7dcfff` peak. Body text is now slightly brighter than Type by design.
-  -- All other roles retain the palette defaults.
-  --
-  -- CLOSED 2026-09-07. This is the final colour state. Do not retune it without
-  -- a new workflow-blocking defect and the config change gate.
+  -- Settled daily selection, 2026-09-07. Brackets and delimiters deliberately
+  -- share the Kanagawa midpoint; the other entries are the roles that differ
+  -- from the base palette.
   ["custom-latest"] = {
     palette = {
       type = palette.variants.type.nvim_type,
-      delimiter = palette.variants.delimiter.mid_high,
-      bracket = palette.variants.body.base0,
+      delimiter = palette.variants.delimiter.kanagawa_mid,
+      bracket = palette.variants.delimiter.kanagawa_mid,
+      func = palette.variants.func.vivid,
+      comment = palette.variants.comment.subtle,
     },
   },
 

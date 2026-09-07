@@ -899,3 +899,248 @@ now overrides three base roles:
 The yellow warm side, violet keyword, raised body, and comment remain unchanged.
 This supersedes the live-state claims in the 2026-09-06 section but preserves
 that section as the measurement record. The palette is closed after this update.
+
+## 2026-09-07: user-approved warm taupe trial
+
+The user explicitly overrode the change gate and requested warm punctuation
+because variables, brackets, and delimiters looked too similar in white/grey.
+`custom-latest` now uses `delimiter.warm_taupe` (`#b98f79`) for brackets and
+delimiters, including ordinary operators and JSX tag wrappers. Variables remain
+`#b1bebf`; the user's vivid blue functions remain `#359ee9`. Parameters, tags,
+and string interpolation markers retain yellow `#aea134`.
+
+Warm taupe was previously tried and rejected. This trial revisits it for the
+explicit hue-separation preference. Against the user's current `#031219`
+background its authored sRGB contrast is 6.58:1; CIEDE2000 separation is 25.0
+from variables and 23.4 from yellow parameters. These measurements do not
+establish visual comfort. User acceptance in real files is pending.
+
+To restore the preceding punctuation, set `custom-latest.delimiter` to
+`palette.variants.delimiter.mid_high` and `custom-latest.bracket` to
+`palette.variants.body.base0` in `variants.lua`.
+
+## 2026-09-07: Kanagawa punctuation trial
+
+The user rejected warm taupe's brown cast as muddy in the Go screenshot and
+requested `#9cabca`, Kanagawa's `springViolet2`, after comparing other dark
+themes. Both punctuation roles now use `delimiter.kanagawa`; variables remain
+`#b1bebf` and functions remain vivid blue `#359ee9`. Taupe stays as a rejected
+candidate. Visual acceptance of blue-lavender is pending.
+
+Authored sRGB contrast against `#031219` is 8.23:1. Separation from variables
+is lower than taupe's, so this trial prioritizes the preferred cool tint.
+
+## 2026-09-07: user-proposed pale cyan trial
+
+The user found Kanagawa `#9cabca` better than taupe, then requested a comparison
+with `#9cc8ca`. Both punctuation roles now use `delimiter.pale_cyan`; variables
+and vivid blue functions retain their values. Kanagawa remains available as
+`delimiter.kanagawa`. Visual acceptance of pale cyan is pending.
+
+Authored sRGB contrast against `#031219` is 10.44:1. It is brighter than
+Kanagawa and closer to both variables (CIEDE2000 9.2) and cyan Type (12.1), so
+it may reduce the separation this trial originally sought.
+
+## 2026-09-07: user-proposed pale yellow trial
+
+The user likes Kanagawa's tone and proposed `#cfcea7` as another promising
+comparison. Both punctuation roles now use `delimiter.pale_yellow`. Variables
+remain `#b1bebf` and functions remain `#359ee9`. Kanagawa is kept as the preferred
+reference; visual acceptance of pale yellow is pending.
+
+This changes hue as well as lightness and chroma: pale yellow has L* 81.9,
+C* 20.5, and Lab hue 107.3, versus Kanagawa's 69.8, 17.6, and 275.0.
+Authored sRGB contrast against `#031219` is 11.81:1. Punctuation is brighter
+than variables, with CIEDE2000 separation 16.0 from variables and 18.3 from
+yellow parameters. It is a warmer experiment, not a same-hue Kanagawa variant.
+
+## 2026-09-07: saturated Kanagawa trial
+
+The user preferred Kanagawa `#9cabca` but could barely see its blue hue.
+Both punctuation roles now use `delimiter.kanagawa_saturated` (`#90abdd`).
+This raises chroma from 17.6 to 28.4 while preserving lightness (69.8 to 69.7)
+and approximately the same Lab hue (275.0 to 275.4). Variables remain
+`#b1bebf` and functions remain `#359ee9`. Visual acceptance is pending.
+
+Authored sRGB contrast against `#031219` is 8.20:1. CIEDE2000 separation from
+variables improves from 13.7 to 17.7, while separation from vivid blue functions
+falls from 16.2 to 12.6. The original `delimiter.kanagawa` remains the fallback.
+
+## 2026-09-07: green hue comparison
+
+The user liked `#90abdd` and requested a green version. Both punctuation roles
+now use `delimiter.kanagawa_green` (`#8db488`), a local derivative rather than
+an upstream Kanagawa color. The blue remains in `delimiter.kanagawa_saturated`
+as the liked fallback. Variables and functions retain their colors.
+
+The green changes Lab hue from 275.4 to 140.0 while keeping lightness and
+chroma approximately equal (L* 69.5, C* 28.4). Authored sRGB contrast against
+`#031219` is 8.16:1. CIEDE2000 separation is 18.4 from variables, 17.7 from
+teal strings, and 19.8 from yellow parameters. Visual acceptance is pending.
+
+## 2026-09-07: Kanagawa midpoint trial
+
+The user rejected green and requested a color between original Kanagawa
+`#9cabca` and the liked saturated blue `#90abdd`. Both punctuation roles now
+use `delimiter.kanagawa_mid` (`#96abd3`), derived by averaging their LCh values
+and converting back to RGB. Both blue endpoints remain available in the palette.
+
+After RGB rounding, lightness is 69.7 and chroma 22.7, between the original's
+17.6 and the stronger blue's 28.4. Authored sRGB contrast against `#031219` is
+8.21:1. Variables and functions retain their colors. Visual acceptance is pending.
+
+## 2026-09-07: midpoint review and neutral tag wrappers
+
+The user likes the midpoint and requested an evidence-based comparison against
+`body.base0` brackets and `delimiter.mid_high` separators, plus a decision on
+whether variables need `body.brightest`. All 13 supplied screenshots were read:
+Go, TypeScript, TSX logic, imports, type declarations, dense object literals,
+and JSX markup. They are 1920x1080 with the `27G2G3` monitor profile. All contain
+consistent body and punctuation core pixels. Raw screenshot RGB values differ
+from authored hexes because of color management; they are not sRGB measurements.
+
+The following comparisons use authored sRGB values against the current
+`#031219` background, not the older `#000f13` background used in prior notes.
+
+| punctuation | contrast vs background | CIEDE2000 from variables | from functions |
+| --- | --- | --- | --- |
+| previous brackets `#9eabac` | 8.04:1 | 5.26 | 21.62 |
+| previous delimiters `#7f9195` | 5.78:1 | 13.84 | 19.33 |
+| midpoint `#96abd3` | 8.21:1 | 15.69 | 14.16 |
+
+The strongest improvement is variable/bracket separation at nearly unchanged
+bracket brightness. Delimiters gain a smaller separation improvement and more
+background contrast, but become more prominent. Separation from teal strings
+also improves (26.04 versus 19.73 for old brackets and 17.54 for old delimiters).
+The accepted cost is proximity to function blue. Screenshots show paler brackets
+and more saturated function names; this remains a visual tradeoff, not a proof
+that the midpoint is universally best. Color-distance cutoffs in older notes
+are local heuristics, not validated readability or comfort thresholds.
+
+Keep `body.brighter` (`#b1bebf`): contrast is already 9.95:1. `body.brightest`
+(`#bcc9ca`) raises it to 11.18:1, but body/punctuation separation only improves
+from 15.69 to 16.76. There is no observed variable-readability defect requiring
+that increase. Object keys and string values still sharing teal is a separate
+capture assignment; changing the plain variable color would not change them.
+
+WCAG's [4.5:1 minimum](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
+and [7:1 enhanced benchmark](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html)
+provide background-contrast references, not a ranking of syntax palettes or a
+guarantee of long-session comfort. Current body and code punctuation exceed both.
+
+During review the user explicitly requested neutral HTML/JSX/TSX tag wrappers.
+The existing scoped tag-delimiter block now uses `c.base0` (`#9eabac`), including
+Vue. This colors `<`, `>`, and `/`; expression braces, comparisons, and division
+remain blue. Real TSX, JavaScript/JSX, and HTML parser captures verified the split,
+and a deliberate blue tag override was correctly rejected by the verification.
+The numbered builds already used base0 tag wrappers, so their behavior is kept.
+
+Recommendation: retain midpoint code punctuation and the existing variable
+color. The new neutral tag wrappers still need a visual look in the next session.
+
+### Function blue: retain vivid
+
+The user also requested confirmation that vivid blue is sufficient after azure
+looked faded. `#359ee9` raises authored sRGB background contrast from azure's
+5.82:1 to 6.54:1, lightness from 59.1 to 62.6, and chroma from 38.5 to 46.4.
+Separation from cyan Type improves from 15.2 to 17.8, and from teal strings
+from 21.8 to 26.5. The supplied screenshots show saturated function names beside
+paler blue punctuation. Keep vivid; this review found no need to brighten it.
+
+### Cross-language audit and limits
+
+The user expanded the review to JS, TS, CSS, HTML, JSX, TSX, Go, Bash, Lua,
+YAML (including Docker Compose), TOML, and Dockerfiles. Representative snippets
+were parsed through the installed grammars and resolved through actual Neovim
+highlight groups, including embedded JavaScript in HTML and Bash in Dockerfiles.
+The audit checked 2,647 token glyphs against the intended role colors across
+the eleven languages with installed parsers, with zero mismatches. Spelling and
+private query captures were excluded because they do not paint text; HTML's
+intentional `@none` resolves to normal body text. This is representative coverage,
+not a proof for every possible syntax construct or a reading-speed study.
+
+Every contrast below uses current `Normal.bg = #031219`:
+
+| role | color | authored sRGB contrast |
+| --- | --- | --- |
+| variables | `#b1bebf` | 9.95:1 |
+| code punctuation | `#96abd3` | 8.21:1 |
+| neutral tag wrappers | `#9eabac` | 8.04:1 |
+| functions and properties | `#359ee9` | 6.54:1 |
+| types | `#2ac3de` | 9.02:1 |
+| strings, members, numbers, booleans | `#29a298` | 6.08:1 |
+| keywords | `#a17bcc` | 5.63:1 |
+| parameters, imports, special punctuation | `#aea134` | 7.20:1 |
+| comments | `#576d74` | 3.48:1 |
+
+Concrete findings to flag, rather than reopening the entire palette:
+
+- CSS has no installed Tree-sitter parser. A real `.css` buffer uses native
+  `syntax=css`. Its braces/commas use function blue, some punctuation falls back
+  to body text, and at-rules/pseudo-classes use `#db302d` at 4.05:1. This is the
+  clearest consistency gap and lies below the 4.5:1 text-contrast benchmark for
+  those red tokens. Parser installation or narrow native CSS overrides need a
+  separate decision; neither was performed during this review.
+- Dockerfile `CMD ["node", "server.js"]` currently captures only the keyword;
+  its `json_string_array` and `json_string` nodes receive no syntax capture from
+  the installed query. They fall back to readable body text, but do not share
+  the string/bracket distinction of JS or TOML. This is an upstream query gap,
+  not a blue-palette failure. No Dockerfile query was changed.
+- Comments remain below the 4.5:1 benchmark by existing preference. This is a
+  readability compromise worth knowing, rather than a claim that every token
+  meets AA contrast. No comment change was requested.
+- Teal strings and member names still share a color intentionally. Brighter
+  plain variables cannot alter those captures.
+
+The selected core colors have adequate background contrast and the supplied
+screenshots support their visual hierarchy. Retain them; future work should
+address a concrete observed gap such as CSS rather than search for another
+universally best shade. The current background is part of this decision.
+
+### 2026-09-07: modest comment lift and native CSS corrections
+
+The user requested slightly brighter comments without high contrast, and the
+CSS corrections identified by the audit. The core palette stays unchanged.
+
+`custom-latest` now uses `variants.comment.subtle` (`#637981`), the theme's
+existing base00 tone, for `Comment`. Against actual background `#031219`, this
+raises contrast from 3.48:1 to 4.15:1 and L* from 44.6 to 49.4. Hue and chroma
+remain close to the original. Comments remain deliberately below the 4.5:1
+benchmark and well below body text at 9.95:1; this is the modest increase the
+user asked for, not a claim of full contrast compliance. Italic styling is
+preserved. The palette's default `comment = false` keeps reference builds on
+upstream comments and ensures the temporary build override restores correctly.
+Only `Comment` is repainted, not the shared base01 UI ramp.
+
+CSS remains on the installed native syntax engine. Existing CSS groups now
+link to the established syntax roles in the colorscheme's `on_highlights`:
+
+- Braces and math parentheses use the bracket role.
+- Separators, selector operators, class dots and uncaptured operators inside
+  function/math regions use delimiter/operator roles.
+- At-rules, logical words and pseudo-classes use the violet keyword role,
+  raising the former red tokens from 4.05:1 to 5.63:1.
+- Nested properties, numbers, strings and function names retain their existing
+  colors. Error highlights retain their diagnostic colors.
+
+Explicit highlight links survive the runtime's later `hi def link` commands.
+No parser, plugin, autocmd or syntax-matching rule was added. The only new work
+is a bounded set of assignments during colorscheme loading.
+
+Verification: a real CSS buffer confirmed comment text, braces, colons,
+semicolons, class dots, selector operators, function commas, calc subtraction,
+at-rules and pseudo-classes. Its property names, numbers, strings and function
+names retained their colors. Comparing all existing highlight definitions
+against the pre-change session found changes only in Comment and CSS groups.
+Negative controls detected both the old comment color and old function-colored
+braces. Switching through custom-v1, original and custom-latest confirmed the
+comment override restores correctly. The previous cross-language audit was
+rerun with the new comment expectation: all 2,647 checked token glyphs passed,
+with updated comments in every sampled language and no missing foregrounds.
+
+Remaining native grammar limits: `cssFunctionName` includes both the name and
+its outer parentheses; some media-query punctuation inherits `cssAtRule`, and
+some top-level separators have no syntax group. Highlight relinking cannot
+separate glyphs that share a group or add missing captures. These limitations
+are recorded rather than adding parsing work for cosmetic completeness.
+Dockerfile capture gaps and shared teal roles were outside this change.

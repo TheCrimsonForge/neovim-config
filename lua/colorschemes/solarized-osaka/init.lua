@@ -117,6 +117,11 @@ return {
         paint({ "Normal", "NormalFloat", "@variable" }, palette.body)
       end
 
+      -- Lift syntax comments without changing base01, which also colors UI chrome.
+      if palette.comment then
+        paint({ "Comment" }, palette.comment)
+      end
+
       -- The winbar sits on the editor background, not the statusline's.
       --
       -- It is a real, visible row in two places: the global 1-row winbar set in
@@ -253,26 +258,17 @@ return {
         "@tag.builtin.javascript",
       }, palette.punctuation)
 
-      -- The tag DELIMITERS (`<`, `>`, `/`) go neutral, for the same reason
-      -- `Operator` does further down: they are punctuation carrying no meaning
-      -- worth a hue, and they were 13.0% of the punctuation colour for that.
-      --
-      -- They follow the BRACKET role rather than the delimiter one: `<div>` is a
-      -- name wrapped in punctuation exactly as `foo(bar)` is. This keeps tag and
-      -- code structure aligned when a build separates brackets from operators.
-      --
-      -- NOT the `bracket` local above, deliberately. That one falls back to
-      -- `palette.punctuation`, so builds with `bracket = false` (custom-v1/v2/v3,
-      -- where brackets ARE the punctuation accent) would have their tag
-      -- delimiters pulled onto copper, which is not what they rendered. Falling
-      -- back to `delimiter` instead keeps every numbered build byte-identical and
-      -- only moves the builds that set `bracket` to a real value.
+      -- Tag wrappers (`<`, `>`, `/`) stay on base0 by user preference, so dense
+      -- markup has a quieter frame than the blue punctuation in expressions.
+      -- Keep these language-scoped: ordinary comparison/division operators and
+      -- expression braces still follow the syntax palette. The numbered builds
+      -- already used base0 for these wrappers, so their appearance is preserved.
       paint({
         "@tag.delimiter.tsx",
         "@tag.delimiter.vue",
         "@tag.delimiter.html",
         "@tag.delimiter.javascript",
-      }, palette.bracket or delimiter)
+      }, c.base0)
 
       -- Generic delimiters go neutral too, 2026-08-10. This closes item 6 of
       -- todos/syntax-palette-followups.md, which had been the live one.
@@ -355,6 +351,32 @@ return {
       -- this line would otherwise reach them via
       -- @keyword.operator -> @operator -> Operator.
       hl.Operator = { fg = delimiter }
+
+      -- Native CSS fallback: reuse syntax roles instead of Function/PreProc/Noise.
+      -- Explicit links survive css.vim's later `hi def link` without buffer hooks.
+      -- Function regions supply the color of otherwise uncaptured calc operators;
+      -- their nested numbers, strings and function names keep their own groups.
+      for group, target in pairs({
+        cssBraces = "@punctuation.bracket",
+        cssMathParens = "@punctuation.bracket",
+        cssNoise = "@punctuation.delimiter",
+        cssClassNameDot = "@punctuation.delimiter",
+        cssAttrComma = "@punctuation.delimiter",
+        cssFunctionComma = "@punctuation.delimiter",
+        cssMediaComma = "@punctuation.delimiter",
+        cssSelectorOp = "Operator",
+        cssSelectorOp2 = "Operator",
+        cssFunction = "Operator",
+        cssMathGroup = "Operator",
+        cssAtRule = "@keyword",
+        cssAtKeyword = "@keyword",
+        cssAtRuleLogical = "@keyword",
+        cssPseudoClass = "@keyword",
+        cssPseudoClassId = "@keyword",
+        cssPagePseudo = "@keyword",
+      }) do
+        hl[group] = { link = target }
+      end
 
       -- Types. The theme sets `Type = yellow500`, which made EVERY type gold:
       -- Rectangle, Shape, float64, string, int, SlotTableProps, ReactNode,

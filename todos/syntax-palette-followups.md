@@ -2,6 +2,22 @@
 
 ## Status
 
+Current selection (2026-09-07, explicitly approved): `custom-latest` uses the Kanagawa midpoint
+`#96abd3` for brackets and delimiters, cool white `#b1bebf` for variables, and
+vivid blue `#359ee9` for functions. The user likes the midpoint; screenshot and
+numeric review support keeping it. Tag wrappers in HTML/JSX/TSX/Vue now use
+`base0` (`#9eabac`) by request; expression punctuation stays blue. The closed
+state described below is historical. See the latest syntax palette decision note.
+
+Cross-language audit completed against `#031219`. Core colors are settled.
+Completed by request: comments lifted slightly to `#637981` (4.15:1), native CSS
+punctuation/operators linked to code roles, and CSS at-rules/pseudo-classes
+changed from red to violet keywords. No parser or runtime hooks were added.
+Dockerfile JSON-form command arrays remain uncaptured; shared teal roles remain
+intentional. Native CSS grammar still groups some function punctuation with the
+function name. Full evidence is in the latest section of
+`notes/syntax-palette-decisions.md`.
+
 > **Superseded for current values — see item 6 and
 > `notes/syntax-palette-decisions.md`.** Everything in this Status section and in
 > the sections below it describes the palette as of **2026-07-22**, before the
