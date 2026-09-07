@@ -74,18 +74,16 @@ local builds = {
   -- you saw could be ours or could be a side effect of the reset.
   original = { config = { on_highlights = function() end } },
 
-  -- User-approved trial 2026-09-07: grey punctuation blended with variables.
-  -- Split the difference between original and saturated Kanagawa after rejecting green.
-  -- Keep the user's vivid blue functions and cyan Type selection.
+  -- Settled daily selection, 2026-09-07. Brackets and delimiters deliberately
+  -- share the Kanagawa midpoint; the other entries are the roles that differ
+  -- from the base palette.
   ["custom-latest"] = {
     palette = {
       type = palette.variants.type.nvim_type,
       delimiter = palette.variants.delimiter.kanagawa_mid,
       bracket = palette.variants.delimiter.kanagawa_mid,
-      -- func = palette.variants.punctuation.terracotta,
       func = palette.variants.func.vivid,
       comment = palette.variants.comment.subtle,
-      punctuation = palette.variants.keyword.subdued,
     },
   },
 
