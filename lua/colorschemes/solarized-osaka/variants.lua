@@ -83,7 +83,7 @@ local builds = {
       delimiter = palette.variants.delimiter.kanagawa_mid,
       bracket = palette.variants.delimiter.kanagawa_mid,
       func = palette.variants.func.vivid,
-      comment = palette.variants.comment.subtle,
+      -- comment = palette.variants.comment.subtle,
     },
   },
 
