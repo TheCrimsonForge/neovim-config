@@ -290,6 +290,9 @@ ROLES = [
     ("function", "Function"),
     ("type", "Type"),
     ("string", "@string"),
+    ("number", "@number"),
+    ("boolean", "@boolean"),
+    ("member", "@variable.member"),
     ("body", "Normal"),
     ("comment", "Comment"),
 ]
