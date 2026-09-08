@@ -117,18 +117,15 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | role | value | note |
 | --- | --- | --- |
 | body / `@variable` | `#b1bebf` | |
-| delimiters / operators | `#7f9195` | the maximin grey rung |
-| brackets | `#9eabac` | `base0`, one rung up; same value as the tag wrapper |
+| brackets / delimiters / operators | `#96abd3` | Kanagawa LCh midpoint |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, by explicit request |
 | function / `@property` | `#359ee9` | `@property` is unstyled and duplicates this |
-| type | `#17bbd6` | dimmed 2026-09-08; it was the brightest accent on screen |
+| type | `#2ac3de` | |
 | punctuation / parameter / **member** | `#cd735d` | salmon, replaced subdued yellow `#aea134` |
 | boolean / `@constant` | `#d19c59` | amber; Tokyo Night's orange at our lightness |
 | keyword | `#a17bcc` | violet |
 | comment | `#576d74` | upstream; `comment.subtle` exists but is not applied |
-| string (`@string`) | `#5aad8b` | green, rotated out of the cyan band and lifted to 7.05:1 |
-| `@number` | `#29a298` | theme cyan; no longer equals string |
-| object + type-literal keys | `#b1bebf` | `@variable.member.key`, links `@variable`. **Open question** — cyan collided with type, mauve was rejected as pink, body has no identity |
+| `@string` / `@number` | `#29a298` | still share one value |
 
 **ONE ACCENT HUE ON THE WARM SIDE.** This is the rule that keeps being broken.
 Confirmed again 2026-09-08: yellow punctuation beside a salmon `member` was

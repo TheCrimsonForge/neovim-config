@@ -208,28 +208,28 @@ return {
       -- @type.definition, Typedef, Structure and every @lsp.type.* link to it.
       hl.Type = { fg = palette.type }
 
-      -- String values. Painted on the `String` group only, NOT on the theme's
-      -- shared cyan500 -- that hex is also DiagnosticHint, Question, WhichKey and
-      -- ~45 other UI groups. `@string` links to String and follows; `@number` and
-      -- `@character` link to `Constant` and deliberately do not, which is what
-      -- finally separates a number from a string (they were dE2000 0.0).
-      if palette.string then
-        hl.String = { fg = palette.string }
-        hl["@string.documentation"] = { fg = palette.string }
-      end
-
       -- Booleans. Assigned to the BASE group because the whole chain is bare
       -- string links (`@boolean` -> `Boolean` -> `Constant`) and `paint` skips
-      -- strings by design. Setting `Boolean` breaks that link, so `@number` and
-      -- `Constant` are untouched and `@boolean` follows automatically.
+      -- strings by design. Setting `Boolean` breaks that link, so `Constant`
+      -- itself is untouched and `@boolean` follows automatically.
       hl.Boolean = { fg = palette.boolean }
+
+      -- Numbers, on the same value as booleans and named constants -- the
+      -- Tokyo Night grouping, where one colour carries every literal constant.
+      -- Set on `Number` rather than `Constant`: `Float` links to `Number`, so
+      -- this covers `@number` AND `@number.float`, while `Constant`, `@string`
+      -- and `@character` keep the theme's cyan. Before this, `@number` was
+      -- dE2000 0.0 from `@string` -- a numeric literal and a string literal
+      -- were the same colour.
+      hl.Number = { fg = palette.boolean }
 
       -- Named constants (SCREAMING_SNAKE). Were the theme's `Constant` cyan,
       -- dE2000 0.0 from both `@string` and `@number`.
       --
-      -- WARN: set on the CAPTURES, not on `Constant` -- `Number` links to
-      -- `Constant`, so assigning the base group silently recolours every numeric
-      -- literal too. See notes/palette-reference.md, "Named constants".
+      -- WARN: set on the CAPTURES, not on `Constant` -- `Constant` is also
+      -- `@character` and (until `Number` is set above) every numeric literal, so
+      -- assigning the base group reaches further than intended.
+      -- See notes/palette-reference.md, "Named constants".
       hl["@constant"] = { fg = palette.boolean }
       hl["@constant.macro"] = { fg = palette.boolean }
 
@@ -247,22 +247,15 @@ return {
       -- re-capture the key position as @variable.member.key; member ACCESS
       -- (`obj.attr`) keeps @variable.member and stays on the member colour.
       --
-      -- Linked to @variable, i.e. BODY TEXT, and the reason is measured. Keys
-      -- were linked to @string first and that was wrong twice over: in a type
-      -- literal `label: string` put the key on cyan next to a cyan type (dE
-      -- 15.2), so an interface block read as one colour, and the cyan+type pair
-      -- was already 38.8% of a real TS file. Body clears type 18.7, string 22.2
-      -- and the member colour 32.9, and at C* 4.7 against cyan's 34.7 it adds
-      -- almost no saturation to the densest name role in object-heavy code.
-      --
-      -- NOT the delimiter grey, which scores better on paper: keys would then
-      -- match the braces and colons around them, so `{ Cash: 1 }` merges.
-      -- Keys do equal `@variable` now, which is fair -- a key IS a name.
-      if palette.key then
-        hl["@variable.member.key"] = { fg = palette.key }
-      else
-        hl["@variable.member.key"] = { link = "@variable" }
-      end
+      -- Linked to @string so keys sit with the values they introduce. The
+      -- alternative is `{ link = "@variable.member" }`, which puts keys on the
+      -- member colour instead and keeps key and value distinct -- one-line swap.
+      -- MUST stay painted whenever `member` is. `@variable.member.key` has no
+      -- colour of its own otherwise, so it FALLS BACK to `@variable.member` --
+      -- which is what made a distinct member colour flood every object-literal
+      -- file. The capture split in after/queries/ is necessary but not
+      -- sufficient; this line is the other half.
+      hl["@variable.member.key"] = { link = "@string" }
 
       -- `@property` is a DIFFERENT group and still at the theme default, where it
       -- exactly duplicates Function: struct-literal keys, object/dict keys and
@@ -310,6 +303,21 @@ return {
       -- treesitter, so this is what paints them.
       for level = 1, 6 do
         hl["@markup.heading." .. level .. ".markdown"] = { fg = c.green, bold = true }
+      end
+
+      -- JSX/TSX <h1>-<h6> are markup ELEMENTS, not document headings, but the ecma/jsx
+      -- queries capture the text inside them as @markup.heading.<level> all the same. That
+      -- falls back to `Title` and paints ordinary UI copy (`<h1>Checkout</h1>`) in the same
+      -- red as a picker title, while the identical text one element up is plain `Normal`.
+      -- Both parsers are named because .tsx uses `tsx` and .jsx uses `javascript`.
+      -- Body text is one value by design (`palette.body`, painted onto Normal and
+      -- @variable above), so these read it too rather than pinning a second value.
+      -- No bold either: nothing about a JSX tag name makes its text a heading.
+      local jsx_heading_fg = palette.body or c.fg
+      for _, lang in ipairs({ "tsx", "javascript" }) do
+        for level = 1, 6 do
+          hl["@markup.heading." .. level .. "." .. lang] = { fg = jsx_heading_fg }
+        end
       end
 
       -- LSP doc surface (hover, signature, diagnostic floats, blink docs).

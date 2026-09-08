@@ -45,18 +45,16 @@ higher.
 | role | hex | source | note |
 | --- | --- | --- | --- |
 | body / `@variable` | `#b1bebf` | `body.brighter` | L\* 76.0, 10.19:1 |
-| delimiter (operators, `.` `,` `;` `:`) | `#7f9195` | `delimiter.mid_high` | the maximin rung, same as the base build |
-| bracket | `#9eabac` | `body.base0` (custom-latest) | one rung above the delimiter; same value as the tag wrapper |
+| delimiter (operators, `.` `,` `;` `:`) | `#96abd3` | `delimiter.kanagawa_mid` (custom-latest) | base build uses `mid_high` `#7f9195` |
+| bracket | `#96abd3` | `delimiter.kanagawa_mid` (custom-latest) | same value as delimiter again |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, hardcoded in `init.lua` | user preference |
 | function | `#359ee9` | `func.vivid` (custom-latest) | base build uses `azure` `#1d98cd` |
-| type | `#17bbd6` | `type.nvim_type_dim` (custom-latest) | dimmed 2026-09-08 from `nvim_type` `#2ac3de`; base build uses `tokyonight` `#7dcfff` |
+| type | `#2ac3de` | `type.nvim_type` (custom-latest) | base build uses `tokyonight` `#7dcfff` |
 | boolean (`true`/`false`) | `#d19c59` | `boolean.amber` (custom-latest) | **added 2026-09-08**; was cyan, identical to String and `@number` |
 | `@constant` + `@constant.macro` | `#d19c59` | shares the `boolean` value | **added 2026-09-08**; SCREAMING_SNAKE names were cyan, identical to String. `@constant.macro` was `#db302d`, the error red |
-| `@variable.member.key` (object + type keys) | `#b1bebf` | `key = false` → links `@variable` | **UNRESOLVED** — every coloured candidate was rejected; see [key](#key) |
-| `@number` | `#29a298` | theme `Constant` | **no longer identical to String** — string moved to green, so this separated by itself (dE 8.9). `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
+| `@number` | `#29a298` | theme `Constant` | **unstyled** — still identical to String. `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
 | punctuation / parameter / member | `#cd735d` | `punctuation.explored.salmon` (custom-latest) | base default is `keyword.subdued` `#aea134`; salmon taken up 2026-09-08 |
 | keyword | `#a17bcc` | `keyword.warm_violet` | base value; a copper keyword was tried on 2026-09-08 and reverted — see [the copper keyword](#the-copper-keyword-2026-09-08) |
-| string (`@string`) | `#5aad8b` | `string.green_bright` (custom-latest) | rotated out of cyan 2026-09-08, then lifted to 7.05:1; snapshot builds keep `cyan500` |
 | comment | `#576d74` | theme default (upstream) | `comment.subtle` `#637981` exists but its line is commented out in `custom-latest` |
 | `@variable.member` | `#cd735d` | shares salmon with punctuation above | **paint line re-enabled 2026-09-08** — it was a silent no-op before |
 | `@property` (object/dict keys, JSX attrs) | `#359ee9` | theme default | **unstyled** — exactly duplicates Function; see [member](#member) |
@@ -491,8 +489,7 @@ practical issue. See item 8 of `../todos/theme/syntax-palette-followups.md`.
 | `tokyonight` | `#7dcfff` | h249, L\* 79.7, C\* 33.5, 11.08:1 | **the base selection.** Restored 2026-08-09 after three replacements were tried and rejected on real files. Shares h249 with Function and splits on lightness alone (dE 16.2), rule 1 broken knowingly. What carries the pair is the 20.6 L\* gap, the largest of any candidate; it is also 25.5 from String where the closest rival managed 18.8 |
 | `vscode_entity` | `#c0caf5` | h284, C\* 22.9 | rejected 2026-08-09, read "flat". De-accenting via chroma failed here exactly as on the keyword ladder: treat chroma as presence in this palette, never as the calming lever |
 | `periwinkle` | `#a7b1fe` | h290, C\* 42.0 | measured best of everything tried (worst 20.9, and it dissolved the Type/Function pair entirely) and still lost on looks |
-| `nvim_type_dim` | `#17bbd6` | L\* 69.9, C\* 37.7, 8.25:1; 15.2 from string | **SELECTED 2026-09-08.** `nvim_type` at L\* 70 |
-| `nvim_type` | `#2ac3de` | L\* 72.8, C\* 37.8, 9.02:1; 16.4 from string | ran 2026-09-07 to 09-08; was the brightest accent on screen |
+| `nvim_type` | `#2ac3de` | 15.2 from func, 16.4 from string | **LIVE in custom-latest** |
 | `vscode_support` | `#0db9d7` | 12.7 from func | rejected |
 
 ## boolean
@@ -536,156 +533,6 @@ with a 105° hue gap, no warm conflict at all. If copper is ever reinstated for
 
 `@number` was deliberately left alone — `Constant` keeps the theme's cyan, so
 numbers are still identical to String. Give it its own role if that matters.
-
-### Why type is bright, and the 2026-09-08 dim
-
-Type is boxed in. It sits at hue 220 with **String at 187 — only 33° away** — so
-what separates them is *lightness*, not hue. That made type the **brightest
-accent on screen** (L\* 72.8, 9.02:1, brighter than everything but body text) at
-the 3rd-highest dose (14.75% of a real `api.ts`, 20.33% of a type-heavy file),
-which is a standing rule-3 conflict.
-
-Reviewed on that basis. Chroma was *not* the problem — type is only 5th of ten
-accents in chroma (37.8, behind violet 47.7, func 46.4, amber 44.1, salmon 43.2).
-
-| option | hex | L\* | C\* | contrast | vs string | visible change |
-| --- | --- | --- | --- | --- | --- | --- |
-| keep | `#2ac3de` | 72.8 | 37.8 | 9.02:1 | 16.4 | — |
-| **taken** | **`#17bbd6`** | **69.9** | **37.7** | **8.25:1** | **15.2** | **dE 2.2 — below the visible threshold** |
-| calmer | `#4fb3c8` | 68.1 | 30.0 | 7.80:1 | 13.8 | dE 4.8 |
-| quietest | `#62abbb` | 66.0 | 24.0 | 7.30:1 | 12.9 | dE 7.9 |
-
-`#17bbd6` drops type from the brightest accent to roughly delimiter level for
-1.2 dE of string separation, at a change too small to read as a different colour.
-Going further was declined: 12.9-13.8 is tight for a role at 15-20% of the file,
-and the cyan it must clear **grew the same day** — object keys now link to
-`@string`, which put string+keys at 28.02% of a type-heavy file.
-
-Low chroma is not an alternative: at L\* 70 with C\* 24 type starts colliding
-with the *greys* (13.3 against the tag wrapper) instead of with string.
-
-**Yellow was rejected outright**, not on taste. It would put 46.61% of `api.ts`
-on the warm side across three hues (salmon 27.38 + amber 4.48 + type 14.75)
-against today's 31.86% across two, it is dE 15.1 from the amber boolean so the
-boolean gets squeezed again, and at C\* 56.3 it is *more* saturated than the
-value it would replace — the opposite of the goal.
-
-## key
-
-Object-literal and type-literal keys, from the `after/queries/` captures. **Not
-the same role as `member`**: a key is a name being *defined*, member access is one
-being read.
-
-Tried body text first, and it was rejected on looks — dE **0.0** from
-`@variable`, so a key had no identity of its own at all.
-
-**The mauve/pink region (h345–0) is the only empty hue left in this palette**,
-which is why every candidate here is in it. Everything other themes use for keys
-is a bright blue or teal, and all of them collide:
-
-| candidate | hex | worst dE | collides with |
-| --- | --- | --- | --- |
-| VS Code Dark+ property | `#9cdcfe` | 13.8 | type |
-| tokyonight `green1` | `#73daca` | 13.9 | string green |
-| tokyonight `blue5` | `#89ddff` | 11.9 | type |
-| body text (was) | `#b1bebf` | **0.0** | *is* `@variable` |
-| **`key.mauve`** | **`#c0a4ad`** | **20.4** | bracket — clears everything |
-
-| value | hex | numbers | verdict |
-| --- | --- | --- | --- |
-| `mauve` | `#c0a4ad` | L\* 70.0, C\* 11.8, h356, 8.29:1 | best separation of anything tried (20.4) but **REJECTED ON LOOKS** — reads pink |
-| `mauve_bright` | `#d2abbf` | L\* 74.0, C\* 18, h345, 9.34:1 | worst 20.7, more present |
-| `lavender` | `#b9b2d2` | L\* 74.0, C\* 18, h300, 9.38:1 | cooler, but worst 17.0 vs body |
-| `body` | `#b1bebf` | dE 0.0 from `@variable` | **LIVE.** No identity of its own, and still preferred to every coloured candidate |
-
-Keys are **dense** — 61 glyphs / 22.8% of an object-heavy TSX file — which is
-why a coloured key shows up immediately and why chroma has to stay modest.
-
-**STATUS: unresolved, and body text is the least-bad option.** Three were tried
-on 2026-09-08 and all three failed for different reasons:
-
-1. `@string` cyan — collided with the type colour; an interface block read as
-   one colour (dE 15.2, and cyan + type was 38.8% of a real file).
-2. `body` `#b1bebf` — dE **0.0** from `@variable`, so keys have no identity.
-3. `key.mauve` `#c0a4ad` — measured **best of anything** at worst 20.4, and was
-   rejected on looks as pink.
-
-So the numbers have not picked a winner here: the only hue with room is the
-mauve/pink gap, and that reads wrong. **Judge the next candidate on looks, not
-on separation** — this is one of the roles where the measurement is not the
-deciding input.
-
-`false` in the base palette keeps keys linked to `@variable` in the snapshot
-builds.
-
-## string
-
-`String`, which `@string` links to. Moved off the theme's cyan on 2026-09-08.
-
-**Only the `String` group is painted, never the shared `cyan500`.** That hex is
-also `DiagnosticHint`, `Question`, `WhichKey`, `healthSuccess`, the blink-cmp
-kind icons and ~45 other UI groups — repainting it would drag the whole UI along.
-
-A useful side effect: `@number` and `@character` link to `Constant`, not to
-`String`, so they stayed cyan. That **separated number from string by itself** —
-those two had been dE2000 0.0, one of the palette's last duplicates.
-
-### Why green, and why h164
-
-String's tightest pair used to be **`type` at dE 15.2** — both sat in the cyan
-band 33° apart. The green band (h120–180) was completely empty, so rotating into
-it is nearly free separation. **Lightness and chroma are unchanged** (L\* 60.4,
-C\* 34.9 vs 34.7), which matters because string is 16–22% of a real TS file:
-nothing got louder, only different.
-
-| option | hex | hue | vs type | vs git-add green | shift from cyan |
-| --- | --- | --- | --- | --- | --- |
-| `cyan500` (was) | `#29a298` | 187 | **15.2** | 30.6 | — |
-| `green_soft` | `#41a288` | 172 | 21.0 | 25.7 | dE 6.1 |
-| **`green_mid`** | **`#4da180`** | **164** | **23.7** | **23.4** | **dE 8.9** |
-| `green_full` | `#58a078` | 156 | 26.5 | 21.0 | dE 11.6 |
-| `green_vivid` | `#3ea37d` | 164 | 24.9 | 23.4 | dE 9.7 — C\* 40.2, louder, declined |
-
-h164 is the **balance point**: type separation and git-add-green separation cross
-there (23.7 / 23.4). Rotating further toward green buys type and spends git —
-`GitSignsAdd` is `#849900`, and markdown H1 uses it too.
-
-Every theme green considered was rejected on **lightness**, not hue: tokyonight
-`#9ece6a` (L\* 77.6), kanagawa `#98bb6c` (71.8), catppuccin `#a6e3a1` (84.8),
-everforest `#a7c080` (74.5) are all far brighter than L\* 60, which rule 3
-forbids for a role at 16–22% dose. Solarized's own green `#859900` is dE **0.2**
-from the git-add sign colour — unusable.
-
-Kept at `false` in the base palette so the numbered snapshot builds and
-`original` still render the theme's cyan; only `custom-latest` moves it.
-
-### The 2026-09-08 delimiter move, and the string lift
-
-Both were re-picked once the palette around them had changed.
-
-**delimiter + bracket: `kanagawa_mid` `#96abd3` → `mauve_grey` `#c0a4ad`.**
-`kanagawa_mid` sat at hue 275, wedged between func (250) and keyword violet
-(310), so its worst neighbour was func at only dE 14.2. After keys went white and
-string went green, the **hue gap between keyword (310) and salmon (40) was the
-only empty space left**, and a near-neutral there beats every blue-grey:
-
-| | hex | L\* | C\* | hue | worst dE | worst pair |
-| --- | --- | --- | --- | --- | --- | --- |
-| was | `#96abd3` | 69.7 | 22.7 | 275 | **14.2** | func |
-| now | `#c0a4ad` | 70.0 | **12.0** | 355 | **20.4** | tag wrapper |
-
-Same lightness, **half the chroma**, and +6.2 dE of separation. The chroma drop
-matters most: delimiters are the most *scattered* role in the palette (84–220
-marks at avg run 1.1–1.3, i.e. single characters), so rule 3 binds hardest there.
-
-An olive delimiter at hue 110 scored well until `GitSignsAdd` `#849900` was added
-to the neighbour set — dE 11.7. Always include the git sign colours when scoring
-anything in the green–yellow band.
-
-**string: `green_mid` `#4da180` → `green_bright` `#5aad8b`**, L\* 60.4 → 64.9,
-contrast **6.09 → 7.05:1**, hue and chroma unchanged. Brightening a green at
-hue 164 *improves* its separation from the cyan `@number` (8.9 → 9.8) because it
-moves away from cyan's own L\* 60.4, so this cost nothing.
 
 ## member
 
@@ -858,7 +705,7 @@ the winner. Each of these is a per-language pin, not a preference.
   object key and a member *access* the same capture name. So
   `after/queries/{typescript,tsx,javascript,lua,terraform}/highlights.scm`
   re-capture the key position as `@variable.member.key`, which `init.lua` links
-  to `@variable` (body text). Member access (`obj.attr`, `var.environment`,
+  to `@string`. Member access (`obj.attr`, `var.environment`,
   `aws_s3_bucket.artifacts.arn`, `t.field`) keeps `@variable.member` and stays on
   the member colour — verified per language.
 
@@ -868,19 +715,9 @@ the winner. Each of these is a per-language pin, not a preference.
   query file error out**, not just that pattern — which is why the javascript
   file has no `property_signature` rule (TypeScript-only node).
 
-  **Keys are linked to `@variable`, i.e. body text, and `@string` was tried first
-  and was wrong.** In a type literal `label: string` put the key on cyan next to
-  a cyan type (dE 15.2), so an interface block read as one colour — and the
-  cyan+type pair was already 38.8% of a real TS file. Body clears type 18.7,
-  string 22.2 and the member colour 32.9, and at C\* 4.7 against cyan's 34.7 it
-  adds almost no saturation to the densest name role in object-heavy code.
-  Measured on the same file, moving keys off cyan took type+cyan from 38.77% to
-  36.33% and left cyan meaning string only.
-
-  Not the delimiter grey, which scores better on paper (clears everything, C\*
-  22.7): keys would then match the braces and colons around them, so
-  `{ Cash: 1 }` merges. Keys do equal `@variable` now, which is fair — a key is a
-  name.
+  Keys are linked to `@string` so a key sits with the value it introduces; the
+  one-line alternative is `{ link = "@variable.member" }`, which puts keys on the
+  member colour and keeps key and value distinct.
 
   Python and Go were left alone deliberately: there the quoted form is a genuine
   string literal used as a key (`d = {'a': 1}`, `map[string]int{"a": 1}`) rather

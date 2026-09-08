@@ -78,7 +78,7 @@ local variants = {
   -- synthesised on the theme's grey axis. Ladder + rejected colour sweep in the
   -- doc; do not rebuild it.
   delimiter = {
-    kanagawa_mid = "#96abd3", -- L*69.7 C*22.7 h275 8.21:1 | ran 2026-09-07/08; worst 14.2 vs func
+    kanagawa_mid = "#96abd3", -- LCh midpoint of the two Kanagawa blues below
     kanagawa_green = "#8db488",
     kanagawa_saturated = "#90abdd",
     pale_yellow = "#cfcea7",
@@ -152,18 +152,8 @@ local variants = {
     balanced = "#4488ab",
   },
 
-  -- Type, @type.builtin, @constructor.
-  --
-  -- THE BLUE BAND IS FULL: String cyan sits at h187 and Function at h250, and
-  -- type has to fit between them. String is only 33 degrees away in hue, so what
-  -- separates the two is LIGHTNESS -- which is why this role cannot simply be
-  -- dimmed, and why low chroma does not work either (at L* 70 with C* 24 it
-  -- starts colliding with the greys instead).
-  --
-  -- Type is also the BRIGHTEST accent and the 3rd densest capture (14.75% of a
-  -- real api.ts, 20.33% of a type-heavy file), which is a standing rule-3
-  -- conflict. Reviewed 2026-09-08 for exactly that; see the doc for the four
-  -- options measured and why yellow was rejected outright.
+  -- Type, @type.builtin, @constructor. CLOSED 2026-09-07.
+  -- The blue band is FULL: String cyan sits at h187 and Function at h250.
   type = {
     sky = "#0edfff",
     sky_calm = "#56cae7",
@@ -173,8 +163,7 @@ local variants = {
     tokyonight = "#7dcfff", -- base build
     vscode_entity = "#c0caf5",
     periwinkle = "#a7b1fe",
-    nvim_type_dim = "#17bbd6", -- L*69.9 C*37.7 8.25:1 | SELECTED 2026-09-08: nvim_type at L* 70
-    nvim_type = "#2ac3de", -- L*72.8 C*37.8 9.02:1 | ran 2026-09-07 to 09-08; brightest accent on screen
+    nvim_type = "#2ac3de", -- LIVE in custom-latest
     vscode_support = "#0db9d7",
   },
 
@@ -185,57 +174,21 @@ local variants = {
   -- What picks the value is separation from the DENSE warm role, and TN's own
   -- hue loses there -- see notes/palette-reference.md, "boolean".
   boolean = {
-    amber = "#d19c59", -- L*68.1 C*44.1 h73.8 7.80:1 | SELECTED: dE 27.4 / 34deg from salmon, still reads warm
+    -- Added 2026-09-08 when punctuation moved to the BRIGHTER yellow #baac0d
+    -- (h98): amber sits only 24 degrees off it at dE 17.2, so it stopped
+    -- reading as a separate colour. These clear it by rotating toward orange,
+    -- which the warm side has room for now that it carries only the yellow.
+    --
+    -- This role is DENSE here -- number + boolean + constant is ~19% of a
+    -- numeric TS file -- so chroma stays at 40, not 60.
+    orange_mid = "#c48956", -- L*62 C*40 h65 6.39:1 | SELECTED: maximin, vs yellow 23.1, vs error red 22.5
+    orange_bright = "#e39a71", -- L*70 C*40 h55 8.26:1 | better vs yellow (27.7) but 20.5 from the error red
+    orange_vivid = "#ed9747", -- L*70 C*60 h65 8.26:1 | best vs yellow (23.8) but C*60 is loud at this dose
+    rose = "#f28f9a", -- L*70 C*40 h15 8.30:1 | furthest from yellow (47.1), reads pink
+    amber = "#d19c59", -- L*68.1 C*44.1 h73.8 7.80:1 | ran until 2026-09-08; only dE 17.2 from the brighter yellow
     gold = "#b5a73b", -- L*67.9 C*55.9 h97.9 7.75:1 | dE 50.3 / 58deg -- MAX clarity, but yellow not orange
     tokyonight_dim = "#ed8e55", -- L*68.0 C*54.8 h55.5 7.79:1 | TN's hue at our lightness; dE only 20.2 / 16deg from salmon -- BLURRED, reported 2026-09-08
     tokyonight = "#ff9e64", -- L*74.0 C*54.6 h55.6 9.35:1 | TN as shipped; dE 23.7 / 16deg, same hue problem and -2.1 L* vs body
-  },
-
-  -- Object-literal and type-literal KEYS (`@variable.member.key`, produced by the
-  -- after/queries files). NOT the same role as `member`: a key is a name being
-  -- DEFINED, member access is one being read.
-  --
-  -- The hue gap between keyword (310) and salmon (40) is the only empty space
-  -- left in this palette, which is why these are all mauve/pink. Every colour
-  -- other themes use for keys is a bright blue or teal and collides here:
-  -- VS Code's #9cdcfe is dE 13.8 from type, tokyonight's #73daca is 13.9 from
-  -- the string green, its #89ddff is 11.9 from type.
-  --
-  -- Keys are DENSE -- up to 22% of an object-heavy file -- so chroma stays
-  -- modest per rule 3.
-  --
-  -- STATUS: unresolved, and body text is the least-bad option. Cyan collided
-  -- with the type colour, mauve measured best of anything but was rejected on
-  -- looks as pink, and body has no identity at all (dE 0.0 from @variable).
-  -- Judge the next candidate ON LOOKS -- the numbers have not picked a winner
-  -- here, and at this dose a coloured key shows up immediately.
-  key = {
-    mauve = "#c0a4ad", -- L*70.0 C*11.8 h356 8.29:1 | best separation (20.4) but REJECTED ON LOOKS 2026-09-08: reads pink
-    mauve_bright = "#d2abbf", -- L*74.0 C*18 h345 9.34:1 | worst 20.7, more present
-    lavender = "#b9b2d2", -- L*74.0 C*18 h300 9.38:1 | cooler, but worst 17.0 vs body
-    body = "#b1bebf", -- LIVE (via `key = false` -> link @variable). dE 0.0 from @variable, so keys have no identity of their own -- known, and still preferred to every coloured candidate tried
-  },
-
-  -- String values (`String`, which `@string` links to). NOT the theme's shared
-  -- `cyan500`: that hex is also DiagnosticHint, Question, WhichKey, healthSuccess
-  -- and ~45 more UI groups, so only the String group is painted. `@number` and
-  -- `@character` stay on `Constant`, which is why moving string also SEPARATES
-  -- number from string -- they were dE2000 0.0 before.
-  --
-  -- Rotated out of the crowded blue band into the empty green one. String's
-  -- tightest pair used to be `type` at dE 15.2, because both sat in cyan 33
-  -- degrees apart. Lightness and chroma are deliberately unchanged, so nothing
-  -- got louder -- string is 16-22% of a real TS file.
-  --
-  -- h164 is the balance point: type separation and git-add-green separation
-  -- cross there (23.7 / 23.4). Further toward green buys type and spends git.
-  string = {
-    green_bright = "#5aad8b", -- L*64.9 C*35 h164 7.05:1 | SELECTED 2026-09-08: same hue/chroma, lifted for contrast
-    green_mid = "#4da180", -- L*60.4 C*34.9 h164 6.09:1 | first green; vs type 23.7, vs git-add 23.4
-    green_soft = "#41a288", -- h172 | subtler shift (dE 6.1); vs type 21.0, vs git 25.7
-    green_full = "#58a078", -- h156 | most green; vs type 26.5 but vs git only 21.0
-    green_vivid = "#3ea37d", -- h164 C*40.2 | same hue, MORE chroma -- louder, declined
-    cyan500 = "#29a298", -- the theme's own; tightest pair was type at 15.2
   },
 
   -- Member fields (`@variable.member`), APPLIED since 2026-09-08. Before that
@@ -247,6 +200,23 @@ local variants = {
   -- close to keyword. Stay IN the accent band (L* ~60): these symbols appear on
   -- nearly every line, and a bright value drains its neighbours.
   member = {
+    -- Swept 2026-09-08 against the palette as it stands now (yellow punctuation,
+    -- orange literals, cyan strings+keys). The historical candidates below all
+    -- score 10-16 against it; these two were found by sweeping the gaps.
+    --
+    -- Colouring this role is only SAFE because after/queries/ split object keys
+    -- onto @variable.member.key -- before that, a distinct member colour flooded
+    -- every object-literal file, since bare keys shared this capture.
+    -- The green window is squeezed between the git-add sign colour (h111) and
+    -- the string cyan (h187), so h134-150 is all there is. It measures a little
+    -- worse than the pink below, but better than pairs this palette already
+    -- lives with (type vs string cyan is dE 16.4), and pink was not wanted.
+    --
+    -- WARN: this DEPENDS on string staying cyan. If `string` ever goes back to
+    -- the green #5aad8b (h164) these two collide -- re-measure before doing that.
+    sage = "#8bcb8a", -- L*76 C*42 h142 9.97:1 | SELECTED: worst 20.6 vs the git-add green
+    sage_dim = "#88be87", -- L*72 C*36 h142 8.84:1 | dimmer, worst 19.0 vs string cyan
+    rose_soft = "#e197a3", -- L*70 C*30 h10 8.29:1 | best measured (23.5) but pink, not wanted
     rose = "#b67faf", -- base-build default
     iris = "#8d8de3",
     purple = "#a17bcc",
@@ -301,15 +271,10 @@ return {
   -- `Operator`, which is what lets a yellow name sit inside neutral punctuation.
   -- Separate from `delimiter` so a build can split the two; custom-latest does.
   bracket = variants.delimiter.mid_high,
-  -- `false` keeps the theme's own String, so the numbered snapshot builds are
-  -- unchanged; only `custom-latest` moves it.
-  -- `false` keeps keys linked to @variable in the snapshot builds.
-  key = false,
-  string = false,
   func = variants.func.azure,
   type = variants.type.tokyonight,
   -- Booleans. Painted by `hl.Boolean` in init.lua, which `@boolean` links to.
   boolean = variants.boolean.amber,
   -- UNREAD: see `member` above.
-  member = variants.member.rose,
+  -- member = false,
 }

@@ -12,3 +12,19 @@
   "||"
   "!"
 ] @keyword.operator
+
+; Struct- and map-literal KEYS, normalised onto the same capture the ecma files
+; use, so `member` can be given its own colour without flooding every
+; composite literal. Without this, `Cfg{Bar: 1}` files a key as
+; @variable.member -- the same capture as `s.Bar` member ACCESS -- and colouring
+; that role turned every key in the file the member colour.
+;
+; Both forms are captured: a bare identifier key (struct fields) and a string
+; key (map literals), so the two do not diverge the way they did in TypeScript.
+(keyed_element
+  key: (literal_element
+    (identifier) @variable.member.key))
+
+(keyed_element
+  key: (literal_element
+    (interpreted_string_literal) @variable.member.key))
