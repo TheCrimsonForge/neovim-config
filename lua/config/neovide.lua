@@ -42,8 +42,24 @@ vim.keymap.set("n", "<D-d>", "<Plug>(VM-Find-Under)", { desc = "Multi-cursor: ad
 vim.keymap.set("v", "<D-d>", "<Plug>(VM-Find-Subword-Under)", { desc = "Multi-cursor: add next" })
 
 -- Cmd+K: toggle Copilot suggestions in insert mode (Ghostty sends this as <M-k>).
--- Remaps to the <M-k> handler defined in plugins/copilot.lua (avoids duplicating the toggle).
-vim.keymap.set("i", "<D-k>", "<M-k>", { remap = true, desc = "Copilot: Toggle Suggestions" })
+-- Forwards to the <M-k> handler in plugins/copilot.lua rather than duplicating the
+-- toggle, which lives in that file's config closure and is not exported.
+--
+-- The forward is CHECKED AT PRESS TIME, not registered conditionally. copilot.lua
+-- loads on InsertEnter, long after this file runs, so a load-time check would
+-- always see the mapping missing. Checking here also means the key starts working
+-- again by itself if copilot is re-enabled -- it is `enabled = false` while the
+-- subscription is inactive, and without this guard `remap = true` fell through to
+-- an unmapped <M-k> and inserted a stray character instead of toggling.
+--
+-- The DICT form of `maparg` is the documented existence check. The string form
+-- happens to work too -- it renders a Lua callback as "<Lua 414>", measured, so it
+-- is non-empty -- but that is how Neovim stringifies a callback, not a contract.
+vim.keymap.set("i", "<D-k>", function()
+  if not vim.tbl_isempty(vim.fn.maparg("<M-k>", "i", false, true)) then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<M-k>", true, true, true), "m", false)
+  end
+end, { desc = "Copilot: Toggle Suggestions" })
 
 -- Clipboard: copy/paste with system clipboard
 vim.keymap.set({ "n", "v" }, "<D-c>", '"+y', { desc = "Copy to clipboard" })
