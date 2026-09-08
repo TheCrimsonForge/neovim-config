@@ -20,9 +20,19 @@ return {
     -- legitimate `on_colors` -- it does not reopen the syntax-ramp ban below.
     -- All three keys, or floats and sidebars show as panels that do not match.
     --
-    -- WARN: SILENT NO-OP. `bg_popup` and `bg_statusline` are deliberately NOT
-    -- set and must stay unset -- neither is the key it looks like, and the
-    -- completion menu depends on `bg_popup` staying base04. Both measured.
+    -- `bg_statusline` FEEDS LUALINE, NOT THE NATIVE `StatusLine`. Both are left
+    -- alone on purpose, so the bar keeps its base03 band (#002c38, 2.2 L* above
+    -- the background). TRIED AND REVERTED 2026-09-09: flattening it to the editor
+    -- background needs BOTH `c.bg_statusline` here (the shipped lualine theme's
+    -- section `c` and its three inactive sections read it) AND `StatusLine` /
+    -- `StatusLineNC` in `on_highlights` (the theme hardcodes those to base03 in
+    -- groups/editor.lua). Reverted on the grounds that the band is not new -- it
+    -- has been there every month this theme has run, and the winbar flattening on
+    -- 2026-09-05 is what made it stand out, not a regression.
+    --
+    -- WARN: SILENT NO-OP. `bg_popup` is deliberately NOT set and must stay unset
+    -- -- it is not the key it looks like, and the completion menu depends on it
+    -- staying base04. Measured.
     on_colors = function(c)
       local bg = require("config.ui").bg
       c.bg = bg
@@ -69,6 +79,9 @@ return {
 
       -- The winbar sits on the editor background, not the statusline's (the theme
       -- links WinBar -> StatusLine, bg base03, which reads as a lighter strip).
+      --
+      -- ONLY the winbar. The statusline KEEPS its base03 band -- see the
+      -- `bg_statusline` note above for why flattening it was tried and reverted.
       hl.WinBar = { link = "Normal" }
       hl.WinBarNC = { link = "NormalNC" }
 
@@ -96,10 +109,35 @@ return {
 
       paint({ "@punctuation.bracket" }, bracket)
 
+      -- ECMA TAKES THE GREY RUNG TOO, 2026-09-09. TS/JS/JSX/TSX had a
+      -- `@punctuation.bracket.<lang>` override holding their brackets on `base0`
+      -- (8.04:1) while every other language sat on `mid_high` (5.78:1). The
+      -- argument for it was that a TS object literal puts key and value on the
+      -- same teal, leaving the brackets as the only marker of where the object
+      -- starts and ends. Reversed by request: one rung for every language reads
+      -- calmer than ecma being the loud exception, and the frame is structure,
+      -- not something to read. Delimiters were already global.
+      --
+      -- To put it back: `hl["@punctuation.bracket." .. lang] = { fg = c.base0 }`
+      -- over `{ "tsx", "typescript", "javascript" }`.
+
       -- `${}` is a MODE SWITCH, not structure, so it keeps the accent -- and it
       -- has to stay readable INSIDE the string colour, which the neutral grey
       -- does not (17.7 separation against this accent's 32.9).
       paint({ "@punctuation.special" }, palette.punctuation)
+
+      -- `\n`, `\t`, `\"` inside a string. SAME REASONING as `${}` above, and the
+      -- same colour: an escape is not string content, it is a switch out of it.
+      --
+      -- The theme leaves this on an alarm dark red at 2.87:1 -- BELOW AA, and the
+      -- lowest contrast anywhere in the palette, on characters that matter in
+      -- exactly the code where they are hardest to see (`fmt.Printf`, `printf`,
+      -- regex). Rejected alternatives: every readable red either lands on top of
+      -- the Go member salmon (#c16953 is dE 3.7 from it, #cd735d is 0.0) or stays
+      -- under 5:1 (#db302d 4.05, #cb6001 4.72). #e06c75 clears both at 5.95:1 and
+      -- dE 10.5, and is the pick if escapes must stay red -- but it adds a FOURTH
+      -- warm colour to Go, which already carries salmon, amber and the accent.
+      hl["@string.escape"] = { fg = palette.punctuation }
 
       paint({
         "@variable.parameter",
@@ -164,6 +202,23 @@ return {
         "Function",
         "Identifier",
       }, palette.func)
+
+      -- Builtin CALLABLES are functions, so they go on the function colour.
+      -- `@function.builtin` and `@function.method.builtin` link to `Special`
+      -- upstream, which this file paints with the warm accent -- so Lua's
+      -- `require`/`pcall`/`tostring`, bash's `echo`, and Python's `print`/`len`
+      -- rendered in the accent while every user-defined call beside them was
+      -- blue. The distinction the accent was drawing (builtin vs yours) is not
+      -- one worth a hue: what you read is "this is a call".
+      --
+      -- `@variable.builtin` (`self`, `vim`, `this`) deliberately STAYS on the
+      -- accent -- those are values, not calls, and there are few of them.
+      --
+      -- Written as tables, not `paint`: both groups are bare string links in the
+      -- theme, and `paint` skips those by design (see the helper). Going through
+      -- `paint` here silently did nothing.
+      hl["@function.builtin"] = { fg = palette.func }
+      hl["@function.method.builtin"] = { fg = palette.func }
 
       -- The theme overrides `@variable.typescript`/`.javascript` yellow but has
       -- no `.tsx`/`.jsx` equivalent, so `.ts` variables were yellow while `.tsx`
@@ -232,14 +287,49 @@ return {
       -- See notes/palette-reference.md, "Named constants".
       hl["@constant"] = { fg = palette.boolean }
       hl["@constant.macro"] = { fg = palette.boolean }
-
-      -- Member fields (`r.Width`, `row.count`). ACTIVE since 2026-09-08 -- it was
-      -- commented out from 2026-08-09, which meant `palette.member` was read by
-      -- nothing and setting `member` in a build silently did nothing. Without
-      -- this line the group falls back to the theme's cyan500, an exact duplicate
-      -- of String (dE2000 0.0).
-      hl["@variable.member"] = { fg = palette.member }
-
+      -- Member fields, GO ONLY. Go code is `x.Field` on nearly every line and the
+      -- receiver is usually one letter, so the field is what you actually read --
+      -- worth a colour. The identical capture in TS/JS covers object members too,
+      -- where it flooded files with warm ink, so those stay on the theme's own
+      -- cyan500 (dE2000 0.0 from String: member access reads as one unit with the
+      -- strings and keys beside it). `@variable.member.key` links to `@string`
+      -- regardless, so keys always sit with their values.
+      --
+      -- Language-scoped rather than painted then undone: `@variable.member.go`
+      -- resolves before `@variable.member`, so no other language needs excluding.
+      -- Gated so `member = false` in a build still means "theme default
+      -- everywhere" -- and it must be `false`, never `nil`, since `variants.load`
+      -- iterates with `pairs` (palette.lua, trap 1).
+      -- TRIED AND REVERTED 2026-09-08: `@variable.member` on `palette.keyword`
+      -- (warm_violet) for every language but Go. It added no new colour and got
+      -- member access off String's cyan, but a field and a keyword then read as
+      -- one class -- in a TS file the violet covered 19 keyword + 12
+      -- keyword.return + 8 keyword.function + 9 variable.member glyphs -- and it
+      -- looked wrong on sight. Non-Go member access stays on the theme default.
+      --
+      -- Go keeps its own: salmon, painted language-scoped. Go reads `x.Field` on
+      -- nearly every line with a one-letter receiver, and the warm red is what
+      -- makes the field pop off it.
+      -- GO ONLY, every field position on one value. Go files name the same field
+      -- in three grammatical spots and the base queries give each a different
+      -- capture, so `Width` was teal in `type R struct { Width float64 }`, teal
+      -- again in `R{Width: 3}` and BLUE in `r.Width` -- three colours for one
+      -- name. `@property` is the access one and is why field reads looked like
+      -- function calls.
+      --
+      -- On the ACCENT (`palette.punctuation`), not a colour of its own: fields are
+      -- the thing you read in Go and the accent is the palette's loudest value,
+      -- so they get it. Salmon ran here earlier the same day; `member` is left
+      -- `false` in the build and this block is the one-line switch back.
+      --
+      -- KNOWN COST: in Go the accent now carries imports, parameters, builtin
+      -- constants, string escapes AND every field position, so it is by far the
+      -- densest colour in a struct-heavy file. Against the Go literals
+      -- (`boolean.orange_bright`) it sits dE 27.7 apart, so `Width: 3` still
+      -- reads as two things.
+      for _, group in ipairs({ "@variable.member.go", "@variable.member.key.go", "@property.go" }) do
+        hl[group] = { fg = palette.punctuation }
+      end
       -- Object-literal and type-literal KEYS, normalised. The base ecma queries
       -- file a bare key as @variable.member and a quoted key as @string, so
       -- `{ Cash: 1, 'Credit Card': 2 }` showed its two keys in two colours for
@@ -257,6 +347,15 @@ return {
       -- sufficient; this line is the other half.
       hl["@variable.member.key"] = { link = "@string" }
 
+      -- HCL/Terraform attribute names. The `@string` link above is an ecma
+      -- decision -- an object literal is a small part of a TS file -- but the HCL
+      -- queries file EVERY `key = value` name as `@variable.member.key`, so a
+      -- whole `.tf` file rendered its keys and its values in one colour
+      -- (dE2000 0.0). `@property` is where YAML and TOML keys already sit, so
+      -- config languages now read the same way whatever the syntax.
+      for _, lang in ipairs({ "terraform", "hcl" }) do
+        hl["@variable.member.key." .. lang] = { link = "@property" }
+      end
       -- `@property` is a DIFFERENT group and still at the theme default, where it
       -- exactly duplicates Function: struct-literal keys, object/dict keys and
       -- JSX attributes (`@tag.attribute` links to it). So a TS `mode: 'x'` still

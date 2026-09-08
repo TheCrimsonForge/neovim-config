@@ -29,7 +29,21 @@ local variants = {
     olive = "#849900",
     balanced = "#aea10c", -- custom-v2
     darker = "#a3970b",
-    brighter = "#baac0d",
+    brighter = "#baac0d", -- L*69.5 C*70.8 h97.9 8.14:1 | SELECTED
+    -- L*74.0 C*76.0 h97.9 9.39:1 | TRIED AND REJECTED 2026-09-08.
+    -- `brighter` was ALREADY AT THE sRGB CHROMA CEILING for its lightness and hue:
+    -- max in-gamut C* at L*69.5 h97.9 is 72.5, dE 0.4 away, so "more saturated at
+    -- the same brightness" does not exist here. Yellow only gets more vivid by
+    -- getting lighter, and +4.5 L* buys +5.2 C*. dE 3.7 from `brighter` -- visible,
+    -- just past the 2.3 JND -- but it lands 1.9 L* under body, which is level with
+    -- body text in practice, and this role has the HIGHEST DOSE after body
+    -- (parameters, imports, builtin variables, `${}`, decorators, constructors,
+    -- JSX tag names: 19% of glyphs in bash, 17% in TSX, 30.2% in markup-heavy
+    -- TSX). Every separation gain was dE 0.4-2.2, at or below the JND, so it
+    -- bought nothing visible and cost 4.6 L* of hierarchy. If the yellow ever
+    -- reads dull the lever is DOSE, not lightness. Further stops, both worse on
+    -- the same count: #cabb01 (L*75) and #cdbe00 (L*76, level with body).
+    vivid = "#c7b903",
     amber = "#b59a00",
     citron = "#9ea100",
     subdued = "#aea134", -- the yellow; base default for punctuation + parameter
@@ -58,9 +72,26 @@ local variants = {
     base0 = "#9eabac",
   },
 
+  -- Comments. LADDER, brightest first, all on upstream's hue and chroma
+  -- (h~226 C*9.2) so only lightness moves. dE against the live value in
+  -- brackets; the JND is ~2.3, so anything under that is not a visible change.
+  --
+  -- AA (4.5:1) IS ONLY CLEARED BY `readable`. Every dimmer stop is below it,
+  -- which is what this config ran for months on upstream anyway, so dropping
+  -- back is a comfort call, not a defect.
+  --
+  -- The FLOOR is not contrast, it is `delimiter.mid_high` #7f9195 at L*58.9:
+  -- going dimmer moves AWAY from it, so the "two low-chroma greys blur" risk
+  -- only exists above `readable`. L*54 (#6e858c, 4.89:1) is the brightest safe
+  -- value while punctuation stays chromatic.
   comment = {
-    subtle = "#637981", -- 4.15:1. NOT applied unless a build sets `comment`; the
-    -- base leaves it `false`, so comments are upstream #576d74 by default
+    readable = "#698087", -- L*52.1  4.56:1  (dE 0.0)   the only AA stop
+    dim = "#647b82", -- L*50.0  4.25:1  (dE 2.0)   below JND, do not bother
+    subtle = "#637981", -- L*49.4  4.15:1  (dE 2.8)   one stop down, not enough
+    dimmer = "#5f767d", -- L*48.0  3.96:1  (dE 4.0)   SELECTED 2026-09-09
+    dimmest = "#5a7178", -- L*46.0  3.68:1  (dE 5.9)   one short of upstream
+    -- Upstream #576d74 (L*44.6, 3.48:1, dE 7.4) is reached with `comment = false`,
+    -- not a key here: `false` means "leave the theme's own ramp alone".
   },
 
   -- Body text: `Normal`, `NormalFloat`, `@variable`, one value by design.
@@ -183,9 +214,23 @@ local variants = {
     -- numeric TS file -- so chroma stays at 40, not 60.
     orange_mid = "#c48956", -- L*62 C*40 h65 6.39:1 | SELECTED: maximin, vs yellow 23.1, vs error red 22.5
     orange_bright = "#e39a71", -- L*70 C*40 h55 8.26:1 | better vs yellow (27.7) but 20.5 from the error red
+    -- L*70.0 C*32.2 h55.6 8.30:1 | SELECTED 2026-09-08. Tokyo Night's own hue at
+    -- our lightness, muted: 20% less chroma than `orange_bright` on the same
+    -- rung, so the ladder does not move. Scored against the live Go set (fields
+    -- now on the accent yellow): min dE 26.4, and the best CVD of the realistic
+    -- candidates -- 12.3 deutan / 15.2 protan against orange_bright's 9.9 / 13.3,
+    -- because dropping chroma pulls it off the axis both deficiencies compress.
+    -- C*28 was one step too far: the nearest neighbour becomes BODY TEXT and it
+    -- starts reading beige rather than orange.
+    tokyonight_muted = "#da9e7c",
     orange_vivid = "#ed9747", -- L*70 C*60 h65 8.26:1 | best vs yellow (23.8) but C*60 is loud at this dose
     rose = "#f28f9a", -- L*70 C*40 h15 8.30:1 | furthest from yellow (47.1), reads pink
-    amber = "#d19c59", -- L*68.1 C*44.1 h73.8 7.80:1 | ran until 2026-09-08; only dE 17.2 from the brighter yellow
+    amber = "#d19c59", -- L*68.1 C*44.1 h73.8 7.80:1 | ran until 2026-09-08; only dE 17.2 from the brighter yellow.
+    -- Re-tried 2026-09-08 for GO ONLY, where the salmon member leaves orange_bright
+    -- dE 12.6 from its nearest neighbour: amber scored better on paper (worst pair
+    -- 17.2, and against the yellow rather than the member) and was REJECTED ON
+    -- SIGHT -- it mixes with the yellow in Go the same way it did everywhere else.
+    -- dE 17.2 across a 24 degree hue gap is not enough separation for this palette.
     gold = "#b5a73b", -- L*67.9 C*55.9 h97.9 7.75:1 | dE 50.3 / 58deg -- MAX clarity, but yellow not orange
     tokyonight_dim = "#ed8e55", -- L*68.0 C*54.8 h55.5 7.79:1 | TN's hue at our lightness; dE only 20.2 / 16deg from salmon -- BLURRED, reported 2026-09-08
     tokyonight = "#ff9e64", -- L*74.0 C*54.6 h55.6 9.35:1 | TN as shipped; dE 23.7 / 16deg, same hue problem and -2.1 L* vs body

@@ -36,14 +36,56 @@ local builds = {
   ["custom-latest"] = {
     palette = {
       type = palette.variants.type.nvim_type,
-      delimiter = palette.variants.delimiter.kanagawa_mid,
-      bracket = palette.variants.delimiter.kanagawa_mid,
+      -- Both on the MAXIMIN grey rung 2026-09-09, off `kanagawa_mid` (#96abd3).
+      -- The periwinkle was a fourth hue in the blue band and the least meaningful
+      -- ink at the third-highest contrast (8.21:1, above strings and keywords).
+      -- Measured over Go/bash/devops/js-ts/jsx-tsx/python: worst chromatic pair
+      -- 14.2 -> 16.5, tightest colour-blind pair 2.3 -> 4.8, p10 unchanged at
+      -- 16.5. init.lua keeps ecma brackets on base0 -- see the note there.
+      delimiter = palette.variants.delimiter.mid_high,
+      bracket = palette.variants.delimiter.mid_high,
       func = palette.variants.func.vivid,
-      boolean = palette.variants.boolean.orange_mid,
+      -- One value for every language, Go included: the Go-specific override was
+      -- dropped when `tokyonight_muted` landed. `tokyonight_dim` chosen by eye
+      -- 2026-09-08: TN's hue at our L*68, and the strongest separation from the
+      -- accent yellow of any candidate (dE 29.5). It carries C*54.8, above the
+      -- C*40 this role's dose note asks for, and CVD is its weak axis (5.4
+      -- deutan) -- accepted knowingly; `tokyonight_muted` is the safer swap.
+      boolean = palette.variants.boolean.tokyonight_dim,
+      boolean = palette.variants.boolean.orange_vivid,
+      boolean = palette.variants.boolean.orange_bright,
+      boolean = palette.variants.boolean.tokyonight_dim,
+      -- boolean = palette.variants.boolean.tokyonight_muted,
       -- Tokyo Night's boolean orange, adapted to our lightness. `tokyonight` is
       -- TN's exact #ff9e64, `amber` trades hue fidelity for max separation.
-      member = palette.variants.punctuation.explored.salmon,
       -- member = palette.variants.member.rose_soft,
+      -- member = palette.variants.punctuation.explored.salmon,
+
+      -- GO ONLY: init.lua paints this on `@variable.member.go` alone. Go reads
+      -- `x.Field` on nearly every line, with a one-letter receiver, so the field
+      -- is what you actually read. The same capture in TS/JS also covers object
+      -- members, where it flooded files with warm ink, so every other language
+      -- keeps the theme's own value (String's cyan500).
+      --
+      -- Salmon over coral 2026-09-08, by eye. Same hue (39.8 vs 40.0) and 2.0 L*
+      -- higher, 5.62:1. Nearest warm neighbour either way is
+      -- `boolean.orange_bright` (#e39a71): salmon dE 12.6 (9.2 deutan), coral
+      -- 14.0 (10.9). Both clear; if numbers and struct fields ever blur on one
+      -- line, that pair is why and coral is the one-word fix.
+      -- UNUSED since 2026-09-08: Go fields moved to the accent yellow, which
+      -- init.lua paints directly. Set this to `punctuation.explored.salmon` (or
+      -- `.coral`) and switch the Go field block back to `palette.member` to
+      -- restore a dedicated field colour. `false`, never nil.
+      member = false,
+      --  NOTE: both coral and salmon are valid however coral is a little bit better at color separation
+      --  so i decided to go with coral, both colors are good but i just choose the one better color separation to my eyes.
+      -- member = palette.variants.punctuation.explored.coral,
+      --
+      -- REVERTED 2026-09-08: back to the theme's own value, which is String's
+      -- cyan500. One fewer warm colour, on the grounds that the palette was
+      -- carrying too many at once. `false`, not nil, so the override registers.
+      -- member = false,
+
       parameter = palette.variants.keyword.brighter,
       punctuation = palette.variants.keyword.brighter,
       -- parameter = palette.variants.punctuation.explored.salmon,
@@ -65,6 +107,13 @@ local builds = {
       -- punctuation = palette.variants.punctuation.explored.clay,
       -- parameter = palette.variants.punctuation.explored.clay,
       -- comment = palette.variants.comment.subtle,
+      -- Dropped TWO stops from `readable` 2026-09-09: at 4.56:1 comments read as
+      -- too bright, and `subtle` (dE 2.8) was still not enough. `dimmer` is 4.1 L*
+      -- below `readable` on the same hue and chroma, dE 4.0, and sits between
+      -- `subtle` and upstream. It gives up AA (3.96:1) to do it, knowingly -- the
+      -- upstream value this config ran for months is lower still at 3.48:1.
+      -- Ladder in palette.lua; `false` here means upstream #576d74.
+      comment = palette.variants.comment.dimmer,
     },
   },
 
