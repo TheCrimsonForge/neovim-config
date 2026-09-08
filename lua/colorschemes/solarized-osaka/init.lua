@@ -237,10 +237,18 @@ return {
       -- re-capture the key position as @variable.member.key; member ACCESS
       -- (`obj.attr`) keeps @variable.member and stays on the member colour.
       --
-      -- Linked to @string so keys sit with the values they introduce. The
-      -- alternative is `{ link = "@variable.member" }`, which puts keys on the
-      -- member colour instead and keeps key and value distinct -- one-line swap.
-      hl["@variable.member.key"] = { link = "@string" }
+      -- Linked to @variable, i.e. BODY TEXT, and the reason is measured. Keys
+      -- were linked to @string first and that was wrong twice over: in a type
+      -- literal `label: string` put the key on cyan next to a cyan type (dE
+      -- 15.2), so an interface block read as one colour, and the cyan+type pair
+      -- was already 38.8% of a real TS file. Body clears type 18.7, string 22.2
+      -- and the member colour 32.9, and at C* 4.7 against cyan's 34.7 it adds
+      -- almost no saturation to the densest name role in object-heavy code.
+      --
+      -- NOT the delimiter grey, which scores better on paper: keys would then
+      -- match the braces and colons around them, so `{ Cash: 1 }` merges.
+      -- Keys do equal `@variable` now, which is fair -- a key IS a name.
+      hl["@variable.member.key"] = { link = "@variable" }
 
       -- `@property` is a DIFFERENT group and still at the theme default, where it
       -- exactly duplicates Function: struct-literal keys, object/dict keys and

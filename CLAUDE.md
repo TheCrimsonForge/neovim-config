@@ -126,6 +126,7 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | keyword | `#a17bcc` | violet |
 | comment | `#576d74` | upstream; `comment.subtle` exists but is not applied |
 | `@string` / `@number` | `#29a298` | still share one value |
+| object + type-literal keys | `#b1bebf` | `@variable.member.key`, normalised via `after/queries/`; bare vs quoted used to differ |
 
 **ONE ACCENT HUE ON THE WARM SIDE.** This is the rule that keeps being broken.
 Confirmed again 2026-09-08: yellow punctuation beside a salmon `member` was

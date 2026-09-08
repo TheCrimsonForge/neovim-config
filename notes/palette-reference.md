@@ -52,6 +52,7 @@ higher.
 | type | `#17bbd6` | `type.nvim_type_dim` (custom-latest) | dimmed 2026-09-08 from `nvim_type` `#2ac3de`; base build uses `tokyonight` `#7dcfff` |
 | boolean (`true`/`false`) | `#d19c59` | `boolean.amber` (custom-latest) | **added 2026-09-08**; was cyan, identical to String and `@number` |
 | `@constant` + `@constant.macro` | `#d19c59` | shares the `boolean` value | **added 2026-09-08**; SCREAMING_SNAKE names were cyan, identical to String. `@constant.macro` was `#db302d`, the error red |
+| `@variable.member.key` (object + type keys) | `#b1bebf` | linked to `@variable` | normalised 2026-09-08; bare and quoted keys were two different colours |
 | `@number` | `#29a298` | theme `Constant` | **unstyled** — still identical to String. `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
 | punctuation / parameter / member | `#cd735d` | `punctuation.explored.salmon` (custom-latest) | base default is `keyword.subdued` `#aea134`; salmon taken up 2026-09-08 |
 | keyword | `#a17bcc` | `keyword.warm_violet` | base value; a copper keyword was tried on 2026-09-08 and reverted — see [the copper keyword](#the-copper-keyword-2026-09-08) |
@@ -739,7 +740,7 @@ the winner. Each of these is a per-language pin, not a preference.
   object key and a member *access* the same capture name. So
   `after/queries/{typescript,tsx,javascript,lua,terraform}/highlights.scm`
   re-capture the key position as `@variable.member.key`, which `init.lua` links
-  to `@string`. Member access (`obj.attr`, `var.environment`,
+  to `@variable` (body text). Member access (`obj.attr`, `var.environment`,
   `aws_s3_bucket.artifacts.arn`, `t.field`) keeps `@variable.member` and stays on
   the member colour — verified per language.
 
@@ -749,9 +750,19 @@ the winner. Each of these is a per-language pin, not a preference.
   query file error out**, not just that pattern — which is why the javascript
   file has no `property_signature` rule (TypeScript-only node).
 
-  Keys are linked to `@string` so a key sits with the value it introduces; the
-  one-line alternative is `{ link = "@variable.member" }`, which puts keys on the
-  member colour and keeps key and value distinct.
+  **Keys are linked to `@variable`, i.e. body text, and `@string` was tried first
+  and was wrong.** In a type literal `label: string` put the key on cyan next to
+  a cyan type (dE 15.2), so an interface block read as one colour — and the
+  cyan+type pair was already 38.8% of a real TS file. Body clears type 18.7,
+  string 22.2 and the member colour 32.9, and at C\* 4.7 against cyan's 34.7 it
+  adds almost no saturation to the densest name role in object-heavy code.
+  Measured on the same file, moving keys off cyan took type+cyan from 38.77% to
+  36.33% and left cyan meaning string only.
+
+  Not the delimiter grey, which scores better on paper (clears everything, C\*
+  22.7): keys would then match the braces and colons around them, so
+  `{ Cash: 1 }` merges. Keys do equal `@variable` now, which is fair — a key is a
+  name.
 
   Python and Go were left alone deliberately: there the quoted form is a genuine
   string literal used as a key (`d = {'a': 1}`, `map[string]int{"a": 1}`) rather
