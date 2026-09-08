@@ -1,3 +1,10 @@
+-- Which highlight groups get the palette's colours, plus the UI-chrome overrides
+-- that are not syntax at all. Colour VALUES live in palette.lua.
+--
+-- WHY EACH BLOCK BELOW EXISTS -- the measurements, the grammar traps, the
+-- rejected alternatives and the "do not tune this" notes -- is in
+-- notes/palette-reference.md, sections "Grammar traps" and "UI highlights".
+-- Read it before changing a group list or a chrome value.
 local palette = require("colorschemes.solarized-osaka.palette")
 
 return {
@@ -5,86 +12,33 @@ return {
   lazy = false,
   priority = 1000,
   opts = {
-    -- OPAQUE since 2026-09-04. Nvim paints its own background now, so Ghostty's
-    -- `background-opacity = 0.9` and `background-blur-radius = 20` no longer show
-    -- through the editor area -- only the window padding still gets them.
-    --
-    -- WARN: SILENT FAILURE. Deleting or commenting out this line does NOT disable
-    -- transparency -- the plugin defaults it to `true`, so removal re-enables it.
-    -- It must be an explicit `false`, NOT a commented-out line: `transparent`
-    -- defaults to `true` inside the plugin (solarized-osaka/config.lua), so
-    -- deleting this line turns transparency back ON rather than off.
+    -- WARN: SILENT FAILURE. Must be an explicit `false`. The plugin defaults
+    -- `transparent` to `true`, so deleting or commenting this line re-enables
+    -- transparency rather than disabling it. Opaque since 2026-09-04.
     transparent = false,
-    -- ONE background for the whole editor, from `lua/config/ui.lua`.
+    -- ONE background for the whole editor, from lua/config/ui.lua. The ONE
+    -- legitimate `on_colors` -- it does not reopen the syntax-ramp ban below.
+    -- All three keys, or floats and sidebars show as panels that do not match.
     --
-    -- This is the ONE legitimate use of `on_colors`, and it does not reopen the
-    -- ban explained below. That ban is about the syntax RAMP (green500,
-    -- orange500, blue500, cyan500) -- names shared with the UI, where a syntax
-    -- choice silently repaints git signs and diagnostics. A background is not a
-    -- syntax colour: repainting the UI is the entire point here, so the
-    -- propagation that makes the ramp dangerous is what makes this correct.
-    --
-    -- WHY all five keys and not just `bg`. The theme deliberately spreads four
-    -- other backgrounds around it, and every one of them shows up as a panel that
-    -- does not match the editor:
-    --
-    --   bg_float     -> NormalFloat, FloatBorder, FloatTitle. Every popup: the
-    --                   oil browser, snacks pickers and the explorer sidebar,
-    --                   blink-cmp's docs window, the lazy.nvim UI.
-    --   bg_sidebar   -> NormalSB, i.e. the `sidebars` filetypes (qf, help).
-    --
-    -- WARN: SILENT NO-OP. `bg_popup` is NOT the key the theme's `Pmenu` reads --
-    -- that is written from `c.base02` directly, so overriding `bg_popup` in
-    -- `on_colors` changes nothing. The completion menu is moved in `on_highlights`.
-    -- `bg_popup` is deliberately NOT set, and must stay that way. The
-    -- completion-menu family in `on_highlights` below (Pmenu, BlinkCmpMenu,
-    -- BlinkCmpDoc and their borders) is pointed at it precisely so the menu keeps
-    -- a darker panel of its own instead of joining the editor background. Pointing
-    -- them at the shared background was tried on 2026-09-04 and reverted: measured,
-    -- the menu interior and the code beside it were both #031216, so only the
-    -- selected-row band separated them.
-    --
-    -- `bg_statusline` is deliberately NOT set. It looks like the key for the
-    -- statusline and the winbar and it is not: the theme writes
-    -- `StatusLine = { bg = c.base03 }` directly and links `WinBar` to it
-    -- (solarized-osaka/groups/editor.lua), so overriding `bg_statusline` here
-    -- changes nothing visible -- measured, WinBar stayed #002c38. WinBar is
-    -- handled in `on_highlights` instead; the statusline is left to lualine.
-    --
-    -- `on_colors` runs LAST in the theme's colour setup (solarized-osaka/colors.lua
-    -- calls it after every derived value), so these assignments are not
-    -- overwritten and nothing needs to be recomputed. Lualine is unaffected: it
-    -- carries its own theme rather than reading StatusLine.
+    -- WARN: SILENT NO-OP. `bg_popup` and `bg_statusline` are deliberately NOT
+    -- set and must stay unset -- neither is the key it looks like, and the
+    -- completion menu depends on `bg_popup` staying base04. Both measured.
     on_colors = function(c)
       local bg = require("config.ui").bg
       c.bg = bg
       c.bg_float = bg
       c.bg_sidebar = bg
     end,
-    -- NO `on_colors`. Recolouring the theme's base ramp (c.green500, c.orange500,
-    -- c.blue500) is the obvious way to retheme syntax and it is the wrong one:
-    -- those names are shared with the UI, so a syntax choice silently repaints
-    -- unrelated things. Measured consumers of each, outside syntax:
-    --
-    --   green500  -> GitSignsAdd, diffAdded, MiniDiffSignAdd, NeoTreeGitAdded,
-    --                NvimTreeGitNew, GitGutterAdd, NeogitDiffAdd, neotest
-    --   orange500 -> dashboard, snacks, indent-blankline, rainbow delimiters
-    --   blue500   -> neogit, neotest, semantic_tokens, editor
-    --   cyan500   -> DiagnosticHint (colors.hint is an alias of it), Question,
-    --                healthSuccess, MiniStatuslineModeOther, blink/cmp, lspsaga
-    --
-    -- That is how the keyword colour turned git-added markers yellow on
-    -- 2026-08-08. Syntax colours are therefore applied to SYNTAX GROUPS only,
-    -- below, and the theme's own ramp is left intact for everything else.
+    -- NO `on_colors` FOR SYNTAX. The theme's base ramp (green500, orange500,
+    -- blue500, cyan500) is shared with the UI, so a syntax choice there silently
+    -- repaints git signs, diagnostics, the dashboard and indent guides. That is
+    -- how the keyword colour turned git-added markers yellow on 2026-08-08.
     on_highlights = function(hl, c)
-      -- Set `fg` while preserving whatever else a group already carries --
-      -- italic on keywords, bold on markdown delimiters, underline on links, the
-      -- background on markdown code. A bare table assignment drops those.
+      -- Merge `fg` so a group keeps its italic/bold/underline/background.
       --
-      -- Values in this table are heterogeneous: a highlight table OR a bare
-      -- string, which is the theme's shorthand for a link (`@keyword.return` is
-      -- the string "@keyword"). Merging into a string throws, and a link needs
-      -- no help -- its target is in the same list, so it follows for free.
+      -- WARN: SILENT FAILURE. Values here are heterogeneous -- a highlight table
+      -- OR a bare string, the theme's shorthand for a link. Merging into a
+      -- string throws; a link needs no help, its target is in the same list.
       local function paint(groups, fg)
         for _, g in ipairs(groups) do
           if type(hl[g]) == "table" then
@@ -95,24 +49,15 @@ return {
         end
       end
 
-      -- Neutral punctuation: the theme's base0 unless a build overrides it.
-      -- `palette.delimiter` is `false` by default so the default stays COUPLED
-      -- to the theme's own ramp rather than a copy of its hex. `custom-v1`
-      -- overrides it; see the note in palette.lua for why it is not `nil`.
+      -- Both roles read `false` as "follow the theme's own ramp", which is why a
+      -- build must write `false` and never `nil`. See palette.lua.
       local delimiter = palette.delimiter or c.base0
 
-      -- Brackets default to the punctuation accent, so v1 is unchanged. A build
-      -- may point them at `delimiter` instead; see palette.lua.
       local bracket = palette.bracket or palette.punctuation
 
-      -- Body text: `Normal`, `NormalFloat` and `@variable` are one value by
-      -- design -- a plain identifier IS body text here. Same `false`-not-`nil`
-      -- default as `delimiter`. `custom-v1` sets it back to `false`.
-      --
-      -- Painted rather than left to the theme so a build can raise it. `Normal`
-      -- keeps its background: `paint` merges `fg` and leaves everything else.
-      -- The other 15 groups the theme puts on base0 are chrome (TabLine,
-      -- SignColumn, StatusLineNC, Trouble) and stay where they are on purpose.
+      -- Painted rather than left to the theme so a build can raise body text.
+      -- `paint` merges, so `Normal` keeps its background. The other 15 groups the
+      -- theme puts on base0 are chrome and stay put.
       if palette.body then
         paint({ "Normal", "NormalFloat", "@variable" }, palette.body)
       end
@@ -122,21 +67,13 @@ return {
         paint({ "Comment" }, palette.comment)
       end
 
-      -- The winbar sits on the editor background, not the statusline's.
-      --
-      -- It is a real, visible row in two places: the global 1-row winbar set in
-      -- options.lua, and the padding row under oil's path label. The theme links
-      -- `WinBar` -> `StatusLine`, whose background is `base03` (#002c38), so both
-      -- read as a lighter strip against `Normal`. Linking to Normal/NormalNC
-      -- instead makes the row take whatever background the window already has,
-      -- which is the point of a blank winbar. The statusline itself is untouched
-      -- -- lualine draws that from its own theme.
+      -- The winbar sits on the editor background, not the statusline's (the theme
+      -- links WinBar -> StatusLine, bg base03, which reads as a lighter strip).
       hl.WinBar = { link = "Normal" }
       hl.WinBarNC = { link = "NormalNC" }
 
-      -- Keywords. `Operator` is deliberately NOT here -- see the note further
-      -- down -- but `@keyword.operator` (`and`, `or`, `not`) is, because those
-      -- are keywords that happen to be spelled as operators.
+      -- `Operator` is deliberately NOT here, but `@keyword.operator` (`and`,
+      -- `or`, `not`) is: those are keywords spelled as operators.
       paint({
         "Statement",
         "Keyword",
@@ -149,120 +86,50 @@ return {
         "@keyword.return.javascript",
       }, palette.keyword)
 
-      -- Brackets, tags and other "structural" symbols. Feeds what the theme
-      -- calls orange500.
       paint({
         "Special",
         "Debug",
         "@variable.builtin",
         "@module.builtin",
-        -- JSX tag groups are painted in their own block below rather than
-        -- listed here, so the reasoning stays attached to them. Same colour.
+        -- JSX tags are painted in their own block below. Same colour.
       }, palette.punctuation)
 
-      -- The brackets themselves, on their own role so a build can move them
-      -- without moving tags and the rest of the warm side.
       paint({ "@punctuation.bracket" }, bracket)
 
-      -- `${` and its `}` inside a template literal. Deliberately NOT with the
-      -- brackets above, even though it is brace-shaped: it is a MODE SWITCH, not
-      -- structure. It marks where a string stops being text and becomes an
-      -- expression, so it carries meaning and the "punctuation carrying no
-      -- meaning worth a hue" rule does not apply to it.
-      --
-      -- It also has to survive being read INSIDE the string colour, which is the
-      -- measurement that settled it. Separation from `@string` cyan `#29a298`:
-      -- copper 46.9, the accent yellow 32.9, the neutral grey only 17.7. Grouped
-      -- with the brackets in the first cut of the rebuild and moved out on
-      -- 2026-09-05 because the marker was disappearing into the string.
-      --
-      -- Language-free in practice: Go and Lua emit ZERO of this capture, and it
-      -- is 0.16% of TSX / 0.24% of TS.
+      -- `${}` is a MODE SWITCH, not structure, so it keeps the accent -- and it
+      -- has to stay readable INSIDE the string colour, which the neutral grey
+      -- does not (17.7 separation against this accent's 32.9).
       paint({ "@punctuation.special" }, palette.punctuation)
 
-      -- Parameter names and `new X()` callees. Split off the punctuation list
-      -- above on 2026-09-05 so a build can move them WITHOUT moving brackets and
-      -- tags; the two shared one role until then. `palette.parameter` holds the
-      -- punctuation value, so only `custom-latest` renders differently.
-      --
-      -- What is in here, from walking the highlights query: @variable.parameter
-      -- is the parameter name in every language; @constructor is the callee of
-      -- `new` in TS (`URLSearchParams` matches @variable, @type AND @constructor,
-      -- last capture wins). Go emits no @constructor and neither does TSX.
       paint({
         "@variable.parameter",
         "@constructor",
         "@constructor.tsx",
       }, palette.parameter)
 
-      -- Lua table braces, pinned back to the bracket colour. Lua captures `{` as
-      -- BOTH @punctuation.bracket and @constructor -- the same character, matched
-      -- twice -- so Lua's @constructor is a grammar quirk, not a construct (Go's
-      -- composite literals are plain @punctuation.bracket). Without this, a build
-      -- that moves `palette.parameter` recolours every `{` `}` in every Lua file.
-      -- Language-scoped like `@keyword.tsx`: the highlighter tries
-      -- `@constructor.lua` before `@constructor`.
-      --
-      -- Pointing @constructor at the TYPE colour was tried 2026-08-07, reasoned
-      -- from TSX, which turned out not to use the group. Effect was Lua-only:
-      -- blue `{` `}` beside copper `[` `]` in the same expression. Reverted
-      -- 2026-08-09; this line is what keeps that revert true per-language.
+      -- Lua captures `{` as BOTH @punctuation.bracket and @constructor, so this
+      -- pin is what stops a `palette.parameter` change recolouring every Lua
+      -- table brace. Language-scoped: @constructor.lua resolves first.
       paint({ "@constructor.lua" }, bracket)
 
-      -- JSX tags, revisited 2026-08-09. Reference measurement, taken by walking
-      -- treesitter captures over two regions of the SAME production file and
-      -- resolving @cap.tsx -> @cap the way the highlighter does:
+      -- JSX tag NAMES. Both captures MUST carry the same value -- the grammar
+      -- matches one tag with BOTH and query order picks the winner, so splitting
+      -- them renders `<DragAndDrop.Droppable>` in two colours. @tag.builtin.* is
+      -- listed explicitly so theme drift cannot bring that back.
       --
-      --   region                       coverage   marks   run length
-      --   logic-heavy (hooks, consts)     12.5%      74      2.0 ch
-      --   markup-heavy (nested JSX)       34.7%      91      4.3 ch
-      --
-      -- Every group here is language-scoped (.tsx/.javascript/.html/.vue), so
-      -- nothing in this block can reach Go, Python, Lua, bash or plain TS.
-      -- Verified by measuring a 13k-glyph Lua file before and after: identical
-      -- on every row including mark counts.
-      --
-      -- Tag NAMES stay on the punctuation colour, and both tag captures must
-      -- carry the SAME value. This is the load-bearing part.
-      --
-      -- The tsx grammar matches one tag with BOTH @tag and @tag.builtin, and the
-      -- winner is decided by query order, not by what kind of tag it is -- the
-      -- same trap as Lua's `{` being both @punctuation.bracket and @constructor,
-      -- documented above. Measured on real JSX: `Accordion`, `Button`, `If`,
-      -- `SadFaceSVG` resolve through @tag, while `div`, `h2` AND `DragAndDrop`
-      -- resolve through @tag.builtin. So splitting the two captures does NOT
-      -- split "HTML element" from "React component" -- it renders
-      -- `<DragAndDrop.Droppable>` as two different colours inside one name.
-      --
-      -- Sending @tag to the type colour was tried on 2026-08-09 and rejected:
-      -- the sky value is reserved for types, and the split above made tag colour
-      -- look arbitrary in exactly the files it was meant to help.
-      --
-      -- KNOWN COST, accepted deliberately: the punctuation colour reaches 30.2%
-      -- of glyphs in markup-heavy TSX against 12.5% in logic-heavy TSX of the
-      -- same file. Tags are most of that, because a tag is a WORD where a
-      -- bracket is one character. This is a dose problem, not a colour problem
-      -- -- retuning the hex cannot change how much of the screen it covers, so
-      -- do not reach for a new value. The only lever that works is moving
-      -- captures off this list, and the two candidates (@variable.parameter,
-      -- @punctuation.bracket) were measured to be 88% of that colour in
-      -- logic-heavy regions, so moving them would strip the files that already
-      -- read well. See notes/syntax-palette-decisions.md.
+      -- Language-scoped, so nothing here reaches Go/Python/Lua/bash/plain TS.
+      -- KNOWN COST: 30.2% of glyphs in markup-heavy TSX. That is a DOSE problem,
+      -- not a colour problem -- retuning the hex cannot change coverage.
       paint({
         "@tag.tsx",
         "@tag.javascript",
-        -- Explicit rather than inherited: the theme already lands this on the
-        -- same value, but if that ever drifts, the two captures diverge and the
-        -- split-colour tag name comes back.
         "@tag.builtin.tsx",
         "@tag.builtin.javascript",
       }, palette.punctuation)
 
       -- Tag wrappers (`<`, `>`, `/`) stay on base0 by user preference, so dense
-      -- markup has a quieter frame than the blue punctuation in expressions.
-      -- Keep these language-scoped: ordinary comparison/division operators and
-      -- expression braces still follow the syntax palette. The numbered builds
-      -- already used base0 for these wrappers, so their appearance is preserved.
+      -- markup gets a quieter frame. Keep language-scoped: ordinary comparison
+      -- and division operators still follow the syntax palette.
       paint({
         "@tag.delimiter.tsx",
         "@tag.delimiter.vue",
@@ -270,92 +137,44 @@ return {
         "@tag.delimiter.javascript",
       }, c.base0)
 
-      -- Generic delimiters go neutral too, 2026-08-10. This closes item 6 of
-      -- todos/syntax-palette-followups.md, which had been the live one.
-      --
-      -- The group is `,` `;` `:` AND the `.` of every member access -- the
-      -- theme's own comment on it is literally "For delimiters ie: `.`". On the
-      -- keyword colour that put an accent mark on nearly every line of Go and
-      -- TS, and inside every `fmt.Println`, `currentRoute.pathname` and
-      -- `rolePermission.write`. They are the same case as the tag delimiters
-      -- above and `Operator` below: punctuation carrying no meaning worth a hue.
-      --
-      -- This is a coverage change, not a colour change, so it is independent of
-      -- which keyword colour is selected and stays true for the variants in
-      -- lua/colorschemes/solarized-osaka/variants.lua.
+      -- This group is `,` `;` `:` AND the `.` of every member access, so on the
+      -- keyword colour it put an accent mark on nearly every line of Go and TS.
       paint({ "@punctuation.delimiter" }, delimiter)
 
-      -- Two groups `paint` deliberately cannot handle. Both are stored as bare
-      -- string links whose TARGET is outside the lists above, so skipping them
-      -- (correct for links like @keyword.return -> @keyword) would leave them
-      -- resolving somewhere wrong. They have to be written as tables:
-      --   @keyword.import   -> Include -> PreProc -> red500, a saturated alarm
-      --     red 31 degrees from the error red, so `import` and Go's
-      --     `package main` read as diagnostics.
-      --   @keyword.operator -> @operator -> Operator, which goes neutral just
-      --     below, taking `and`/`or`/`not` with it.
+      -- Written as tables because `paint` skips bare string links, and these two
+      -- link OUTSIDE the lists above, so skipping would leave them resolving
+      -- wrong: @keyword.import -> PreProc -> an alarm red that reads as a
+      -- diagnostic, and @keyword.operator -> Operator, which goes neutral below.
       hl["@keyword.import"] = { fg = palette.punctuation }
       hl["@keyword.operator"] = { fg = palette.keyword }
 
-      -- NOTE: quieting Lua's grammar keywords was tried on 2026-08-09 and
-      -- rejected wholesale -- first `local`, then `end`/`then`/`do`. Nothing is
-      -- painted here now, deliberately; every Lua keyword stays on the accent.
-      -- The measurements and the rejected colours are kept in the palette file
-      -- so this is not re-derived. Lua is a config language here, not a daily
-      -- one, and the density it suffers from does not reach the daily stack.
+      -- Nothing paints Lua's grammar keywords, deliberately: that was tried
+      -- twice in 2026-08-09 and rejected wholesale. See palette.lua.
 
-      -- Function names and plain identifiers.
-      --
-      -- No markup/markdown groups appear in any of these three lists, on
-      -- purpose: markdown is prose, not a programming language, so it keeps the
-      -- theme's own colours. Deliberately left out are @markup.list,
-      -- @markup.link, @markup.list.checked, @punctuation.special.markdown,
-      -- @markup.list.markdown, markdownLinkText, markdownHeadingDelimiter,
-      -- mkdCodeStart/End and htmlH2 -- all of which the theme paints from the
-      -- same ramps as code.
+      -- No markup/markdown groups in any of these lists, on purpose: markdown is
+      -- prose and keeps the theme's own colours. Exclusion list in the doc.
       paint({
         "Function",
         "Identifier",
       }, palette.func)
 
-      -- Sync plain-variable color across the JS/TS family. The theme
-      -- (solarized-osaka/groups/treesitter.lua) sets a yellow override for
-      -- `@variable.typescript` / `@variable.javascript`, but has NO equivalent
-      -- for `@variable.tsx` / `@variable.jsx`, so `.tsx`/`.jsx` fall back to the
-      -- base `@variable` (base foreground). That made `.ts` variables yellow
-      -- while `.tsx` variables stayed white. Link the ts/js variants back to
-      -- `@variable` so a plain variable reads the same in every JS/TS file.
+      -- The theme overrides `@variable.typescript`/`.javascript` yellow but has
+      -- no `.tsx`/`.jsx` equivalent, so `.ts` variables were yellow while `.tsx`
+      -- stayed white. Link both back to `@variable`.
       hl["@variable.typescript"] = { link = "@variable" }
       hl["@variable.javascript"] = { link = "@variable" }
 
-      -- Symbolic operators (`=`, `..`, `==`, `~=`, `+`) go neutral. The theme
-      -- paints Operator with green500, the same colour as keywords, and that is
-      -- what makes the keyword colour feel brighter in some files but not
-      -- others. Measured coverage of that colour, by treesitter capture:
-      --
-      --   file                  real keywords   symbolic ops   total
-      --   ai-prompts.lua            5.4%            2.1%        8.0%
-      --   solarized-osaka/init.lua       0.2%            0.5%        0.7%
-      --
-      -- An 11x spread between two Lua files in the same repo, with the SAME
-      -- colour -- so the variation is density, not the value. Symbolic
-      -- operators are 26% of it in the dense file and 74% in the config-style
-      -- one, because every `key = value` line in a Lua table pays for one.
-      -- Dropping them to base0 cuts the dense file to 5.9% and the config file
-      -- to 0.2%, i.e. it flattens the difference between files rather than
-      -- dimming the colour everywhere.
-      --
-      -- `=` is punctuation, not a keyword, so this is also the more correct
-      -- reading. `and`, `or`, `not` are the exception and stay on the keyword
-      -- colour -- they are in the keyword list above, which has to come after
-      -- this line would otherwise reach them via
-      -- @keyword.operator -> @operator -> Operator.
+      -- Symbolic operators go neutral. The theme paints Operator with the keyword
+      -- colour, which is what made that colour feel brighter in some files but
+      -- not others -- measured at an 11x coverage spread between two Lua files in
+      -- the same repo. `=` is punctuation, not a keyword. `and`/`or`/`not` are
+      -- the exception and stay on the keyword list above, which must come after
+      -- this or it reaches them via @keyword.operator -> @operator -> Operator.
       hl.Operator = { fg = delimiter }
 
       -- Native CSS fallback: reuse syntax roles instead of Function/PreProc/Noise.
       -- Explicit links survive css.vim's later `hi def link` without buffer hooks.
-      -- Function regions supply the color of otherwise uncaptured calc operators;
-      -- their nested numbers, strings and function names keep their own groups.
+      -- Function regions supply the colour of otherwise uncaptured calc operators.
       for group, target in pairs({
         cssBraces = "@punctuation.bracket",
         cssMathParens = "@punctuation.bracket",
@@ -378,77 +197,28 @@ return {
         hl[group] = { link = target }
       end
 
-      -- Types. The theme sets `Type = yellow500`, which made EVERY type gold:
-      -- Rectangle, Shape, float64, string, int, SlotTableProps, ReactNode,
-      -- Optional, List. Setting the base group is the whole fix -- @type,
-      -- @type.builtin, @type.definition, Typedef and Structure all link to it,
-      -- and so does every @lsp.type.* group (inert here: lua/plugins/lsp.lua
-      -- nils semanticTokensProvider on attach, so treesitter is the only
-      -- painter and nothing can override this back to yellow).
-      -- See `variants.type` in the palette file for the measurements.
+      -- Setting the base group is the whole fix: @type, @type.builtin,
+      -- @type.definition, Typedef, Structure and every @lsp.type.* link to it.
       hl.Type = { fg = palette.type }
 
-      -- Fields and properties: BOTH are deliberately left at the theme default
-      -- as of 2026-08-09, so both are exact duplicates of another role -- not
-      -- close, identical (dE2000 0.0), verified by walking treesitter captures
-      -- over real Go/TSX/Python files:
-      --   @variable.member (r.Width, row.count, self.width) -> cyan500 == String
-      --   @property        (struct literal keys, JSX attrs)  -> blue500 == Function
-      -- @tag.attribute links to @property, so JSX attributes follow Function.
-      --
-      -- What that costs, knowingly: a TS type literal renders `mode: 'selectable'`
-      -- with the key and the string in one colour, and every Lua `key = "value"`
-      -- line does the same. @property duplicating Function is the harmless half --
-      -- those two rarely touch on the same line.
-      --
-      -- @variable.member DID carry an override (rose, see `variants.member` in the
-      -- palette file) and it was removed: rose won on measurement but not on looks
-      -- in large files, and the collision was preferred to a colour that had never
-      -- been judged the way the other roles were. Re-enabling is the one-line
-      -- uncomment below; read `variants.member` first, its scores predate the
-      -- keyword move and anything close to keyword needs re-measuring.
+      -- Fields and properties are BOTH left at the theme default, so both exactly
+      -- duplicate another role (@variable.member == String, @property ==
+      -- Function). Knowingly: rose won on measurement but not on looks in large
+      -- files. Re-enabling is this one-line uncomment; read the doc first.
       -- hl["@variable.member"] = { fg = palette.member }
 
-      -- Module names, such as `main` in `package main` or `typing` in a Python
-      -- import. The theme links `@module` -> Include -> PreProc -> red500, a
-      -- saturated alarm red at 4.01:1 sitting only 31 degrees of hue from the
-      -- error red, so imports read as diagnostics in every language except Go.
-      -- This generalises the old Go-only override to every language and drops
-      -- its magic hex. `c.base2` (#ede7d3) is not byte-identical to the #eee8d5
-      -- that line hardcoded, but the two are dE2000 0.45 apart -- below the
-      -- just-noticeable threshold -- so Go is unchanged in practice.
+      -- @module links to PreProc -> an alarm red 31 degrees from the error red,
+      -- so imports read as diagnostics in every language except Go.
       hl["@module"] = { fg = c.base2 }
 
       hl.Visual = { bg = "#3b4261" }
       hl.VisualNOS = { bg = "#3b4261" }
 
-      -- Line numbers. The theme points LineNr at `yellow700` (#664c00), a dark but
-      -- SATURATED warm amber, and that is the problem rather than its lightness:
-      --
-      --   group              value     L*     C*    hue    dL* over bg   contrast
-      --   solarized LineNr   #664c00   34.0   42.9   84    28.8          2.33:1
-      --   tokyonight LineNr  #3b4261   28.6   20.1  287    18.5          1.74:1
-      --
-      -- Chroma is more than double tokyonight's, and hue 84 sat in the same warm
-      -- family as the syntax accents of the day (the keyword was yellow at hue 98
-      -- when this was written; it is violet now, but punctuation is warm at hue
-      -- 58, so the collision argument still holds). So the gutter read as CONTENT
-      -- competing with code rather than as chrome, which is what makes
-      -- relative-jump numbers tiring to scan. It is also 10 L* further from the
-      -- background than tokyonight's.
-      --
-      -- #2d3f43 is a low-chroma cool grey sitting on the background's own hue (bg
-      -- #001419 is a cyan-ish near-black), and it reproduces tokyonight's
-      -- RELATIONSHIP rather than its absolute value, which is the right invariant
-      -- when the two backgrounds differ (L* 5.2 here vs 10.1 there):
-      --   #2d3f43  L* 25.3  C* 7.7  dL* 20.1  contrast 1.71:1
-      --   vs tokyonight's         dL* 18.5  contrast 1.74:1
-      -- If this ends up too dim to read at a glance, #33474b is the one step up
-      -- (dL* 23.5, 1.92:1). Do not go back toward a saturated hue to make it
-      -- visible -- raise lightness, keep C* under about 10.
-      --
-      -- All three groups carry explicit values in the theme (not links), so all
-      -- three have to be set or above/below the cursor keep the amber.
+      -- The theme's `yellow700` gutter is a CHROMA problem, not a lightness one:
+      -- it read as content competing with code. #2d3f43 is a low-chroma cool grey
+      -- on the background's own hue. If too dim, #33474b is the one step up --
+      -- DO NOT go back toward a saturated hue, raise lightness and keep C* < 10.
+      -- All three carry explicit values in the theme, so all three must be set.
       hl.LineNr = { fg = "#2d3f43" }
       hl.LineNrAbove = { fg = "#2d3f43" }
       hl.LineNrBelow = { fg = "#2d3f43" }
@@ -460,114 +230,44 @@ return {
       hl.CursorLineNr = {
         fg = palette.variants.punctuation.explored.copper,
       }
-      -- Dedicated current-row band for Oil only (CursorLine is disabled
-      -- globally above). Oil windows remap CursorLine -> OilCursorLine via
-      -- winhighlight, so the band returns in Oil without touching buffers.
+      -- Oil-only current-row band, since CursorLine is off globally. Oil remaps
+      -- CursorLine -> OilCursorLine via winhighlight.
       hl.OilCursorLine = { bg = c.base02 }
 
-      -- Markdown headings only. The theme links the GENERIC `@markup.heading`
-      -- group to `Title` (orange500 = red-orange), and `Title` is shared by help
-      -- files, pickers, `:set all` output, etc. Overriding the markdown-specific
-      -- `@markup.heading.{1..6}.markdown` variants recolors `.md` titles to
-      -- solarized green WITHOUT touching `Title` or any other filetype's
-      -- headings. render-markdown leaves heading fg to treesitter
-      -- (`foregrounds = {}` in render-markdown.lua), so this is what paints them.
+      -- Markdown headings only. The GENERIC @markup.heading links to `Title`,
+      -- which help files, pickers and `:set all` share -- so override the
+      -- markdown-specific variants instead. render-markdown leaves heading fg to
+      -- treesitter, so this is what paints them.
       for level = 1, 6 do
         hl["@markup.heading." .. level .. ".markdown"] = { fg = c.green, bold = true }
       end
 
-      -- LSP documentation surface (hover, signature help, diagnostic floats,
-      -- mouse hover, blink's doc popup).
+      -- LSP doc surface. Separation comes from the border and foreground, not the
+      -- background: a raised panel was tried and read as a box pasted over the
+      -- editor, and there is no darker bg to reach for. Deliberately NOT applied
+      -- to NormalFloat, which would repaint the snacks picker; these are reached
+      -- only by doc floats, via winhighlight in config/keymaps.lua.
       --
-      -- The problem: `bg_float` is `base04`, which is byte-identical to `bg`
-      -- (#001419), so a float was the same colour as the editor and only
-      -- differed by being opaque. It gets worse than "subtle": `transparent =
-      -- true` leaves Normal bg = NONE, so the editor actually shows Ghostty's
-      -- #031219 at background-opacity 0.9 blended with the wallpaper. That
-      -- lands anywhere from L* 4.1 (black wallpaper) to L* 12.9 (bright one),
-      -- and the float's L* 5.2 sits INSIDE that band -- so it read darker than
-      -- the editor on some wallpapers and lighter on others.
-      --
-      -- A raised `base03` panel (L* 15.94) was tried on 2026-08-07 and rejected
-      -- on looks -- it read as a lighter box pasted over the editor. Reverted to
-      -- `bg_float`, so the separation now comes entirely from the border and a
-      -- brighter foreground. Do not reach for a DARKER bg to compensate: bg is
-      -- already L* 5.15 and the darkest usable step is -2.5 L*, below the
-      -- perceptual threshold, and the editor itself drifts L* 4.1-12.9 with the
-      -- wallpaper (transparent = true), so no bg value separates reliably.
-      --
-      -- Still deliberately NOT applied to NormalFloat: SnacksPickerBorder and
-      -- SnacksPickerPreviewTitle read `c.bg_float`, and the picker body falls
-      -- back to NormalFloat, so touching it would repaint the picker. These are
-      -- reached only by doc floats, via winhighlight in config/keymaps.lua.
-      -- fg paints the DESCRIPTION PROSE and essentially nothing else, which is
-      -- why it is worth a value of its own. Measured 2026-08-09 by dumping the
-      -- top treesitter capture of every cell in a real vtsls hover: markdown
-      -- paragraph text resolves to `@spell`, and the `*@param*` tags to
-      -- `@markup.italic` -- both set attributes only, no foreground -- so the
-      -- prose falls through to Normal, i.e. here. Everything else in the float
-      -- already carries a colour: the fenced signature gets injected
-      -- typescript/go/lua captures, inline chips get LspDocInlineCode, links get
-      -- @markup.link.
-      --
-      -- It was `base1` (#adb7b7, L* 73.7, 9.19:1) until 2026-08-09. That made
-      -- the description the BRIGHTEST text in the popup -- above the signature
-      -- it describes (@variable L* 69.0, @function.call L* 59.1) and above the
-      -- editor's own body text (base0, L* 69.0). VSCode runs that hierarchy the
-      -- other way round, and the inversion is what made hover docs read as a
-      -- wall of text. `c.fg` (#839395, L* 59.8, 5.90:1) drops the prose 13.9 L*
-      -- below the signature's identifiers and still clears WCAG AA for body
-      -- text.
-      --
-      -- Do not go dimmer. The next ramp step, base00 (#637981), is 4.11:1 --
-      -- under AA -- and sits only 5 L* off the comment colour. There is exactly
-      -- one usable value here, so this is not a knob to tune.
-      -- A thin amber frame with a readable title. The two need DIFFERENT weights
-      -- and that is the whole point here:
-      --   border -- chrome, so it wants to be barely there. `yellow700` sits at
-      --     2.33:1 against the float, in the same register as
-      --     BlinkCmpMenuBorder's base02 (1.43:1). A syntax accent was tried first
-      --     at ~7:1 and read as a heavy box.
-      --   title  -- actual text, so it needs contrast, which is why it follows
-      --     `palette.keyword` rather than the border's amber.
-      -- NOTE: when this was written the keyword was yellow, so title and border
-      -- shared a hue family by design. The keyword moved to violet on 2026-08-10
-      -- and the title followed it automatically, so the title is now a cool
-      -- colour on a warm frame. Left alone deliberately -- it still reads fine,
-      -- and the alternative is hardcoding a hex that stops tracking the palette.
-      -- Deliberately not `palette.type`: the border used to follow it, so every
-      -- retune of the syntax type colour silently moved this chrome with it.
+      -- `fg` paints the description PROSE and essentially nothing else. DO NOT go
+      -- dimmer -- the next ramp step is sub-AA and sits 5 L* off Comment, so
+      -- there is exactly one usable value here. Border and title need DIFFERENT
+      -- weights: border is chrome at 2.33:1, title is text and follows the
+      -- keyword so it keeps tracking the palette.
       hl.LspDocFloat = { fg = c.fg, bg = c.bg_float }
       hl.LspDocBorder = { fg = c.yellow700, bg = c.bg_float }
       hl.LspDocTitle = { fg = palette.keyword, bg = c.bg_float, bold = true }
 
-      -- Inline code spans inside a hover doc -- the `"nil"`, `"number"` chips in
-      -- a Lua signature. The theme paints @markup.raw.markdown_inline as yellow
-      -- on a dark-green fill (#b28500 on #2c3300), which reads as a row of amber
-      -- boxes in a float that has no other background anywhere.
-      --
-      -- Same colour CodeCompanion uses for the same job (see its
-      -- `CodeCompanionInlineCode`, lua/plugins/codecompanion.lua), so inline code
-      -- reads identically whether it comes from the chat or from an LSP doc.
-      -- `bg = "NONE"` matches that too: the chip becomes coloured text rather
-      -- than a filled box.
-      --
-      -- Scoped via winhighlight in config/keymaps.lua rather than set globally,
-      -- because @markup.raw.markdown_inline is also every inline span in a real
-      -- .md file, and markdown deliberately keeps the theme's own colours.
+      -- Inline code chips in a hover doc. The theme's yellow-on-dark-green fill
+      -- reads as amber boxes in a float with no other background. Same colour
+      -- CodeCompanion uses, so chips match between chat and LSP doc. Scoped via
+      -- winhighlight in config/keymaps.lua, because that capture is also every
+      -- inline span in a real .md file.
       hl.LspDocInlineCode = { fg = "#8ab4d8", bg = "NONE" }
 
-      -- blink.cmp's doc popup does not route through open_floating_preview, so
-      -- it takes the same surface directly. The completion MENU below is left
-      -- alone on purpose -- only the docs panel changes.
-      -- `c.bg_popup`, NOT `c.bg_float`, for the whole completion-menu family
-      -- below. Both were the same value (base04) until 2026-09-04, when
-      -- `on_colors` repointed `bg_float` at the shared editor background -- which
-      -- silently dragged the completion menu with it and left it with no panel of
-      -- its own (measured: menu interior and the code beside it both #031216, so
-      -- only the selected-row band separated them). `bg_popup` is still base04
-      -- (#001419), i.e. exactly the darker background these had before, and it is
-      -- the semantically right key: these are popups, not floats.
+      -- Completion menu family: `c.bg_popup`, NOT `c.bg_float`. Since 2026-09-04
+      -- `bg_float` is the shared editor background, which left the menu with no
+      -- panel of its own. `bg_popup` is still base04 and is the right key -- these
+      -- are popups, not floats.
       hl.BlinkCmpDoc = { fg = c.base1, bg = c.bg_popup }
       hl.BlinkCmpDocBorder = { fg = palette.type, bg = c.bg_popup }
 
@@ -590,25 +290,20 @@ return {
       hl.Folded = { bg = "NONE" }
       hl.UfoFoldedBg = { bg = "NONE" }
 
-      -- grug-far matched-keyword highlight. Defaults to linking DiffText,
-      -- which in this theme is a near-black green band (c.green900) -> the
-      -- match looks faded. Override with a vivid bg + dark fg so the matched
-      -- keyword stands out clearly in the results list. Cyan (not red/yellow)
-      -- is deliberately chosen so it never reads like a vim `/`/`?` search hit:
-      -- Search is yellow (#b28500), IncSearch is muted rose-red (#c75b6b).
+      -- grug-far match. Defaults to DiffText, a near-black green band here, so
+      -- the match looks faded. Cyan deliberately, so it never reads like a vim
+      -- `/` hit (Search is yellow, IncSearch muted rose-red).
       hl.GrugFarResultsMatch = { fg = c.base04, bg = c.cyan300, bold = false }
 
-      -- grug-far results summary ("N matches in M files"). Defaults to linking
-      -- Comment, which is dim/faded against the panel -> the total is hard to
-      -- read. Force the theme's lightest fg so the count is legible.
+      -- grug-far summary. Defaults to Comment, too dim against the panel.
       hl.GrugFarResultsStats = { fg = c.base2 }
 
       -- TODO: brighten the snacks picker match highlight (currently a faded
-      -- olive band). Setting `hl.SnacksPickerMatch` here does NOT take effect —
+      -- olive band). Setting `hl.SnacksPickerMatch` here does NOT take effect --
       -- something re-applies it to `DiffText` AFTER this on_highlights runs
       -- (snacks registers picker hl groups lazily on its own ColorScheme hook).
-      -- Needs investigating: likely set it via a late ColorScheme autocmd or in
-      -- the snacks plugin spec instead of the theme. Scope: snacks picker only.
+      -- Needs a late ColorScheme autocmd or the snacks plugin spec instead.
+      -- Scope: snacks picker only.
     end,
   },
 }

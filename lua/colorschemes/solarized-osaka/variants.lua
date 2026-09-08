@@ -1,62 +1,21 @@
 -- The solarized-osaka builds, one `:colorscheme` away from each other.
 --
 --   solarized-osaka-custom-latest  the selection we run  <- default
---                                  cyan type, medium-chroma blue punctuation,
---                                  vivid blue functions (trial 2026-09-07)
 --   solarized-osaka-custom-v1      the copper build custom-latest replaced
 --   solarized-osaka-custom-v2      custom-v1 on the warm keyword (yellow)
 --   solarized-osaka-custom-v3      custom-v1 on the softer terracotta punctuation
 --   solarized-osaka-original       upstream craftzdog, nothing of ours applied
 --
--- `custom-latest` IS A MOVING NAME and the numbered ones are not. It always
--- means "whatever we run today", so `config.lua` never has to be repointed and
--- muscle memory never goes stale. The numbered builds are frozen snapshots of
--- what it used to be, newest first.
---
--- SO WHEN custom-latest IS SUPERSEDED: give its current values a number (the
--- next one up, e.g. `custom-v4`) with the reasoning that justified them, THEN
--- move the new values into the palette. Never edit a numbered build -- the whole
--- value of one is that it still renders what it rendered on the day it was
--- named. Verify with the group diff described at the bottom of M.load.
---
--- The point of `original` is to have a reference build to diff against, because
--- what we run is no longer stock. It is a precise thing rather than a vague one:
--- the ONLY deviation this config makes from upstream is `on_highlights` in
--- solarized-osaka/init.lua. `transparent = true` is not ours -- it is the plugin's own
--- default (see `defaults` in solarized-osaka/config.lua). So `original` is
--- exactly "the same theme with our on_highlights switched off", and any
--- difference you see between it and custom-latest is a difference we introduced.
+-- `custom-latest` IS A MOVING NAME -- always "whatever we run today" -- and the
+-- numbered ones are frozen snapshots. WHEN custom-latest IS SUPERSEDED: number
+-- its current values first, THEN move the new ones into the palette. Never edit
+-- a numbered build.
 --
 -- Costs nothing at startup: nothing here is read until `:colorscheme` names a
 -- build, because the only entry points are the one-line files in `colors/`.
 --
--- HOW IT WORKS. Two kinds of override, applied the same way -- swap, rebuild,
--- swap back:
---
---   `palette`  swaps a role value in solarized-osaka/palette.lua. `on_highlights`
---              is a closure that reads the palette when it RUNS, and `require`
---              hands every caller the same cached table, so a build does not
---              re-paint a list of highlight groups. Every group using the role
---              follows automatically, including ones added later, so there is no
---              group list here to drift out of sync with the theme.
---   `config`   swaps an entry in the plugin's own resolved options. Only
---              `original` uses it, to disable `on_highlights`.
---
--- Restoring afterwards is load-bearing in both cases: the tables are shared, so
--- leaving one mutated would make a later `:colorscheme solarized-osaka` silently
--- keep this build's colours.
---
--- ADDING A BUILD:
---   1. add an entry to `builds` below -- any role in the palette works, not just
---      `keyword`, and a build may change several at once
---   2. create colors/solarized-osaka-<name>.lua containing one line:
---        require("colorschemes.solarized-osaka.variants").load("<name>")
--- Builds are for values worth LIVING with, not for comparing candidates. A
--- candidate belongs in the palette's variant tables with its numbers; it only
--- earns a build once you would actually switch to it. The 2026-09-05 rebuild
--- broke that rule on purpose -- ten builds existed at once so they could be
--- compared side by side in real files -- and then collapsed back to the winner.
--- Do that again the same way: many builds while deciding, none afterwards.
+-- How a build works, why `original` is a precise reference, how to add one, and
+-- the `vim.g.colors_name` trap: notes/palette-reference.md, section "Builds".
 
 local palette = require("colorschemes.solarized-osaka.palette")
 
@@ -67,55 +26,48 @@ local palette = require("colorschemes.solarized-osaka.palette")
 ---Values come from `palette.variants`, so a hex is never copied.
 ---@type table<string, SolarizedOsakaBuild>
 local builds = {
-  -- Upstream, untouched. Everything this repo decided about syntax colour is
-  -- carried by `on_highlights`, so switching it off is the whole difference.
-  -- Deliberately NOT a full `config.setup({})`: that would also throw away
-  -- anything the plugin spec sets for non-syntax reasons, and then a difference
-  -- you saw could be ours or could be a side effect of the reset.
+  -- `on_highlights` carries everything this repo decided about syntax colour, so
+  -- switching it off is the whole difference. Deliberately NOT a full
+  -- `config.setup({})`, which would also discard non-syntax plugin-spec options
+  -- and make any difference you see ambiguous.
   original = { config = { on_highlights = function() end } },
 
-  -- Settled daily selection, 2026-09-07. Brackets and delimiters deliberately
-  -- share the Kanagawa midpoint; the other entries are the roles that differ
-  -- from the base palette.
+  -- The daily selection. Only the roles that differ from the base palette.
   ["custom-latest"] = {
     palette = {
       type = palette.variants.type.nvim_type,
-      delimiter = palette.variants.delimiter.kanagawa_mid,
-      bracket = palette.variants.delimiter.kanagawa_mid,
+      delimiter = palette.variants.delimiter.mid_high,
+      bracket = palette.variants.body.base0,
       func = palette.variants.func.vivid,
 
-      -- NOTE: punctuation + parameter, final call 2026-09-08.
-      -- Two candidates stayed close: terracotta red and subdued yellow.
-      -- AI analysis scored yellow better, and it still reads best in daily use,
-      -- so yellow stays even though it goes against my personal color preference.
-      -- No red variant found so far that beats it, so red stays commented out.
-      -- Verdict: the palette is ~90% done. The last 10% still open:
-      --   - a red or other color that can replace the subdued yellow
-      --   - object member colors
-      --   - object (dict) key and value colors
-      --   - boolean colors
-      -- Not worth more searching now. Stop here; only reopen if one of these
-      -- clearly bothers me in daily use.
+      -- NOTE: punctuation + parameter, final call 2026-09-08. Terracotta red and
+      -- subdued yellow stayed close; analysis scored yellow better and it still
+      -- reads best in daily use, so yellow stays even though it goes against my
+      -- personal colour preference. No red variant found that beats it.
+      --
+      -- Verdict: the palette is ~90% done. The last 10% still open -- a red that
+      -- can replace the subdued yellow, object member colours, object/dict key
+      -- and value colours, boolean colours. Not worth more searching; only reopen
+      -- if one of these clearly bothers me in daily use.
       --
       -- punctuation = palette.variants.punctuation.terracotta,
       -- parameter = palette.variants.punctuation.terracotta,
-      -- -- punctuation = palette.variants.punctuation.explored.copper,
-      -- -- parameter = palette.variants.punctuation.explored.copper,
-      -- punctuation = palette.variants.punctuation.copper_mid,
-      -- parameter = palette.variants.punctuation.copper_mid,
+      -- punctuation = palette.variants.punctuation.explored.copper,
+      -- parameter = palette.variants.punctuation.explored.copper,
+      -- punctuation = palette.variants.punctuation.explored.clay,
+      -- parameter = palette.variants.punctuation.explored.clay,
       -- comment = palette.variants.comment.subtle,
     },
   },
 
-  -- The build that ran from 2026-08-11 to 2026-09-05: copper punctuation, body
-  -- and punctuation both on the theme's base0. Kept because it is a full month
-  -- of proven daily use and the only fallback that needs no argument.
+  -- Ran 2026-08-11 to 2026-09-05. The fallback that needs no argument: a full
+  -- month of proven daily use.
   --
-  -- Explicit rather than empty now that `custom-latest` holds the palette's
-  -- values -- it was the empty one until 2026-09-05. The three
-  -- `false`s are meaningful, not padding: they mean "follow the theme's own
-  -- base0" for body and delimiters, and "follow `punctuation`" for brackets,
-  -- which is exactly how those roles behaved before they were split out.
+  -- WARN: SILENT FAILURE. The `false`s are meaningful, not padding -- they mean
+  -- "follow the theme's own base0" for body and delimiters, and "follow
+  -- `punctuation`" for brackets. They must be `false`, NEVER `nil`: `nil` is an
+  -- absent key, so `M.load`'s `pairs` never sees it and the override silently
+  -- does not happen. Same for every build below.
   ["custom-v1"] = {
     palette = {
       punctuation = palette.variants.punctuation.copper_mid,
@@ -126,14 +78,9 @@ local builds = {
     },
   },
 
-  -- The warm keyword, kept switchable after violet won the default on
-  -- 2026-08-10. Yellow rather than olive, which is display-unstable -- see the
-  -- notes. Reach for this if violet ever reads as too recessive: it buys a much
-  -- wider worst-neighbour separation, 32.5 against violet's 19.1.
-  --
-  -- Built on custom-v1, not on v4: v4 already spends this yellow on the warm
-  -- side, and a yellow keyword beside a yellow bracket is the collision the
-  -- whole 2026-09-05 rebuild removed.
+  -- The warm keyword, kept switchable after violet won on 2026-08-10. Reach for
+  -- it if violet ever reads as too recessive. Built on custom-v1 deliberately:
+  -- custom-latest already spends this yellow on the warm side.
   ["custom-v2"] = {
     palette = {
       keyword = palette.variants.keyword.balanced,
@@ -145,14 +92,12 @@ local builds = {
     },
   },
 
-  -- The punctuation colour from before 2026-08-11, on the custom-v1 base. Kept
-  -- because it is the one value that satisfies the keyword/punctuation chroma
-  -- pairing perfectly -- gap 0.4 against copper's 23.2.
+  -- The punctuation colour from before 2026-08-11, on the custom-v1 base. The one
+  -- value that satisfies the keyword/punctuation chroma pairing perfectly.
   --
-  -- `parameter` is named alongside `punctuation` and MUST be: it defaults to the
-  -- punctuation VALUE, not the punctuation ROLE, so a build that moves
-  -- `punctuation` alone silently leaves parameters behind. Any future build has
-  -- the same decision to make, and nothing errors if it gets it wrong.
+  -- WARN: SILENT FAILURE. `parameter` is named alongside `punctuation` and MUST
+  -- be: it defaults to the punctuation VALUE, not the punctuation ROLE, so a
+  -- build moving `punctuation` alone silently leaves parameters behind.
   ["custom-v3"] = {
     palette = {
       punctuation = palette.variants.punctuation.terracotta,
@@ -175,24 +120,24 @@ function M.load(name)
     return
   end
 
+  -- Restoring afterwards is load-bearing: these tables are shared, so leaving one
+  -- mutated makes a later `:colorscheme` silently keep this build's colours.
   local saved_roles = {}
   for role, value in pairs(build.palette or {}) do
     saved_roles[role] = palette[role]
     palette[role] = value
   end
 
-  -- `options` is reassigned rather than mutated because the plugin's own
-  -- `extend()` reassigns it too, and every consumer reads it through
-  -- `require("solarized-osaka.config").options` at call time.
+  -- Reassigned rather than mutated, because the plugin's own `extend()`
+  -- reassigns it too and every consumer reads it at call time.
   local plugin_config = build.config and require("solarized-osaka.config") or nil
   local saved_options = plugin_config and plugin_config.options or nil
   if plugin_config then
     plugin_config.options = vim.tbl_deep_extend("force", {}, saved_options, build.config)
   end
 
-  -- Rebuilds the whole theme through the same path the plugin's own
-  -- colors/solarized-osaka.lua uses, so every override in solarized-osaka/init.lua
-  -- is applied exactly as it is by default.
+  -- The same path the plugin's own colors/solarized-osaka.lua uses, so every
+  -- override in init.lua applies exactly as it does by default.
   local ok, err = pcall(function()
     require("solarized-osaka")._load()
   end)
@@ -208,24 +153,10 @@ function M.load(name)
     vim.notify(("solarized-osaka: build %q failed to load: %s"):format(name, err), vim.log.levels.ERROR)
   end
 
-  -- `vim.g.colors_name` is deliberately LEFT as "solarized-osaka", which is what
-  -- `_load()` just set it to. Do not "fix" this to the build name.
-  --
-  -- It is not a label, it is the key plugins look themselves up by. lualine
-  -- resolves `lualine/themes/<colors_name>`, and the theme ships exactly one, so
-  -- naming this "solarized-osaka-custom-v1" orphans that lookup and lualine
-  -- silently falls back to its auto theme -- a visibly duller statusline, with no
-  -- error. Anything else keyed the same way would break the same way.
-  --
-  -- So the build names are ENTRY POINTS, not identities: they are what you type,
-  -- not what the editor calls itself afterwards. A build only ever changes syntax
-  -- colour, so it IS solarized-osaka as far as the rest of the editor is
-  -- concerned. Verified by diffing all 629 highlight groups across custom-v1 and
-  -- custom-v2: only the keyword groups differ. The trade is that `:colorscheme`
-  -- reports the base name, and a plugin that reloads via
-  -- `:colorscheme <g:colors_name>` drops back to custom-v1 -- which is the safe
-  -- direction to fail, and the reason bare `solarized-osaka` must keep meaning
-  -- custom-v1 rather than being repointed at `original`.
+  -- `vim.g.colors_name` is deliberately LEFT as "solarized-osaka". DO NOT "fix"
+  -- it to the build name: it is the key plugins look themselves up by, and
+  -- lualine resolving `lualine/themes/<colors_name>` silently falls back to a
+  -- duller auto theme if renamed. Build names are ENTRY POINTS, not identities.
 end
 
 return M
