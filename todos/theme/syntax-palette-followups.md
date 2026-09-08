@@ -2,12 +2,59 @@
 
 ## Status
 
-Current selection (2026-09-07, explicitly approved): `custom-latest` uses the Kanagawa midpoint
-`#96abd3` for brackets and delimiters, cool white `#b1bebf` for variables, and
-vivid blue `#359ee9` for functions. The user likes the midpoint; screenshot and
-numeric review support keeping it. Tag wrappers in HTML/JSX/TSX/Vue now use
-`base0` (`#9eabac`) by request; expression punctuation stays blue. The closed
-state described below is historical. See the latest syntax palette decision note.
+**CLOSED and FROZEN 2026-09-08. Review around 2027-04 (6-8 months).** The palette
+is settled and the owner has committed to this combination for the whole window.
+Do not reopen it for a preference; the change gate applies as normal.
+
+`custom-latest` runs: salmon `#cd735d` on punctuation + parameter + member,
+amber `#d19c59` on boolean + `@constant`, Kanagawa midpoint `#96abd3` on brackets
+and delimiters, `base0` `#9eabac` on tag wrappers, cool white `#b1bebf` on
+variables, vivid blue `#359ee9` on functions, cyan `#2ac3de` on types, violet
+`#a17bcc` on keywords, upstream `#576d74` on comments.
+
+**Closed on 2026-09-08:**
+
+- Item: **member colour** — `@variable.member` was a *silent no-op* (the paint
+  line in `init.lua` had been commented out since 2026-08-09, so nothing read
+  `palette.member`). Enabled, now salmon. This fixed the largest collision in the
+  palette: one cyan had carried `variable.member` + `string` + `constant` +
+  `number` + `boolean`, at 30.48% of a real `api.ts`.
+- Item: **boolean colour** — was the theme's `Constant` cyan, dE2000 0.0 from
+  `@string` and `@number`. Now amber, modelled on Tokyo Night's orange by
+  reproducing its relationship to body text rather than copying the hex.
+- Item: **object/named constants** — `@constant` and `@constant.macro` were the
+  same cyan (and `@constant.macro` was the error red). Now the boolean value.
+- **`@attribute` was the error colour.** Decorators (Python `@dataclass`,
+  TS/NestJS `@Injectable()`) resolved to `#db302d`, byte-identical to
+  `DiagnosticError`. 8.9% of a decorated Python class, 12.4% of a NestJS
+  controller. Now follows `palette.punctuation`.
+
+**Verified, not just reasoned:** census run over real Go / TS / TSX / Python /
+YAML / Terraform / Dockerfile files, and the salmon build measured against the
+previous subdued-yellow build on the same three files — the new one wins 8 of 9
+metrics (more distinct colours, lower weighted chroma, lower loudest-accent
+share). Salmon vs yellow as a single value: yellow is marginally better
+(7.20:1 vs 5.62:1, wider worst-neighbour) but carries 30% more chroma at the same
+dose, which is the metric this palette exists to minimise.
+
+**Still open, deliberately, for the 2027-04 review:**
+
+- `@number` still equals `@string` (both `#29a298`). One-liner is
+  `hl.Number = { fg = palette.boolean }`; measured cost is amber rising to
+  16-22% of numeric/config files with fragmented runs, so it was declined.
+- `@property` still equals `Function` (both `#359ee9`) — object/dict keys and
+  JSX attributes. This is the larger of the two; it is why YAML keys render
+  function-blue at 59% of a manifest.
+- `body` `#b1bebf` vs tag wrapper `#9eabac` is dE 5.3, the tightest pair in the
+  palette. It is **intentional** (quiet frame in dense JSX), noted so a future
+  session does not "discover" it as a bug.
+- Salmon sits dE2000 11.8 from the error red — the tightest warm/error pair the
+  palette has run. Accepted because diagnostics are toggled on manually. If
+  inline diagnostics ever become default-on, revisit: `#c87655` restores 13.7
+  for a dE 4.1 change that is below the visible threshold.
+
+Full role tables, candidate verdicts and every measurement:
+[`../../notes/palette-reference.md`](../../notes/palette-reference.md).
 
 Cross-language audit completed against `#031219`. Core colors are settled.
 Completed by request: comments lifted slightly to `#637981` (4.15:1), native CSS

@@ -11,6 +11,14 @@ their comments, so the code can stay a data table.
 Read this before changing a value. Most obvious ideas have already been tried,
 measured, and rejected for a recorded reason.
 
+> **SETTLED AND FROZEN 2026-09-08. Next review around 2027-04 (6-8 months).**
+> The owner has committed to this combination for the whole window, so a future
+> session should treat every value here as decided and apply the change gate
+> before reopening anything. The three items deliberately left open are listed in
+> [`../todos/theme/syntax-palette-followups.md`](../todos/theme/syntax-palette-followups.md)
+> — `@number` == `@string`, `@property` == `Function`, and the intentional
+> body/tag-wrapper pair at dE 5.3. Nothing else is outstanding.
+
 ---
 
 ## Live values
@@ -29,18 +37,27 @@ higher.
 > hold either way — but check which number a measurement used before extending
 > it.
 
+>   **This table is a hand-maintained SNAPSHOT and drifts.** `custom-latest` in
+> `variants.lua` is the authority; it changed several times on 2026-09-08 alone.
+> Verified against a running editor on 2026-09-08. To re-check:
+> `:lua =vim.api.nvim_get_hl(0,{name='@boolean',link=false})`
+
 | role | hex | source | note |
 | --- | --- | --- | --- |
 | body / `@variable` | `#b1bebf` | `body.brighter` | L\* 76.0, 10.19:1 |
-| delimiter (operators, `.` `,` `;` `:`) | `#7f9195` | `delimiter.mid_high` | the maximin rung; same as the base build |
-| bracket | `#9eabac` | `body.base0` (custom-latest) | **brighter than the delimiter** — see [the split](#the-current-bracketdelimiter-split) |
+| delimiter (operators, `.` `,` `;` `:`) | `#96abd3` | `delimiter.kanagawa_mid` (custom-latest) | base build uses `mid_high` `#7f9195` |
+| bracket | `#96abd3` | `delimiter.kanagawa_mid` (custom-latest) | same value as delimiter again |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, hardcoded in `init.lua` | user preference |
 | function | `#359ee9` | `func.vivid` (custom-latest) | base build uses `azure` `#1d98cd` |
 | type | `#2ac3de` | `type.nvim_type` (custom-latest) | base build uses `tokyonight` `#7dcfff` |
-| punctuation / parameter | `#aea134` | `keyword.subdued` | the yellow; see [punctuation](#punctuation) |
-| keyword | `#a17bcc` | `keyword.warm_violet` | L\* 58.1, C\* 47.7 |
-| comment | `#637981` | `comment.subtle` | 4.15:1; reference builds keep upstream |
-| member | *unapplied* | `member.rose` wired but commented out in `init.lua` | falls back to theme cyan500 |
+| boolean (`true`/`false`) | `#d19c59` | `boolean.amber` (custom-latest) | **added 2026-09-08**; was cyan, identical to String and `@number` |
+| `@constant` + `@constant.macro` | `#d19c59` | shares the `boolean` value | **added 2026-09-08**; SCREAMING_SNAKE names were cyan, identical to String. `@constant.macro` was `#db302d`, the error red |
+| `@number` | `#29a298` | theme `Constant` | **unstyled** — still identical to String. `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
+| punctuation / parameter / member | `#cd735d` | `punctuation.explored.salmon` (custom-latest) | base default is `keyword.subdued` `#aea134`; salmon taken up 2026-09-08 |
+| keyword | `#a17bcc` | `keyword.warm_violet` | base value; a copper keyword was tried on 2026-09-08 and reverted — see [the copper keyword](#the-copper-keyword-2026-09-08) |
+| comment | `#576d74` | theme default (upstream) | `comment.subtle` `#637981` exists but its line is commented out in `custom-latest` |
+| `@variable.member` | `#cd735d` | shares salmon with punctuation above | **paint line re-enabled 2026-09-08** — it was a silent no-op before |
+| `@property` (object/dict keys, JSX attrs) | `#359ee9` | theme default | **unstyled** — exactly duplicates Function; see [member](#member) |
 | keyword_grammar | *unread* | nothing paints it | experiment rejected twice |
 
 **Palette status: closed, ~90% done.** Final call 2026-09-08. The last 10%,
@@ -51,30 +68,37 @@ deliberately left open and only worth reopening if it bothers you in daily use:
 - object/dict key and value colours
 - boolean colours
 
-### The current bracket/delimiter split
+### The copper keyword (2026-09-08)
 
-**Changed 2026-09-08.** The Kanagawa midpoint `#96abd3` was reverted off both
-punctuation roles, and they no longer hold one value:
+`keyword` was moved from violet to `punctuation.explored.copper_soft` `#ba662b`
+and **reverted the same day**, so violet is live again. Kept because the numbers
+are the argument for not retrying it casually: it put **two** dense roles on the
+warm side. Measured against the live background `#031219`:
 
-| role | was (2026-09-07) | now | L\* |
-| --- | --- | --- | --- |
-| delimiter | `kanagawa_mid` `#96abd3` | `mid_high` `#7f9195` | 69.7 → 58.9 |
-| bracket | `kanagawa_mid` `#96abd3` | `body.base0` `#9eabac` | 69.7 → 69.0 |
+| role | hex | L\* | C\* | hue | contrast |
+| --- | --- | --- | --- | --- | --- |
+| keyword (new) | `#ba662b` | 52.0 | 54.8 | 58 | 4.55:1 |
+| keyword (violet, base build) | `#a17bcc` | 58.1 | 47.8 | 310 | 5.63:1 |
+| punctuation | `#aea134` | 65.5 | 56.3 | 98 | 7.20:1 |
+| error red | `#ff3b30` | 56.7 | 88.7 | 36 | 5.36:1 |
 
-Two things worth knowing about this shape, both from measurements already in this
-file rather than new ones:
+What the numbers say, for and against:
 
-- It is a **two-rung split of about dE 18**, so unlike the 2026-09-05 attempt
-  (dE 3.5, dropped as invisible) this one is clearly visible. The direction is
-  reversed from that attempt, though: the **bracket** is now the brighter of the
-  two, where the earlier split made the delimiter brighter on the argument that
-  operators carry more meaning.
-- `body.base0` `#9eabac` is the value `@variable` held before 2026-09-05, and
-  body text is now `body.brighter` `#b1bebf` — so bracket and body text sit
-  7.0 L\* apart (dE 5.3) rather than being identical, which is what the original
-  "variables look faded next to upstream" problem was. The coverage finding under
-  [delimiter](#delimiter) still applies: watch whether names keep their edge
-  against surrounding punctuation.
+- **It satisfies the pairing rule well.** Keyword C\* 54.8 against punctuation
+  56.3 is a gap of 1.5 — the closest balanced pairing this palette has had
+  (violet/terracotta was 0.4, violet/copper_mid was 23.2). Both calm, neither
+  drowns the other.
+- **The error-red constraint holds**, at dE76 43.0. Note the metric: the recorded
+  17.8 figure for `copper_mid` is dE2000, which is not comparable — dE76 numbers
+  run larger. Do not read 43.0 as "2.4x better than copper_mid".
+- **It is now the palette's dimmest accent, at 4.55:1** — 0.05 over the WCAG AA
+  floor, where violet had 5.63:1. Nothing is sub-AA, but there is no headroom.
+- **Two dense warm roles 40° apart.** Keyword is the densest capture in the daily
+  stack and punctuation the densest accent, and they are now dE76 40.7 apart
+  where violet/yellow was 100.3, i.e. 2.5x closer. What separates them is
+  lightness (13.5 L\*), which is rule 1 broken knowingly — the same trade the
+  Type/Function pair makes. The thing to watch is whether keywords and brackets
+  blur together in dense TSX; that is a dose question, so judge it on real files.
 
 ### The punctuation verdict (2026-09-08)
 
@@ -113,6 +137,35 @@ staying recognisably Solarized. Not "prettier".
 Where it landed against upstream on real files: −17% weighted chroma in TSX,
 −23% in Go, loudest accent down from C\* 90.6 to 75.5, four of five accents still
 on canonical Solarized hues. Less saturated, not darker.
+
+## One accent hue on the warm side
+
+The palette's shape is **four lightness steps ordered by how much the thing
+means** — body 76.0, names 65.5, punctuation 62.8/58.9, comments 44.6 — with
+**exactly one accent hue on the warm side instead of two**.
+
+That last clause is the one that gets broken, and 2026-09-08 confirmed it
+empirically. Yellow punctuation beside a salmon `member` was rejected on sight.
+The census shows the reason is **not dose** — total warm ink was identical either
+way, to two decimal places:
+
+| file | three warm hues | total | two warm hues | total |
+| --- | --- | --- | --- | --- |
+| `api.ts` | salmon 15.40 + yellow 11.98 + amber 4.48 | **31.86%** | salmon 27.38 + amber 4.48 | **31.86%** |
+| `demo.go` | 6.66 + 3.49 + 2.84 | **12.99%** | 9.50 + 3.49 | **12.99%** |
+| `Panel.tsx` | 12.11 + 3.50 + 2.24 | **17.85%** | 15.62 + 2.24 | **17.86%** |
+
+So no amount of retuning a hex fixes it: splitting one warm field into two
+similar-dose warm hues 58° apart is what reads as busy. Keep the warm side to one
+dominant hue plus at most one **low-dose** accent — which is what `boolean` is,
+at 0.65–4.48%.
+
+**Corollary.** `punctuation` and `member` are separate roles, so splitting member
+off the string cyan does *not* require moving punctuation. Moving it anyway is
+still correct: unifying the two keeps the warm side to one hue and leaves room
+for the boolean. Tightest warm pair is 20.0 unified, against 16.1 when
+punctuation and member hold different hues and the boolean has to squeeze between
+them.
 
 ## Four rules that keep being relearned
 
@@ -439,21 +492,77 @@ practical issue. See item 8 of `../todos/theme/syntax-palette-followups.md`.
 | `nvim_type` | `#2ac3de` | 15.2 from func, 16.4 from string | **LIVE in custom-latest** |
 | `vscode_support` | `#0db9d7` | 12.7 from func | rejected |
 
+## boolean
+
+`true` / `false`, painted through `Boolean` in `init.lua`.
+
+**Added 2026-09-08.** Before that the whole chain `@boolean` -> `Boolean` ->
+`Constant` resolved to the theme's cyan `#29a298`, byte-identical to `@string`
+**and** `@number` — a boolean was indistinguishable from a string.
+
+Modelled on Tokyo Night's `orange` `#ff9e64` (the value the VSCode
+`enkia.tokyo-night` theme also uses for booleans) by reproducing its
+**relationship**, not its hex — the same invariant used for `LineNr`:
+
+| | bg L\* | body L\* | orange L\* | orange vs body |
+| --- | --- | --- | --- | --- |
+| Tokyo Night (night) | 10.1 | 81.9 | 74.0 | **−7.9** |
+| ours | 4.7 | 76.0 | 68.0 | **−8.0** |
+
+So the equivalent on our brighter body text is L\* 68, not 74. Copying `#ff9e64`
+verbatim would sit only 2.1 L\* under body and read hotter than TN intends,
+because our background is 5.4 L\* darker (9.35:1 here vs 8.40:1 on TN's own bg).
+
+| value | hex | numbers | verdict |
+| --- | --- | --- | --- |
+| `tokyonight_dim` | `#ed8e55` | L\* 68.0, C\* 54.8, h55.5, 7.79:1 | tried first; **blurred into salmon** (dE 20.2, 16° hue) and was replaced |
+| `tokyonight` | `#ff9e64` | L\* 74.0, C\* 54.6, h55.6, 9.35:1 | TN exactly as shipped; only −2.1 L\* under body here |
+| `amber` | `#d19c59` | L\* 68.1, C\* 44.1, h73.8, 7.80:1 | **SELECTED 2026-09-08.** dE 27.4 / 34° from salmon, still reads warm |
+| `gold` | `#b5a73b` | L\* 67.9, C\* 55.9, h97.9, 7.75:1 | dE 50.3 / 58° — max clarity, but yellow not orange |
+
+**Why this hue is available at all: dose.** The amber band was closed to
+`punctuation` because that role is ~19% of TSX ink and would have put gold back
+on screen. Booleans are a fraction of a percent, so rule 3 permits a bright,
+saturated mark where a dense role could not have one.
+
+**The one thing to watch.** With `keyword` on copper (hue 58) this lands 2° away
+in hue, separated by lightness alone at dE 16.2 — rule 1 broken knowingly. That
+pairing is not currently live: on the base violet keyword the two are dE 82 apart
+with a 105° hue gap, no warm conflict at all. If copper is ever reinstated for
+`keyword`, switch this role to `amber` at the same time.
+
+`@number` was deliberately left alone — `Constant` keeps the theme's cyan, so
+numbers are still identical to String. Give it its own role if that matters.
+
 ## member
 
 Fields and properties (`@variable.member`, `@property`, `@tag.attribute` by
 link).
 
-**Nothing in this table is applied.** The `hl["@variable.member"]` line in
-`init.lua` is commented out as of 2026-08-09, so member falls back to the theme's
-cyan500 and is an exact duplicate of String (dE2000 0.0). Re-enabling is a
-one-line uncomment there.
+**Reopened and APPLIED 2026-09-08.** `custom-latest` sets `member`, and
+`init.lua` paints `@variable.member` again, so a value set there now takes effect.
+Candidates are still being compared, so no single value is recorded as settled
+here — read `custom-latest` in `variants.lua` for what is live right now.
 
-Turned off because rose was only ever a measurement winner, never judged on looks,
-and it did not hold up in huge files (rule 4 again). Living with the String
-collision was preferred. If it reopens: clear String, and stay **in** the accent
-band (L\* ~60), because these symbols appear on nearly every line and a bright
-value drains its neighbours. Scores below predate the keyword move to violet, so
+From 2026-08-09 until then the paint line was commented out, which made this role
+a **silent no-op**: setting `member` in a build changed nothing, because nothing
+read `palette.member`. If a `member` change ever appears to do nothing again,
+check that line in `init.lua` first.
+
+It had been turned off because rose was only ever a measurement winner, never
+judged on looks, and it did not hold up in huge files (rule 4). Living with the
+String collision was preferred at the time.
+
+`@property` is a **different group** and is still on the theme default, where it
+exactly duplicates Function `#359ee9`. It covers struct-literal keys, object/dict
+keys and JSX attributes (`@tag.attribute` links to it), so a TS `mode: 'x'` still
+renders its key in the function colour. It needs a role of its own before being
+recoloured, not `palette.member` — the two land on the same line constantly and
+would collide. A commented `hl["@property"]` line sits next to the member one.
+
+Guidance if retuning: clear String, and stay **in** the accent band (L\* ~60),
+because these symbols appear on nearly every line and a bright value drains its
+neighbours. Scores below predate the keyword move to violet, so
 re-measure anything that was close to keyword.
 
 | value | hex | numbers | verdict |
@@ -572,6 +681,19 @@ the winner. Each of these is a per-language pin, not a preference.
   which is not byte-identical to the `#eee8d5` the old Go-only override
   hardcoded, but dE2000 0.45 apart (below just-noticeable), so Go is unchanged in
   practice.
+- **`@attribute` fell through to the error red** (fixed 2026-09-08). Decorators
+  -- Python's `@dataclass`, and the TS/NestJS/Angular `@Injectable()` family --
+  link `@attribute` -> `PreProc` -> `#db302d`, which is byte-identical to
+  `DiagnosticError`, `DiagnosticSignError`, `DiagnosticFloatingError`, the error
+  undercurl and `ErrorMsg`. So a decorator was painted in the exact colour that
+  means "error": measured at 8.9% of a decorated Python class and 12.4% of a
+  NestJS-style controller. Now pointed at `palette.punctuation`, because
+  `@attribute.builtin` (`@property`, `@staticmethod`) already resolved there via
+  `Special` -- before the fix, a builtin and a user-defined decorator on adjacent
+  lines rendered in two different colours, one of them the error red. Same defect
+  and same fix shape as `@keyword.import` and `@module` above.
+- **`@constant.macro` had the identical problem**, via `Define` -> `PreProc`.
+  Fixed alongside the named-constant change and pointed at `palette.boolean`.
 - **Markdown is prose, not a programming language**, so it keeps the theme's own
   colours. Deliberately left out of every painted list: `@markup.list`,
   `@markup.link`, `@markup.list.checked`, `@punctuation.special.markdown`,
@@ -745,6 +867,63 @@ to treesitter (`foregrounds = {}`), so this is what paints them.
 such as `#073642` to restore the band. `OilCursorLine` is a dedicated current-row
 band for oil only: oil windows remap `CursorLine` → `OilCursorLine` via
 `winhighlight`, so the band returns in oil without touching buffers.
+
+### Cursor line (parked, off)
+
+Tried 2026-09-08 at `#032732`, judged "not bad", switched back off. Parked, not
+rejected — `init.lua` keeps the value as a commented one-line swap. The
+`cursorline` **option** is already on; only the highlight is blank, so that one
+line is the whole switch.
+
+Synthesised on the background's own hue rather than taken from the theme's ramp,
+and bounded from both sides:
+
+- **Floor** — it has to be seen. dL\* +9.11 over `bg`, band/bg ratio 1.213:1,
+  which reproduces tokyonight's own cursorline relationship (+9.2 dL\*, 1.27:1).
+  Same "match the relationship, not the hex" invariant as `LineNr`.
+- **Ceiling** — it must not push text under AA on the cursor row. The dimmest
+  accents bind: at this value salmon is 4.63:1 and violet 4.66:1.
+
+| band | L\* | band/bg | worst accent | note |
+| --- | --- | --- | --- | --- |
+| `#032732` | 13.8 | 1.213:1 | 4.63:1 | the parked value, AA-safe |
+| `#002839` | 14.5 | 1.234:1 | 4.55:1 | last AA-safe rung |
+| `#002c38` | 15.9 | 1.283:1 | 4.38:1 | theme `base03` — **sub-AA** |
+| `#063540` | 19.9 | 1.441:1 | 3.90:1 | oil's popup band |
+
+"worst accent" is salmon; violet tracks it within 0.03. Comments unavoidably dip
+(3.48:1 → 2.87:1) — every cursorline does that.
+
+**More chroma is not an option here.** sRGB's gamut narrows to a point at black,
+so at this lightness C\* is already at the ceiling on this hue: every attempt to
+raise it clipped and came back as extra *lightness*. Same geometry as the hard
+floor documented in `lua/config/ui.lua`. Lightness is the only axis.
+
+### Named constants
+
+`@constant` (SCREAMING_SNAKE names like `EMPTY_GUID`) shared the theme's
+`Constant` cyan with `@string` **and** `@number` — all three dE2000 0.0, so an
+imported constant was the same colour as a string literal. Pointed at the
+`boolean` value on 2026-09-08: a named constant and a boolean are the same class
+of thing, and Tokyo Night groups them together.
+
+Set on the **captures**, not on the `Constant` base group, and the difference is
+load-bearing: **`Number` links to `Constant`**, so assigning the base group would
+silently recolour every numeric literal. That may be wanted — Tokyo Night does
+exactly that, and it would close the `@number` == `@string` duplicate — but it is
+a separate decision. The one-liner is `hl.Number = { fg = palette.boolean }`.
+
+Measured cost of taking it: amber goes from 8.3% → 21.7% of a numeric TS file and
+2.7% → 16.2% of a Helm values file, with avg run dropping to 2.7–3.4 (fragmented).
+Amber was chosen bright *because* it was rare, so that is the trade. A quieter
+relative such as `#c2a079` (same hue, C\* 26, dE 7.0 from amber) would carry the
+dose better if numbers ever do move.
+
+`@constant.macro` is included because it is a constant and because its default was
+a defect: it linked to `Define` → `#db302d`, byte-identical to `DiagnosticError`.
+
+`@constant.builtin` is deliberately **not** included — it carries `nil`, `None`,
+`null`, `undefined` and follows `Special` (the punctuation accent) on purpose.
 
 ### grug-far
 

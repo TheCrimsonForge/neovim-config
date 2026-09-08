@@ -1144,3 +1144,72 @@ some top-level separators have no syntax group. Highlight relinking cannot
 separate glyphs that share a group or add missing captures. These limitations
 are recorded rather than adding parsing work for cosmetic completeness.
 Dockerfile capture gaps and shared teal roles were outside this change.
+
+## 2026-09-08: the warm side moves to salmon (CLOSED, frozen to ~2027-04)
+
+The last palette session before a 6-8 month freeze. Five changes shipped, four of
+them fixing groups that resolved to a duplicate or to the error red.
+
+**What changed.** `punctuation` + `parameter` + `member` moved from subdued yellow
+`#aea134` to salmon `#cd735d`. `boolean` and `@constant` gained amber `#d19c59`.
+`@attribute` and `@constant.macro` were taken off the alarm red. `@variable.member`
+was enabled at all — its paint line in `init.lua` had been commented out since
+2026-08-09, which made the whole `member` role a silent no-op.
+
+**The collision that justified it.** Before this session one cyan `#29a298`
+carried `variable.member` + `string` + `constant` + `number` + `boolean`, all at
+dE2000 0.0, and it was the largest block in a real file: 30.48% of `api.ts`, of
+which `variable.member` alone was 189 glyphs. In `cfg.ts` 48 of 64 cyan glyphs
+were numbers, so the "string colour" was mostly not strings.
+
+**Salmon vs the yellow it replaced, measured on the same Go/TS/TSX files.** The
+new build wins 8 of 9 metrics — more distinct colours in all three files, lower
+weighted chroma in two, loudest accent down 30.48% → 27.38% (TS) and 27.94% →
+22.83% (TSX). The single loss was 0.1 weighted chroma, i.e. noise.
+
+Judged as a bare value, though, **yellow is the better colour**: 7.20:1 against
+salmon's 5.62:1, and worst-neighbour dE 25.9 against 20.0 in its own best
+configuration. The upgrade came from the member split, not from the hue. What
+justifies the hue is chroma: yellow is C\* 56.3 against salmon's 43.2, so at the
+9-27% dose this role carries it costs +5.4% to +10.7% weighted chroma — the exact
+metric the 2026-08 retune existed to reduce.
+
+**One accent hue on the warm side, re-proven.** Yellow punctuation beside a salmon
+`member` was rejected on sight. The census says it was not dose: total warm ink
+was identical to two decimal places either way (`api.ts` 31.86% both ways,
+`demo.go` 12.99% both ways, `Panel.tsx` 17.85/17.86%). Splitting one warm field
+across three hues 58° apart is what reads as busy, and the boolean gets squeezed —
+tightest warm pair 15.1-16.1 split, against 20.0 unified. Four configurations were
+scored; the only one that beats the shipped build is yellow unified with a Tokyo
+Night orange boolean (27.9 warm separation, 7.20:1), and it loses on weighted
+chroma, so it was declined.
+
+**`@attribute` was the error colour.** Decorators — Python `@dataclass`,
+TS/NestJS/Angular `@Injectable()` — linked `@attribute` → `PreProc` → `#db302d`,
+byte-identical to `DiagnosticError`, `DiagnosticSignError`, the error undercurl
+and `ErrorMsg`. Measured at 8.9% of a decorated Python class and 12.4% of a NestJS
+controller. Same defect and same fix shape as `@keyword.import` and `@module`
+before it. Pointed at `palette.punctuation` because `@attribute.builtin` already
+resolved there, so builtin and user decorators had been rendering differently.
+
+**Boolean method.** Modelled on Tokyo Night's `orange` `#ff9e64` by reproducing
+its *relationship* — there it sits 7.9 L\* below body text, so on our brighter
+body the equivalent is L\* 68, not 74. Copying the hex verbatim sits 2.1 L\* under
+body and reads hotter, because our background is 5.4 L\* darker. TN's hue then
+lost anyway: at hue 55.6 it landed 16° from salmon and blurred into it in real
+use, so the role moved to amber at hue 73.8 (dE 27.4 / 34°).
+
+**Declined, with the measurement.** Moving `@number` onto the constant colour
+would close the last literal duplicate and is what Tokyo Night does, but amber
+rises from 8.3% → 21.7% of a numeric TS file and 2.7% → 16.2% of a Helm values
+file, with average run dropping to 2.7-3.4 (fragmented). Amber was chosen bright
+because it was rare, so the dose contradicts its own justification. If it is ever
+taken, `#c2a079` (same hue, C\* 26) carries the dose better.
+
+**Left open on purpose:** `@number` == `@string`, `@property` == `Function`
+(59.3% of a YAML manifest renders function-blue), and body `#b1bebf` vs tag
+wrapper `#9eabac` at dE 5.3 — the tightest pair in the palette and deliberate,
+recorded so it is not rediscovered as a bug. Salmon sits dE2000 11.8 from the
+error red, the tightest warm/error pair the palette has run; accepted because
+diagnostics are toggled on manually, with `#c87655` as the invisible-cost fix
+(13.7) if that ever changes.

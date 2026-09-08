@@ -101,38 +101,56 @@ Full reasoning, measurements and the rejected alternatives:
 [`notes/popup-backdrop-darkening-investigation.md`](notes/popup-backdrop-darkening-investigation.md)
 and [`todos/snacks-explorer-as-file-browser.md`](todos/snacks-explorer-as-file-browser.md).
 
-## Syntax palette: Kanagawa midpoint with neutral tag wrappers, 2026-09-07
+## Syntax palette: salmon warm side, FROZEN 2026-09-08 → review ~2027-04
 
-The user explicitly overrode the change gate for this session and likes midpoint
-blue `#96abd3`. Review of 13 Go/TS/TSX screenshots supports keeping it for code
-punctuation and retaining body `#b1bebf`; `body.brightest` is not needed.
-HTML/JSX/TSX/Vue tag wrappers (`<`, `>`, `/`) use theme `base0` by explicit
-request, while expression braces and ordinary operators remain blue.
-Cross-language review uses actual background `#031219`. The core palette is
-recommended as settled. Comments received a small approved lift to `#637981`
-(4.15:1) in `custom-latest`; reference builds keep the original comment color.
-Native CSS now links its punctuation/operators to the matching code roles and
-at-rules/pseudo-classes to violet keywords. No parser or runtime hooks were added.
-Dockerfile JSON-form command arrays still fall back to body text. Native CSS
-also keeps its grammar limitations, such as function names and their outer
-parentheses sharing one group. These do not call for retuning the core palette.
-`<leader>uC` is disabled through the Snacks plugin key spec, not with
-`vim.keymap.del()`, because the LazyVim mapping may not exist when user keymaps load.
+**Settled. The owner has committed to this combination for 6-8 months.** Apply
+the change gate before reopening any colour; three items are deliberately left
+open and are listed in `todos/theme/syntax-palette-followups.md`.
 
-| role | value |
-| --- | --- |
-| body / `@variable` | `#b1bebf` |
-| code brackets / delimiters / ordinary operators | `#96abd3` |
-| HTML/JSX/TSX/Vue tag wrappers | `#9eabac` |
-| function | `#359ee9` |
-| type | `#2ac3de` |
-| names: params, JSX tags, `${}` | `#aea134` |
-| keyword | `#a17bcc` |
-| comment | `#637981` |
 
-The 2026-09-06 measurements remain useful history, but their former live values
-are superseded by the `custom-latest` overrides in
-`lua/colorschemes/solarized-osaka/variants.lua`. See
+**Live values are decided by `custom-latest` in
+`lua/colorschemes/solarized-osaka/variants.lua`, not by this table and not by
+comments in `palette.lua`.** That build is the authority; anything written down
+elsewhere is a snapshot and drifts. To read the truth from a running editor:
+`:lua =vim.api.nvim_get_hl(0,{name='@boolean',link=false})`
+
+| role | value | note |
+| --- | --- | --- |
+| body / `@variable` | `#b1bebf` | |
+| brackets / delimiters / operators | `#96abd3` | Kanagawa LCh midpoint |
+| HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, by explicit request |
+| function / `@property` | `#359ee9` | `@property` is unstyled and duplicates this |
+| type | `#2ac3de` | |
+| punctuation / parameter / **member** | `#cd735d` | salmon, replaced subdued yellow `#aea134` |
+| boolean / `@constant` | `#d19c59` | amber; Tokyo Night's orange at our lightness |
+| keyword | `#a17bcc` | violet |
+| comment | `#576d74` | upstream; `comment.subtle` exists but is not applied |
+| `@string` / `@number` | `#29a298` | still share one value |
+
+**ONE ACCENT HUE ON THE WARM SIDE.** This is the rule that keeps being broken.
+Confirmed again 2026-09-08: yellow punctuation beside a salmon `member` was
+rejected on sight, and the census showed total warm ink was *identical* either
+way (31.86% of `api.ts` both ways) — the problem is splitting one warm field
+across three hues, not the amount. Keep the warm side to one dominant hue plus at
+most one low-dose accent (`boolean`, 0.65–4.48%).
+
+Salmon vs yellow, measured honestly: yellow is the better single value (7.20:1
+vs 5.62:1, wider worst-neighbour), but salmon carries 30% less chroma at the same
+dose, which is the metric this palette was built to minimise. Unifying
+punctuation + parameter + member on one salmon is what frees the warm band. The
+combination to avoid is yellow punctuation with a salmon member.
+
+Fixed the same day, all previously falling through to an alarm red or a duplicate:
+`@variable.member` (paint line had been commented out, so the role was a silent
+no-op), `@constant` + `@constant.macro` (were the string cyan / the error red),
+`@attribute` — decorators, Python and NestJS/Angular, had rendered in
+`#db302d`, **byte-identical to `DiagnosticError`**.
+
+Still unstyled and duplicating another role: `@number` (= `@string`) and
+`@property` (= `Function`, which is why YAML keys are function-blue).
+
+Full role tables, candidate verdicts and measurements:
+[`notes/palette-reference.md`](notes/palette-reference.md); deep archive in
 [`notes/syntax-palette-decisions.md`](notes/syntax-palette-decisions.md).
 
 ## Silent-failure surfaces — read before debugging "my change did nothing"
