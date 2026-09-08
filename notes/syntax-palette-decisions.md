@@ -7,6 +7,16 @@ file is a data table, not a document.
 Read this before changing a colour. Most obvious ideas have already been tried,
 measured, and rejected for a recorded reason.
 
+> **HISTORICAL AS OF 2026-09-09.** This is the deep archive, session by session,
+> and it stops at the salmon build that was frozen 2026-09-08 and replaced the
+> next day. The arguments and measurements hold; the "currently selected" claims
+> do not. For live values read a running editor or `CLAUDE.md`'s table:
+> `:lua =vim.api.nvim_get_hl(0,{name='@boolean',link=false})`
+>
+> Note also that the Method below measures against `#000f13`. The live
+> background is `#031219`. They sit within about one unit of each other, so the
+> ratios hold, but check which number a figure used before extending it.
+
 ## Method
 
 - Measure against Nvim's opaque **`#000f13`** background.

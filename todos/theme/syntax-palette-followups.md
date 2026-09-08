@@ -2,11 +2,30 @@
 
 ## Status
 
-**CLOSED and FROZEN 2026-09-08. Review around 2027-04 (6-8 months).** The palette
-is settled and the owner has committed to this combination for the whole window.
-Do not reopen it for a preference; the change gate applies as normal.
+**RETUNED 2026-09-09. The 2026-09-08 freeze below did not hold — it lasted one
+day.** This whole file is now the historical record of how the palette got here;
+the sections after this one describe builds that no longer run. Keep applying the
+change gate, but do not quote a value out of this file.
 
-`custom-latest` runs: salmon `#cd735d` on punctuation + parameter + member,
+**Live values are in `CLAUDE.md`'s table, verified 2026-09-09, or in a running
+editor:** `:lua =vim.api.nvim_get_hl(0,{name='@boolean',link=false})`
+
+What actually changed after the freeze: punctuation + parameter moved from salmon
+`#cd735d` to the accent yellow `#baac0d`; boolean moved from amber `#d19c59` to
+`#ed8e55`; brackets and delimiters moved from the Kanagawa midpoint `#96abd3` to
+the grey rung `#7f9195`; comments moved from upstream to `#5f767d`; and the
+`member` role was switched off, with only Go fields keeping a colour.
+
+Of the three items this file left deliberately open, **one has closed**:
+`@number` no longer equals `@string`. Still open: `@property` == `Function`
+(why YAML keys are function-blue), and the intentional body/tag-wrapper pair at
+dE 5.3.
+
+---
+
+### Superseded: the 2026-09-08 freeze, kept for the record
+
+`custom-latest` ran: salmon `#cd735d` on punctuation + parameter + member,
 amber `#d19c59` on boolean + `@constant`, Kanagawa midpoint `#96abd3` on brackets
 and delimiters, `base0` `#9eabac` on tag wrappers, cool white `#b1bebf` on
 variables, vivid blue `#359ee9` on functions, cyan `#2ac3de` on types, violet

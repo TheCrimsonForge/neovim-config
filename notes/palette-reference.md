@@ -11,17 +11,27 @@ their comments, so the code can stay a data table.
 Read this before changing a value. Most obvious ideas have already been tried,
 measured, and rejected for a recorded reason.
 
-> **SETTLED AND FROZEN 2026-09-08. Next review around 2027-04 (6-8 months).**
-> The owner has committed to this combination for the whole window, so a future
-> session should treat every value here as decided and apply the change gate
-> before reopening anything. The three items deliberately left open are listed in
-> [`../todos/theme/syntax-palette-followups.md`](../todos/theme/syntax-palette-followups.md)
-> — `@number` == `@string`, `@property` == `Function`, and the intentional
-> body/tag-wrapper pair at dE 5.3. Nothing else is outstanding.
+> ## HISTORICAL AS OF 2026-09-09. Do not read values out of this file.
+>
+> This document describes the **salmon build**, frozen 2026-09-08 and replaced
+> the next day. The freeze did not hold: punctuation moved off salmon to the
+> accent yellow, boolean off amber, delimiters off the Kanagawa midpoint,
+> comments off upstream, and the `member` role was switched off entirely.
+>
+> The **reasoning, the measurements and the rejected candidates below are still
+> valid and still worth reading** — that is why this file is kept. Only the
+> "which value is live" claims are dead.
+>
+> **For live values, read a running editor or `CLAUDE.md`'s table, never this
+> file:** `:lua =vim.api.nvim_get_hl(0,{name='@boolean',link=false})`
+>
+> One follow-up listed here has since closed: `@number` no longer equals
+> `@string`. `@property` == `Function` and the body/tag-wrapper pair at dE 5.3
+> are still open.
 
 ---
 
-## Live values
+## Live values as of 2026-09-08 (SUPERSEDED, see the banner above)
 
 Measured against Nvim's opaque background. Ghostty tags content display-p3, so
 authored numbers are **not** what the panel emits: accents arrive roughly 20 C\*

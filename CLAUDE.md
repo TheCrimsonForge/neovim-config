@@ -155,8 +155,14 @@ why YAML keys are function-blue).
 
 Full role tables, candidate verdicts and measurements:
 [`notes/palette-reference.md`](notes/palette-reference.md); deep archive in
-[`notes/syntax-palette-decisions.md`](notes/syntax-palette-decisions.md).
-**Both predate the 2026-09-09 retune and still describe the salmon build.**
+[`notes/syntax-palette-decisions.md`](notes/syntax-palette-decisions.md);
+follow-up history in
+[`todos/theme/syntax-palette-followups.md`](todos/theme/syntax-palette-followups.md).
+
+**All three are HISTORICAL.** They stop at the salmon build and each now carries
+a banner saying so. Their reasoning and measurements still hold and are worth
+reading; their "which value is live" claims do not. The table above is the only
+reconciled snapshot, and a running editor is the only authority.
 
 ## Silent-failure surfaces — read before debugging "my change did nothing"
 
