@@ -7,6 +7,14 @@
 -- notes/palette-reference.md -- one table per role, anchored by role name.
 -- READ IT BEFORE CHANGING A VALUE. Most obvious ideas are already rejected there
 -- with numbers, including four rules that keep being relearned.
+--
+-- WHAT IS ACTUALLY ON SCREEN IS NOT DECIDED HERE. The `return` block at the
+-- bottom sets the BASE defaults, and `custom-latest` in variants.lua overrides
+-- any of them -- so that build is the authority, and comments in this file
+-- describe candidates and base defaults, never "what I am looking at". A note
+-- here claiming otherwise has probably gone stale; read variants.lua, or dump
+-- the truth from a running editor:
+--   :lua =vim.api.nvim_get_hl(0,{name='@boolean',link=false})
 
 local variants = {
   -- Keyword, Statement, @keyword, @keyword.operator, @label.
@@ -24,7 +32,7 @@ local variants = {
     brighter = "#baac0d",
     amber = "#b59a00",
     citron = "#9ea100",
-    subdued = "#aea134", -- LIVE: punctuation + parameter
+    subdued = "#aea134", -- the yellow; base default for punctuation + parameter
     hushed = "#aea042",
     gold = "#b99004",
     drab = "#8c9644",
@@ -51,12 +59,13 @@ local variants = {
   },
 
   comment = {
-    subtle = "#637981", -- LIVE in custom-latest; reference builds keep upstream
+    subtle = "#637981", -- 4.15:1. NOT applied unless a build sets `comment`; the
+    -- base leaves it `false`, so comments are upstream #576d74 by default
   },
 
   -- Body text: `Normal`, `NormalFloat`, `@variable`, one value by design.
   body = {
-    base0 = "#9eabac", -- LIVE: bracket (custom-latest). The theme's own.
+    base0 = "#9eabac", -- the theme's own; also the pre-2026-09-05 @variable value
     base1 = "#adb7b7",
     brighter = "#b1bebf", -- SELECTED
     brightest = "#bcc9ca",
@@ -69,7 +78,7 @@ local variants = {
   -- synthesised on the theme's grey axis. Ladder + rejected colour sweep in the
   -- doc; do not rebuild it.
   delimiter = {
-    kanagawa_mid = "#96abd3", -- ran 2026-09-07, reverted 09-08
+    kanagawa_mid = "#96abd3", -- LCh midpoint of the two Kanagawa blues below
     kanagawa_green = "#8db488",
     kanagawa_saturated = "#90abdd",
     pale_yellow = "#cfcea7",
@@ -79,7 +88,7 @@ local variants = {
     base0 = "#9eabac", -- identical to @variable
     base00 = "#637981", -- sub-AA
     base01 = "#576d74", -- Comment itself. NOT a candidate.
-    mid_high = "#7f9195", -- MAXIMIN. LIVE: delimiter.
+    mid_high = "#7f9195", -- MAXIMIN rung; base default for delimiter + bracket
     mid = "#798c91",
     mid_low = "#73878d",
     brighter = "#859699",
@@ -95,7 +104,8 @@ local variants = {
   -- HARD CONSTRAINT: stay clear of the error red #ff3b30 (set in init.lua) so
   -- brackets never read as diagnostics. Chroma does that work, not hue.
   --
-  -- THE LIVE VALUE IS `keyword.subdued`, not anything here.
+  -- NOTE: the base default for this role is `keyword.subdued`, not anything in
+  -- this table. Builds override it freely -- check variants.lua for what is live.
   punctuation = {
     copper_mid = "#be6421", -- ran 2026-08-11 to 09-05
     terracotta = "#b55f4a", -- custom-v3
@@ -106,7 +116,7 @@ local variants = {
     explored = {
       clay = "#c16953",
       coral = "#c76e58",
-      salmon = "#cd735d", -- tried live 2026-09-08, reverted same session
+      salmon = "#cd735d", -- taken up 2026-09-08 for punctuation/parameter/member
       sunset = "#cf7163",
       blush = "#d16f68",
       dusty_rose = "#d16e6c",
@@ -157,12 +167,29 @@ local variants = {
     vscode_support = "#0db9d7",
   },
 
-  -- Fields and properties. NOTHING HERE IS APPLIED: the `@variable.member` line
-  -- in init.lua is commented out, so member falls back to the theme's cyan500 and
-  -- exactly duplicates String. Re-enabling is a one-line uncomment there, but
-  -- read the doc first -- these scores predate the keyword move to violet.
+  -- Booleans and `@constant`, painted via `Boolean` / `@constant` in init.lua.
+  -- Modelled on Tokyo Night's orange by reproducing its RELATIONSHIP (7.9 L*
+  -- below body text), not its hex, so every value here sits at L* 68.
+  --
+  -- What picks the value is separation from the DENSE warm role, and TN's own
+  -- hue loses there -- see notes/palette-reference.md, "boolean".
+  boolean = {
+    amber = "#d19c59", -- L*68.1 C*44.1 h73.8 7.80:1 | SELECTED: dE 27.4 / 34deg from salmon, still reads warm
+    gold = "#b5a73b", -- L*67.9 C*55.9 h97.9 7.75:1 | dE 50.3 / 58deg -- MAX clarity, but yellow not orange
+    tokyonight_dim = "#ed8e55", -- L*68.0 C*54.8 h55.5 7.79:1 | TN's hue at our lightness; dE only 20.2 / 16deg from salmon -- BLURRED, reported 2026-09-08
+    tokyonight = "#ff9e64", -- L*74.0 C*54.6 h55.6 9.35:1 | TN as shipped; dE 23.7 / 16deg, same hue problem and -2.1 L* vs body
+  },
+
+  -- Member fields (`@variable.member`), APPLIED since 2026-09-08. Before that
+  -- init.lua painted nothing with it, so setting `member` in a build silently did
+  -- nothing. `@property` (object/dict keys, JSX attrs) is a separate group and
+  -- still on the theme default, where it duplicates Function.
+  --
+  -- These scores predate the keyword move to violet, so re-measure anything
+  -- close to keyword. Stay IN the accent band (L* ~60): these symbols appear on
+  -- nearly every line, and a bright value drains its neighbours.
   member = {
-    rose = "#b67faf", -- the wired default
+    rose = "#b67faf", -- base-build default
     iris = "#8d8de3",
     purple = "#a17bcc",
     rose_warm = "#be7ca6",
@@ -173,18 +200,25 @@ local variants = {
   },
 }
 
--- THE BASE SELECTIONS. `custom-latest` in variants.lua overrides type, delimiter,
--- bracket and func; every other build starts from these values.
+-- THE BASE SELECTIONS. `custom-latest` in variants.lua overrides several of
+-- these; every other build starts from the values below.
 --
--- WARN: SILENT FAILURE. Three traps in this block, all verified:
---   1. A build role must be `false`, NEVER `nil`. `nil` is the absence of a key,
---      so `variants.load` iterates with `pairs`, never sees it, and the override
---      silently does not happen. Applies to `delimiter`, `body`, `bracket`.
---   2. A duplicate role key here is not an error -- the last assignment wins and
---      the earlier line becomes a lie that reordering would activate. Happened
---      2026-09-06 with `delimiter`. After editing a role, check it appears once:
---        grep -c "^  delimiter = " lua/colorschemes/solarized-osaka/palette.lua
---   3. `false` on `comment` is meaningful: it keeps upstream comments in
+-- THE SHAPE: four lightness steps ordered by how much the thing means -- body
+-- 76.0, names 65.5, punctuation 62.8/58.9, comments 44.6 -- with EXACTLY ONE
+-- ACCENT HUE ON THE WARM SIDE instead of two.
+--
+-- That last clause is the one people break. Re-confirmed 2026-09-08: yellow
+-- punctuation beside a salmon `member` was rejected on sight, and total warm ink
+-- was IDENTICAL either way -- so it is not a dose problem and no hex retune
+-- fixes it. Keep the warm side to one dominant hue plus at most one LOW-DOSE
+-- accent. Measurements: notes/palette-reference.md, "One accent hue".
+--
+-- WARN: SILENT FAILURE. Three traps here, all verified:
+--   1. A build role must be `false`, NEVER `nil` -- `nil` is an absent key, so
+--      `variants.load`'s `pairs` never sees it and the override does not happen.
+--   2. A duplicate role key is not an error; the last assignment wins silently.
+--      After editing a role: grep -c "^  delimiter = " <this file>
+--   3. `false` on `comment` is meaningful -- it keeps upstream comments in
 --      reference builds and prevents override leakage.
 return {
   -- Exposed by role so builds can name a value without copying a hex. Read only
@@ -211,6 +245,8 @@ return {
   bracket = variants.delimiter.mid_high,
   func = variants.func.azure,
   type = variants.type.tokyonight,
+  -- Booleans. Painted by `hl.Boolean` in init.lua, which `@boolean` links to.
+  boolean = variants.boolean.amber,
   -- UNREAD: see `member` above.
   member = variants.member.rose,
 }

@@ -36,10 +36,15 @@ local builds = {
   ["custom-latest"] = {
     palette = {
       type = palette.variants.type.nvim_type,
-      delimiter = palette.variants.delimiter.mid_high,
-      bracket = palette.variants.body.base0,
+      delimiter = palette.variants.delimiter.kanagawa_mid,
+      bracket = palette.variants.delimiter.kanagawa_mid,
       func = palette.variants.func.vivid,
-
+      -- Tokyo Night's boolean orange, adapted to our lightness. `tokyonight` is
+      -- TN's exact #ff9e64, `amber` trades hue fidelity for max separation.
+      boolean = palette.variants.boolean.amber,
+      member = palette.variants.punctuation.explored.salmon,
+      parameter = palette.variants.punctuation.explored.salmon,
+      punctuation = palette.variants.punctuation.explored.salmon,
       -- NOTE: punctuation + parameter, final call 2026-09-08. Terracotta red and
       -- subdued yellow stayed close; analysis scored yellow better and it still
       -- reads best in daily use, so yellow stays even though it goes against my

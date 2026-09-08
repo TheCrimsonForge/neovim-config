@@ -146,6 +146,13 @@ return {
       -- wrong: @keyword.import -> PreProc -> an alarm red that reads as a
       -- diagnostic, and @keyword.operator -> Operator, which goes neutral below.
       hl["@keyword.import"] = { fg = palette.punctuation }
+
+      -- Decorators (Python `@dataclass`, TS/NestJS `@Injectable()`). SAME DEFECT
+      -- as `@keyword.import`: `@attribute` -> PreProc -> #db302d, byte-identical
+      -- to DiagnosticError, so a decorator was painted in the "error" colour.
+      -- Uses `palette.punctuation` because `@attribute.builtin` already resolved
+      -- there via `Special`, so both decorator kinds now match.
+      hl["@attribute"] = { fg = palette.punctuation }
       hl["@keyword.operator"] = { fg = palette.keyword }
 
       -- Nothing paints Lua's grammar keywords, deliberately: that was tried
@@ -201,11 +208,35 @@ return {
       -- @type.definition, Typedef, Structure and every @lsp.type.* link to it.
       hl.Type = { fg = palette.type }
 
-      -- Fields and properties are BOTH left at the theme default, so both exactly
-      -- duplicate another role (@variable.member == String, @property ==
-      -- Function). Knowingly: rose won on measurement but not on looks in large
-      -- files. Re-enabling is this one-line uncomment; read the doc first.
-      -- hl["@variable.member"] = { fg = palette.member }
+      -- Booleans. Assigned to the BASE group because the whole chain is bare
+      -- string links (`@boolean` -> `Boolean` -> `Constant`) and `paint` skips
+      -- strings by design. Setting `Boolean` breaks that link, so `@number` and
+      -- `Constant` are untouched and `@boolean` follows automatically.
+      hl.Boolean = { fg = palette.boolean }
+
+      -- Named constants (SCREAMING_SNAKE). Were the theme's `Constant` cyan,
+      -- dE2000 0.0 from both `@string` and `@number`.
+      --
+      -- WARN: set on the CAPTURES, not on `Constant` -- `Number` links to
+      -- `Constant`, so assigning the base group silently recolours every numeric
+      -- literal too. See notes/palette-reference.md, "Named constants".
+      hl["@constant"] = { fg = palette.boolean }
+      hl["@constant.macro"] = { fg = palette.boolean }
+
+      -- Member fields (`r.Width`, `row.count`). ACTIVE since 2026-09-08 -- it was
+      -- commented out from 2026-08-09, which meant `palette.member` was read by
+      -- nothing and setting `member` in a build silently did nothing. Without
+      -- this line the group falls back to the theme's cyan500, an exact duplicate
+      -- of String (dE2000 0.0).
+      hl["@variable.member"] = { fg = palette.member }
+
+      -- `@property` is a DIFFERENT group and still at the theme default, where it
+      -- exactly duplicates Function: struct-literal keys, object/dict keys and
+      -- JSX attributes (`@tag.attribute` links to it). So a TS `mode: 'x'` still
+      -- renders its key in the function colour, not the member colour. Give it
+      -- its own role before recolouring, not `palette.member` -- these two land
+      -- on the same line constantly and would collide.
+      -- hl["@property"] = { fg = palette.member }
 
       -- @module links to PreProc -> an alarm red 31 degrees from the error red,
       -- so imports read as diagnostics in every language except Go.
@@ -223,8 +254,13 @@ return {
       hl.LineNrAbove = { fg = "#2d3f43" }
       hl.LineNrBelow = { fg = "#2d3f43" }
 
-      -- Re-enable with a custom color (e.g. "#073642") to restore the band.
+      -- Current-line band, OFF. Tried 2026-09-08 at `#032732` and parked, not
+      -- rejected -- swap the two lines below to re-enable. The `cursorline`
+      -- OPTION is already on, so this line is the whole switch. Bounds, the
+      -- tested ladder, and why chroma is not an axis here:
+      -- notes/palette-reference.md, "Cursor line".
       hl.CursorLine = { bg = "NONE" }
+      -- hl.CursorLine = { bg = "#032732" }
 
       -- if u want to change the current line number indicator color , can change here
       hl.CursorLineNr = {
@@ -242,17 +278,13 @@ return {
         hl["@markup.heading." .. level .. ".markdown"] = { fg = c.green, bold = true }
       end
 
-      -- LSP doc surface. Separation comes from the border and foreground, not the
-      -- background: a raised panel was tried and read as a box pasted over the
-      -- editor, and there is no darker bg to reach for. Deliberately NOT applied
-      -- to NormalFloat, which would repaint the snacks picker; these are reached
-      -- only by doc floats, via winhighlight in config/keymaps.lua.
-      --
-      -- `fg` paints the description PROSE and essentially nothing else. DO NOT go
-      -- dimmer -- the next ramp step is sub-AA and sits 5 L* off Comment, so
-      -- there is exactly one usable value here. Border and title need DIFFERENT
-      -- weights: border is chrome at 2.33:1, title is text and follows the
-      -- keyword so it keeps tracking the palette.
+      -- LSP doc surface (hover, signature, diagnostic floats, blink docs).
+      -- Deliberately NOT applied to NormalFloat, which would repaint the snacks
+      -- picker; reached only via winhighlight in config/keymaps.lua.
+      -- DO NOT dim `fg` further -- the next ramp step is sub-AA and sits 5 L* off
+      -- Comment, so there is exactly one usable value. Border is chrome (2.33:1)
+      -- and the title is text, so they deliberately differ.
+      -- Full reasoning: notes/palette-reference.md, "LSP documentation surface".
       hl.LspDocFloat = { fg = c.fg, bg = c.bg_float }
       hl.LspDocBorder = { fg = c.yellow700, bg = c.bg_float }
       hl.LspDocTitle = { fg = palette.keyword, bg = c.bg_float, bold = true }
