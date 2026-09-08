@@ -35,7 +35,7 @@ local builds = {
   -- The daily selection. Only the roles that differ from the base palette.
   ["custom-latest"] = {
     palette = {
-      type = palette.variants.type.nvim_type,
+      type = palette.variants.type.nvim_type_dim,
       delimiter = palette.variants.delimiter.kanagawa_mid,
       bracket = palette.variants.delimiter.kanagawa_mid,
       func = palette.variants.func.vivid,

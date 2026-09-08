@@ -49,7 +49,7 @@ higher.
 | bracket | `#96abd3` | `delimiter.kanagawa_mid` (custom-latest) | same value as delimiter again |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, hardcoded in `init.lua` | user preference |
 | function | `#359ee9` | `func.vivid` (custom-latest) | base build uses `azure` `#1d98cd` |
-| type | `#2ac3de` | `type.nvim_type` (custom-latest) | base build uses `tokyonight` `#7dcfff` |
+| type | `#17bbd6` | `type.nvim_type_dim` (custom-latest) | dimmed 2026-09-08 from `nvim_type` `#2ac3de`; base build uses `tokyonight` `#7dcfff` |
 | boolean (`true`/`false`) | `#d19c59` | `boolean.amber` (custom-latest) | **added 2026-09-08**; was cyan, identical to String and `@number` |
 | `@constant` + `@constant.macro` | `#d19c59` | shares the `boolean` value | **added 2026-09-08**; SCREAMING_SNAKE names were cyan, identical to String. `@constant.macro` was `#db302d`, the error red |
 | `@number` | `#29a298` | theme `Constant` | **unstyled** — still identical to String. `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
@@ -489,7 +489,8 @@ practical issue. See item 8 of `../todos/theme/syntax-palette-followups.md`.
 | `tokyonight` | `#7dcfff` | h249, L\* 79.7, C\* 33.5, 11.08:1 | **the base selection.** Restored 2026-08-09 after three replacements were tried and rejected on real files. Shares h249 with Function and splits on lightness alone (dE 16.2), rule 1 broken knowingly. What carries the pair is the 20.6 L\* gap, the largest of any candidate; it is also 25.5 from String where the closest rival managed 18.8 |
 | `vscode_entity` | `#c0caf5` | h284, C\* 22.9 | rejected 2026-08-09, read "flat". De-accenting via chroma failed here exactly as on the keyword ladder: treat chroma as presence in this palette, never as the calming lever |
 | `periwinkle` | `#a7b1fe` | h290, C\* 42.0 | measured best of everything tried (worst 20.9, and it dissolved the Type/Function pair entirely) and still lost on looks |
-| `nvim_type` | `#2ac3de` | 15.2 from func, 16.4 from string | **LIVE in custom-latest** |
+| `nvim_type_dim` | `#17bbd6` | L\* 69.9, C\* 37.7, 8.25:1; 15.2 from string | **SELECTED 2026-09-08.** `nvim_type` at L\* 70 |
+| `nvim_type` | `#2ac3de` | L\* 72.8, C\* 37.8, 9.02:1; 16.4 from string | ran 2026-09-07 to 09-08; was the brightest accent on screen |
 | `vscode_support` | `#0db9d7` | 12.7 from func | rejected |
 
 ## boolean
@@ -533,6 +534,39 @@ with a 105° hue gap, no warm conflict at all. If copper is ever reinstated for
 
 `@number` was deliberately left alone — `Constant` keeps the theme's cyan, so
 numbers are still identical to String. Give it its own role if that matters.
+
+### Why type is bright, and the 2026-09-08 dim
+
+Type is boxed in. It sits at hue 220 with **String at 187 — only 33° away** — so
+what separates them is *lightness*, not hue. That made type the **brightest
+accent on screen** (L\* 72.8, 9.02:1, brighter than everything but body text) at
+the 3rd-highest dose (14.75% of a real `api.ts`, 20.33% of a type-heavy file),
+which is a standing rule-3 conflict.
+
+Reviewed on that basis. Chroma was *not* the problem — type is only 5th of ten
+accents in chroma (37.8, behind violet 47.7, func 46.4, amber 44.1, salmon 43.2).
+
+| option | hex | L\* | C\* | contrast | vs string | visible change |
+| --- | --- | --- | --- | --- | --- | --- |
+| keep | `#2ac3de` | 72.8 | 37.8 | 9.02:1 | 16.4 | — |
+| **taken** | **`#17bbd6`** | **69.9** | **37.7** | **8.25:1** | **15.2** | **dE 2.2 — below the visible threshold** |
+| calmer | `#4fb3c8` | 68.1 | 30.0 | 7.80:1 | 13.8 | dE 4.8 |
+| quietest | `#62abbb` | 66.0 | 24.0 | 7.30:1 | 12.9 | dE 7.9 |
+
+`#17bbd6` drops type from the brightest accent to roughly delimiter level for
+1.2 dE of string separation, at a change too small to read as a different colour.
+Going further was declined: 12.9-13.8 is tight for a role at 15-20% of the file,
+and the cyan it must clear **grew the same day** — object keys now link to
+`@string`, which put string+keys at 28.02% of a type-heavy file.
+
+Low chroma is not an alternative: at L\* 70 with C\* 24 type starts colliding
+with the *greys* (13.3 against the tag wrapper) instead of with string.
+
+**Yellow was rejected outright**, not on taste. It would put 46.61% of `api.ts`
+on the warm side across three hues (salmon 27.38 + amber 4.48 + type 14.75)
+against today's 31.86% across two, it is dE 15.1 from the amber boolean so the
+boolean gets squeezed again, and at C\* 56.3 it is *more* saturated than the
+value it would replace — the opposite of the goal.
 
 ## member
 

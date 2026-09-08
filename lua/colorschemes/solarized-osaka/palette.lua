@@ -152,8 +152,18 @@ local variants = {
     balanced = "#4488ab",
   },
 
-  -- Type, @type.builtin, @constructor. CLOSED 2026-09-07.
-  -- The blue band is FULL: String cyan sits at h187 and Function at h250.
+  -- Type, @type.builtin, @constructor.
+  --
+  -- THE BLUE BAND IS FULL: String cyan sits at h187 and Function at h250, and
+  -- type has to fit between them. String is only 33 degrees away in hue, so what
+  -- separates the two is LIGHTNESS -- which is why this role cannot simply be
+  -- dimmed, and why low chroma does not work either (at L* 70 with C* 24 it
+  -- starts colliding with the greys instead).
+  --
+  -- Type is also the BRIGHTEST accent and the 3rd densest capture (14.75% of a
+  -- real api.ts, 20.33% of a type-heavy file), which is a standing rule-3
+  -- conflict. Reviewed 2026-09-08 for exactly that; see the doc for the four
+  -- options measured and why yellow was rejected outright.
   type = {
     sky = "#0edfff",
     sky_calm = "#56cae7",
@@ -163,7 +173,8 @@ local variants = {
     tokyonight = "#7dcfff", -- base build
     vscode_entity = "#c0caf5",
     periwinkle = "#a7b1fe",
-    nvim_type = "#2ac3de", -- LIVE in custom-latest
+    nvim_type_dim = "#17bbd6", -- L*69.9 C*37.7 8.25:1 | SELECTED 2026-09-08: nvim_type at L* 70
+    nvim_type = "#2ac3de", -- L*72.8 C*37.8 9.02:1 | ran 2026-09-07 to 09-08; brightest accent on screen
     vscode_support = "#0db9d7",
   },
 

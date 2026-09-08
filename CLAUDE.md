@@ -120,7 +120,7 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | brackets / delimiters / operators | `#96abd3` | Kanagawa LCh midpoint |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, by explicit request |
 | function / `@property` | `#359ee9` | `@property` is unstyled and duplicates this |
-| type | `#2ac3de` | |
+| type | `#17bbd6` | dimmed 2026-09-08; it was the brightest accent on screen |
 | punctuation / parameter / **member** | `#cd735d` | salmon, replaced subdued yellow `#aea134` |
 | boolean / `@constant` | `#d19c59` | amber; Tokyo Night's orange at our lightness |
 | keyword | `#a17bcc` | violet |
