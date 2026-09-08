@@ -20,7 +20,7 @@ local variants = {
   -- Keyword, Statement, @keyword, @keyword.operator, @label.
   -- Densest capture in the daily stack. STOP RULE: re-measure past ~7% of ink.
   keyword = {
-    warm_violet = "#a17bcc", -- SELECTED
+    warm_violet = "#a17bcc", -- SELECTED for `keyword` itself
     kanagawa = "#957fb8",
     tokyonight = "#9d7cd8",
     warm_rose = "#b67faf",
@@ -29,20 +29,16 @@ local variants = {
     olive = "#849900",
     balanced = "#aea10c", -- custom-v2
     darker = "#a3970b",
-    brighter = "#baac0d", -- L*69.5 C*70.8 h97.9 8.14:1 | SELECTED
-    -- L*74.0 C*76.0 h97.9 9.39:1 | TRIED AND REJECTED 2026-09-08.
-    -- `brighter` was ALREADY AT THE sRGB CHROMA CEILING for its lightness and hue:
-    -- max in-gamut C* at L*69.5 h97.9 is 72.5, dE 0.4 away, so "more saturated at
-    -- the same brightness" does not exist here. Yellow only gets more vivid by
-    -- getting lighter, and +4.5 L* buys +5.2 C*. dE 3.7 from `brighter` -- visible,
-    -- just past the 2.3 JND -- but it lands 1.9 L* under body, which is level with
-    -- body text in practice, and this role has the HIGHEST DOSE after body
-    -- (parameters, imports, builtin variables, `${}`, decorators, constructors,
-    -- JSX tag names: 19% of glyphs in bash, 17% in TSX, 30.2% in markup-heavy
-    -- TSX). Every separation gain was dE 0.4-2.2, at or below the JND, so it
-    -- bought nothing visible and cost 4.6 L* of hierarchy. If the yellow ever
-    -- reads dull the lever is DOSE, not lightness. Further stops, both worse on
-    -- the same count: #cabb01 (L*75) and #cdbe00 (L*76, level with body).
+    -- The yellows below are candidates for `punctuation` + `parameter`, which
+    -- read from this table; they are not keyword candidates.
+    brighter = "#baac0d", -- L*69.5 C*70.8 h97.9 8.14:1 | SELECTED for punctuation + parameter
+    -- L*74.0 C*76.0 h97.9 9.39:1 | TRIED AND REJECTED 2026-09-08. `brighter` is
+    -- already at the sRGB chroma ceiling for its lightness and hue, so "more
+    -- saturated at the same brightness" does not exist -- yellow only gets vivid
+    -- by getting lighter, and the 4.5 L* it costs puts this level with body text
+    -- on the palette's highest-dose role after body itself. Every separation gain
+    -- was at or below the JND. If the yellow reads dull the lever is DOSE, not
+    -- lightness. Full measurements in notes/palette-reference.md, "keyword".
     vivid = "#c7b903",
     amber = "#b59a00",
     citron = "#9ea100",
@@ -214,32 +210,37 @@ local variants = {
     -- numeric TS file -- so chroma stays at 40, not 60.
     orange_mid = "#c48956", -- L*62 C*40 h65 6.39:1 | SELECTED: maximin, vs yellow 23.1, vs error red 22.5
     orange_bright = "#e39a71", -- L*70 C*40 h55 8.26:1 | better vs yellow (27.7) but 20.5 from the error red
-    -- L*70.0 C*32.2 h55.6 8.30:1 | SELECTED 2026-09-08. Tokyo Night's own hue at
-    -- our lightness, muted: 20% less chroma than `orange_bright` on the same
-    -- rung, so the ladder does not move. Scored against the live Go set (fields
-    -- now on the accent yellow): min dE 26.4, and the best CVD of the realistic
-    -- candidates -- 12.3 deutan / 15.2 protan against orange_bright's 9.9 / 13.3,
-    -- because dropping chroma pulls it off the axis both deficiencies compress.
-    -- C*28 was one step too far: the nearest neighbour becomes BODY TEXT and it
-    -- starts reading beige rather than orange.
+    -- L*70.0 C*32.2 h55.6 8.30:1 | Tokyo Night's hue at our lightness, muted:
+    -- 20% less chroma than `orange_bright` on the same rung, so the ladder does
+    -- not move. Best CVD of the realistic candidates (12.3 deutan / 15.2 protan
+    -- against orange_bright's 9.9 / 13.3), because dropping chroma pulls it off
+    -- the axis both deficiencies compress. THE SAFER SWAP if the live value ever
+    -- reads too hot or too close for colour-blind use. C*28 is one step too far:
+    -- the nearest neighbour becomes body text and it starts reading beige.
     tokyonight_muted = "#da9e7c",
     orange_vivid = "#ed9747", -- L*70 C*60 h65 8.26:1 | best vs yellow (23.8) but C*60 is loud at this dose
     rose = "#f28f9a", -- L*70 C*40 h15 8.30:1 | furthest from yellow (47.1), reads pink
-    amber = "#d19c59", -- L*68.1 C*44.1 h73.8 7.80:1 | ran until 2026-09-08; only dE 17.2 from the brighter yellow.
-    -- Re-tried 2026-09-08 for GO ONLY, where the salmon member leaves orange_bright
-    -- dE 12.6 from its nearest neighbour: amber scored better on paper (worst pair
-    -- 17.2, and against the yellow rather than the member) and was REJECTED ON
-    -- SIGHT -- it mixes with the yellow in Go the same way it did everywhere else.
-    -- dE 17.2 across a 24 degree hue gap is not enough separation for this palette.
+    amber = "#d19c59", -- L*68.1 C*44.1 h73.8 7.80:1 | ran until 2026-09-08. Only
+    -- dE 17.2 from the brighter yellow across a 24 degree hue gap, which is not
+    -- enough separation for this palette: re-tried the same day and REJECTED ON
+    -- SIGHT both times, because it mixes with the yellow.
     gold = "#b5a73b", -- L*67.9 C*55.9 h97.9 7.75:1 | dE 50.3 / 58deg -- MAX clarity, but yellow not orange
-    tokyonight_dim = "#ed8e55", -- L*68.0 C*54.8 h55.5 7.79:1 | TN's hue at our lightness; dE only 20.2 / 16deg from salmon -- BLURRED, reported 2026-09-08
+    -- L*68.0 C*54.8 h55.5 7.79:1 | SELECTED 2026-09-08, by eye. TN's hue at our
+    -- lightness, dE 29.5 from the accent yellow, the widest of any candidate. It
+    -- blurred into the salmon member colour when that role existed; the salmon is
+    -- gone, so the objection is too. Carries C*54.8 against the C*40 this role's
+    -- dose note asks for, and 5.4 deutan is its weak axis -- both accepted
+    -- knowingly, with `tokyonight_muted` as the swap.
+    tokyonight_dim = "#ed8e55",
     tokyonight = "#ff9e64", -- L*74.0 C*54.6 h55.6 9.35:1 | TN as shipped; dE 23.7 / 16deg, same hue problem and -2.1 L* vs body
   },
 
-  -- Member fields (`@variable.member`), APPLIED since 2026-09-08. Before that
-  -- init.lua painted nothing with it, so setting `member` in a build silently did
-  -- nothing. `@property` (object/dict keys, JSX attrs) is a separate group and
-  -- still on the theme default, where it duplicates Function.
+  -- Member fields (`@variable.member`). NOT APPLIED as of 2026-09-08: the build
+  -- leaves `member = false` and init.lua paints Go fields from `punctuation`
+  -- instead, so nothing reads these values. They are kept as the candidate set
+  -- for giving fields a colour of their own again. `@property` (object/dict keys,
+  -- JSX attrs) is a separate group, still on the theme default where it
+  -- duplicates Function.
   --
   -- These scores predate the keyword move to violet, so re-measure anything
   -- close to keyword. Stay IN the accent band (L* ~60): these symbols appear on
