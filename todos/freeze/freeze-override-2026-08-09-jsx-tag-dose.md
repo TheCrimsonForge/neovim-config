@@ -1,6 +1,6 @@
 # Freeze-override trace — 2026-08-09 JSX tag dose
 
-Required by rule 10 in [`discipline-stop-rules.md`](discipline-stop-rules.md).
+Required by rule 10 in [`discipline-stop-rules.md`](../process/discipline-stop-rules.md).
 
 **The change, as shipped:** `@tag.delimiter.*` (`<`, `>`, `/`) → neutral. Tag
 NAMES stay terracotta, with `@tag.builtin.*` now painted explicitly so both tag

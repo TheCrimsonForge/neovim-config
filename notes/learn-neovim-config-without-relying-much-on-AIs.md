@@ -290,7 +290,7 @@ Study:
 
 - `lua/plugins/lsp.lua`
 - `README.md` language support section
-- `todos/multi-language-support.md`
+- `todos/languages/multi-language-support.md`
 
 Useful help:
 

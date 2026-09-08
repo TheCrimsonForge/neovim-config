@@ -1,6 +1,6 @@
 # Freeze-override trace — 2026-08-09 hover-doc readability
 
-Required by rule 10 in [`discipline-stop-rules.md`](discipline-stop-rules.md).
+Required by rule 10 in [`discipline-stop-rules.md`](../process/discipline-stop-rules.md).
 
 **The change:** two edits to LSP hover docs — dim the description prose, and put a
 blank line back between the signature block and the description.

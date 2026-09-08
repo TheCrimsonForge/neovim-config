@@ -1,6 +1,6 @@
 # Freeze-override trace — 2026-08-11 syntax palette session
 
-Required by rule 10 in [`discipline-stop-rules.md`](discipline-stop-rules.md).
+Required by rule 10 in [`discipline-stop-rules.md`](../process/discipline-stop-rules.md).
 
 **The change:** the largest single session inside this freeze, in five parts —
 
@@ -38,7 +38,7 @@ the named axis before being discarded. That is now recorded in
 the main reason the session produced tools rather than only a colour.
 
 **Consequence:** the freeze was extended from 2026-09-20 to 2026-10-20 on the
-same day. See the note under the freeze window in [`rules.md`](../rules.md) —
+same day. See the note under the freeze window in [`rules.md`](../../rules.md) —
 time spent inside a freeze buys more freeze, not less.
 
 **Still open, deliberately:** item 8 in

@@ -198,7 +198,7 @@ made in two different rooms — a cafe on the laptop, a desk on the monitor.
 Ambient light moves perceived saturation on a dark theme more than a 2.1 C\* clip
 does: bright surroundings raise the effective black floor and wash chroma out, so
 a value that needed more chroma in a cafe reads hot at a dim desk. PPI compounds
-it, and the base-text item in `todos/syntax-palette-followups.md` already measured
+it, and the base-text item in `todos/theme/syntax-palette-followups.md` already measured
 stroke coverage worth 6.9 L\* on a byte-identical colour. **Judge two builds on
 both displays in the same room before concluding the display is the variable.**
 

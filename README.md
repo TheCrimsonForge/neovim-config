@@ -311,8 +311,8 @@ colors/             one line each — the `:colorscheme` entry points for the bu
 scripts/palette/    measuring tools for the syntax colours (see its README)
 snippets/           VSCode-format snippets
 rules.md            the discipline rules I follow when changing the config
-notes/              guides — safe-editing · freeze-policy · maintenance/delegation · reading codebases · learning · journal
-todos/              backlog — one file per future config idea (not done yet)
+notes/              guides — safe-editing · freeze-policy · maintenance/delegation · reading codebases · learning · journal · palette-reference
+todos/              backlog, grouped by subject (see todos/README.md) — freeze · process · theme · ui · languages · ai · done
 AGENTS.md           pointer for non-Claude agents → CLAUDE.md (the canonical entry point)
 docs/               agent instructions (docs/CLAUDE.md is canonical) · parked phase specs
 ```

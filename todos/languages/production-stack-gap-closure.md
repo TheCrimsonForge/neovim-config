@@ -12,7 +12,7 @@ The implementation landed in:
 - `38fd53b`: documentation of the remaining real-file verification.
 
 The detailed pre-change plan remains available in Git history. Current language
-state is maintained in `todos/multi-language-support.md`.
+state is maintained in `todos/languages/multi-language-support.md`.
 
 ## Current Verdict
 

@@ -1,6 +1,6 @@
 # Freeze-override trace — 2026-08-20 telescope-file-browser session
 
-Required by rule 10 in [`discipline-stop-rules.md`](discipline-stop-rules.md).
+Required by rule 10 in [`discipline-stop-rules.md`](../process/discipline-stop-rules.md).
 
 **The change:** `telescope-file-browser.nvim` added and made the primary file
 explorer, in four parts —
@@ -49,7 +49,7 @@ finder on every directory change (found because the user reported lag), and
 `default_file_explorer = false` breaking `:e <dir>` (found by the pre-commit
 perf review). Both were mine. The review earned its place.
 
-**Consequence:** per the rule in [`rules.md`](../rules.md) — time spent inside a
+**Consequence:** per the rule in [`rules.md`](../../rules.md) — time spent inside a
 freeze buys more freeze, not less. This session is a candidate for extending the
 window again at the checkpoint; that decision is deliberately left to the
 checkpoint rather than taken here.

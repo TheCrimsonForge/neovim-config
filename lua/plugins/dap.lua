@@ -8,7 +8,7 @@
 -- Why this file exists: the stock setup gives breakpoints, stepping and locals,
 -- but leaves the Go-specific half of Delve switched off. Background, the
 -- measured Delve capabilities and the remaining gaps live in
--- `todos/nvim-dap-webstorm-parity-and-enhancements.md`.
+-- `todos/languages/nvim-dap-webstorm-parity-and-enhancements.md`.
 
 -- Delve DAP launch options, applied to every Go config (see `dlv config -list`
 -- in the REPL for the live values, and `dlv config <name> <value>` to change

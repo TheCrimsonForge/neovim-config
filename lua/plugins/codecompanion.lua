@@ -305,7 +305,7 @@ return {
       --
       --     Do NOT reach for a terminal-wide font or gamma knob for this again. If
       --     the chat is the only thing too bright, the chat is the only thing to
-      --     change. See `todos/syntax-palette-followups.md` item 4 for the same
+      --     change. See `todos/theme/syntax-palette-followups.md` item 4 for the same
       --     lesson from the opposite direction (text that looked too DIM was also a
       --     rasterization question, not a colour one).
       --     `bold = false` is explicit: only the COLOR changes, the weight stays

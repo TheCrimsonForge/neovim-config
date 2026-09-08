@@ -1,6 +1,6 @@
 # Freeze-override trace — 2026-08-08/09 syntax palette session
 
-Required by rule 10 in [`discipline-stop-rules.md`](discipline-stop-rules.md): the
+Required by rule 10 in [`discipline-stop-rules.md`](../process/discipline-stop-rules.md): the
 change-gate may be overridden, but the override leaves a trace.
 
 **The change:** retuned the solarized-osaka syntax palette (keyword, types,
