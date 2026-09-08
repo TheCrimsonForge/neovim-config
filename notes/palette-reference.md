@@ -45,8 +45,8 @@ higher.
 | role | hex | source | note |
 | --- | --- | --- | --- |
 | body / `@variable` | `#b1bebf` | `body.brighter` | L\* 76.0, 10.19:1 |
-| delimiter (operators, `.` `,` `;` `:`) | `#96abd3` | `delimiter.kanagawa_mid` (custom-latest) | base build uses `mid_high` `#7f9195` |
-| bracket | `#96abd3` | `delimiter.kanagawa_mid` (custom-latest) | same value as delimiter again |
+| delimiter (operators, `.` `,` `;` `:`) | `#c0a4ad` | `delimiter.mauve_grey` (custom-latest) | replaced `kanagawa_mid` 2026-09-08; base build uses `mid_high` |
+| bracket | `#c0a4ad` | `delimiter.mauve_grey` (custom-latest) | same value as delimiter |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, hardcoded in `init.lua` | user preference |
 | function | `#359ee9` | `func.vivid` (custom-latest) | base build uses `azure` `#1d98cd` |
 | type | `#17bbd6` | `type.nvim_type_dim` (custom-latest) | dimmed 2026-09-08 from `nvim_type` `#2ac3de`; base build uses `tokyonight` `#7dcfff` |
@@ -56,7 +56,7 @@ higher.
 | `@number` | `#29a298` | theme `Constant` | **no longer identical to String** — string moved to green, so this separated by itself (dE 8.9). `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
 | punctuation / parameter / member | `#cd735d` | `punctuation.explored.salmon` (custom-latest) | base default is `keyword.subdued` `#aea134`; salmon taken up 2026-09-08 |
 | keyword | `#a17bcc` | `keyword.warm_violet` | base value; a copper keyword was tried on 2026-09-08 and reverted — see [the copper keyword](#the-copper-keyword-2026-09-08) |
-| string (`@string`) | `#4da180` | `string.green_mid` (custom-latest) | rotated out of cyan 2026-09-08; base/snapshot builds keep `cyan500` `#29a298` |
+| string (`@string`) | `#5aad8b` | `string.green_bright` (custom-latest) | rotated out of cyan 2026-09-08, then lifted to 7.05:1; snapshot builds keep `cyan500` |
 | comment | `#576d74` | theme default (upstream) | `comment.subtle` `#637981` exists but its line is commented out in `custom-latest` |
 | `@variable.member` | `#cd735d` | shares salmon with punctuation above | **paint line re-enabled 2026-09-08** — it was a silent no-op before |
 | `@property` (object/dict keys, JSX attrs) | `#359ee9` | theme default | **unstyled** — exactly duplicates Function; see [member](#member) |
@@ -610,6 +610,34 @@ from the git-add sign colour — unusable.
 
 Kept at `false` in the base palette so the numbered snapshot builds and
 `original` still render the theme's cyan; only `custom-latest` moves it.
+
+### The 2026-09-08 delimiter move, and the string lift
+
+Both were re-picked once the palette around them had changed.
+
+**delimiter + bracket: `kanagawa_mid` `#96abd3` → `mauve_grey` `#c0a4ad`.**
+`kanagawa_mid` sat at hue 275, wedged between func (250) and keyword violet
+(310), so its worst neighbour was func at only dE 14.2. After keys went white and
+string went green, the **hue gap between keyword (310) and salmon (40) was the
+only empty space left**, and a near-neutral there beats every blue-grey:
+
+| | hex | L\* | C\* | hue | worst dE | worst pair |
+| --- | --- | --- | --- | --- | --- | --- |
+| was | `#96abd3` | 69.7 | 22.7 | 275 | **14.2** | func |
+| now | `#c0a4ad` | 70.0 | **12.0** | 355 | **20.4** | tag wrapper |
+
+Same lightness, **half the chroma**, and +6.2 dE of separation. The chroma drop
+matters most: delimiters are the most *scattered* role in the palette (84–220
+marks at avg run 1.1–1.3, i.e. single characters), so rule 3 binds hardest there.
+
+An olive delimiter at hue 110 scored well until `GitSignsAdd` `#849900` was added
+to the neighbour set — dE 11.7. Always include the git sign colours when scoring
+anything in the green–yellow band.
+
+**string: `green_mid` `#4da180` → `green_bright` `#5aad8b`**, L\* 60.4 → 64.9,
+contrast **6.09 → 7.05:1**, hue and chroma unchanged. Brightening a green at
+hue 164 *improves* its separation from the cyan `@number` (8.9 → 9.8) because it
+moves away from cyan's own L\* 60.4, so this cost nothing.
 
 ## member
 

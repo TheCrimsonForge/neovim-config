@@ -117,7 +117,7 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | role | value | note |
 | --- | --- | --- |
 | body / `@variable` | `#b1bebf` | |
-| brackets / delimiters / operators | `#96abd3` | Kanagawa LCh midpoint |
+| brackets / delimiters / operators | `#c0a4ad` | near-neutral in the empty keyword-to-salmon hue gap; half the chroma of the blue-grey it replaced |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, by explicit request |
 | function / `@property` | `#359ee9` | `@property` is unstyled and duplicates this |
 | type | `#17bbd6` | dimmed 2026-09-08; it was the brightest accent on screen |
@@ -125,7 +125,7 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | boolean / `@constant` | `#d19c59` | amber; Tokyo Night's orange at our lightness |
 | keyword | `#a17bcc` | violet |
 | comment | `#576d74` | upstream; `comment.subtle` exists but is not applied |
-| string (`@string`) | `#4da180` | green, rotated out of the cyan band 2026-09-08 |
+| string (`@string`) | `#5aad8b` | green, rotated out of the cyan band and lifted to 7.05:1 |
 | `@number` | `#29a298` | theme cyan; no longer equals string |
 | object + type-literal keys | `#b1bebf` | `@variable.member.key`, normalised via `after/queries/`; bare vs quoted used to differ |
 

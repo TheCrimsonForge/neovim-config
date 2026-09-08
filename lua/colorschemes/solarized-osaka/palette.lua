@@ -78,7 +78,11 @@ local variants = {
   -- synthesised on the theme's grey axis. Ladder + rejected colour sweep in the
   -- doc; do not rebuild it.
   delimiter = {
-    kanagawa_mid = "#96abd3", -- LCh midpoint of the two Kanagawa blues below
+    -- The hue gap between keyword (310) and salmon (40) is the only empty space
+    -- left, and a near-neutral there beats every blue-grey: same lightness as
+    -- kanagawa_mid, HALF the chroma, and worst-neighbour 14.2 -> 20.4.
+    mauve_grey = "#c0a4ad", -- L*70.0 C*12.0 h355 8.29:1 | SELECTED 2026-09-08, worst 20.4 vs tag wrapper
+    kanagawa_mid = "#96abd3", -- L*69.7 C*22.7 h275 8.21:1 | ran 2026-09-07/08; worst 14.2 vs func
     kanagawa_green = "#8db488",
     kanagawa_saturated = "#90abdd",
     pale_yellow = "#cfcea7",
@@ -205,7 +209,8 @@ local variants = {
   -- h164 is the balance point: type separation and git-add-green separation
   -- cross there (23.7 / 23.4). Further toward green buys type and spends git.
   string = {
-    green_mid = "#4da180", -- L*60.4 C*34.9 h164 6.09:1 | SELECTED: vs type 23.7, vs git-add 23.4
+    green_bright = "#5aad8b", -- L*64.9 C*35 h164 7.05:1 | SELECTED 2026-09-08: same hue/chroma, lifted for contrast
+    green_mid = "#4da180", -- L*60.4 C*34.9 h164 6.09:1 | first green; vs type 23.7, vs git-add 23.4
     green_soft = "#41a288", -- h172 | subtler shift (dE 6.1); vs type 21.0, vs git 25.7
     green_full = "#58a078", -- h156 | most green; vs type 26.5 but vs git only 21.0
     green_vivid = "#3ea37d", -- h164 C*40.2 | same hue, MORE chroma -- louder, declined

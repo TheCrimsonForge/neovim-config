@@ -36,9 +36,9 @@ local builds = {
   ["custom-latest"] = {
     palette = {
       type = palette.variants.type.nvim_type_dim,
-      string = palette.variants.string.green_mid,
-      delimiter = palette.variants.delimiter.kanagawa_mid,
-      bracket = palette.variants.delimiter.kanagawa_mid,
+      string = palette.variants.string.green_bright,
+      delimiter = palette.variants.delimiter.mauve_grey,
+      bracket = palette.variants.delimiter.mauve_grey,
       func = palette.variants.func.vivid,
       -- Tokyo Night's boolean orange, adapted to our lightness. `tokyonight` is
       -- TN's exact #ff9e64, `amber` trades hue fidelity for max separation.
