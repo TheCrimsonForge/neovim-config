@@ -45,14 +45,14 @@ higher.
 | role | hex | source | note |
 | --- | --- | --- | --- |
 | body / `@variable` | `#b1bebf` | `body.brighter` | L\* 76.0, 10.19:1 |
-| delimiter (operators, `.` `,` `;` `:`) | `#c0a4ad` | `delimiter.mauve_grey` (custom-latest) | replaced `kanagawa_mid` 2026-09-08; base build uses `mid_high` |
-| bracket | `#c0a4ad` | `delimiter.mauve_grey` (custom-latest) | same value as delimiter |
+| delimiter (operators, `.` `,` `;` `:`) | `#7f9195` | `delimiter.mid_high` | the maximin rung, same as the base build |
+| bracket | `#9eabac` | `body.base0` (custom-latest) | one rung above the delimiter; same value as the tag wrapper |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, hardcoded in `init.lua` | user preference |
 | function | `#359ee9` | `func.vivid` (custom-latest) | base build uses `azure` `#1d98cd` |
 | type | `#17bbd6` | `type.nvim_type_dim` (custom-latest) | dimmed 2026-09-08 from `nvim_type` `#2ac3de`; base build uses `tokyonight` `#7dcfff` |
 | boolean (`true`/`false`) | `#d19c59` | `boolean.amber` (custom-latest) | **added 2026-09-08**; was cyan, identical to String and `@number` |
 | `@constant` + `@constant.macro` | `#d19c59` | shares the `boolean` value | **added 2026-09-08**; SCREAMING_SNAKE names were cyan, identical to String. `@constant.macro` was `#db302d`, the error red |
-| `@variable.member.key` (object + type keys) | `#b1bebf` | linked to `@variable` | normalised 2026-09-08; bare and quoted keys were two different colours |
+| `@variable.member.key` (object + type keys) | `#c0a4ad` | `key.mauve` (custom-latest) | own role since 2026-09-08; was body text, which gave it no identity |
 | `@number` | `#29a298` | theme `Constant` | **no longer identical to String** — string moved to green, so this separated by itself (dE 8.9). `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
 | punctuation / parameter / member | `#cd735d` | `punctuation.explored.salmon` (custom-latest) | base default is `keyword.subdued` `#aea134`; salmon taken up 2026-09-08 |
 | keyword | `#a17bcc` | `keyword.warm_violet` | base value; a copper keyword was tried on 2026-09-08 and reverted — see [the copper keyword](#the-copper-keyword-2026-09-08) |
@@ -569,6 +569,41 @@ on the warm side across three hues (salmon 27.38 + amber 4.48 + type 14.75)
 against today's 31.86% across two, it is dE 15.1 from the amber boolean so the
 boolean gets squeezed again, and at C\* 56.3 it is *more* saturated than the
 value it would replace — the opposite of the goal.
+
+## key
+
+Object-literal and type-literal keys, from the `after/queries/` captures. **Not
+the same role as `member`**: a key is a name being *defined*, member access is one
+being read.
+
+Tried body text first, and it was rejected on looks — dE **0.0** from
+`@variable`, so a key had no identity of its own at all.
+
+**The mauve/pink region (h345–0) is the only empty hue left in this palette**,
+which is why every candidate here is in it. Everything other themes use for keys
+is a bright blue or teal, and all of them collide:
+
+| candidate | hex | worst dE | collides with |
+| --- | --- | --- | --- |
+| VS Code Dark+ property | `#9cdcfe` | 13.8 | type |
+| tokyonight `green1` | `#73daca` | 13.9 | string green |
+| tokyonight `blue5` | `#89ddff` | 11.9 | type |
+| body text (was) | `#b1bebf` | **0.0** | *is* `@variable` |
+| **`key.mauve`** | **`#c0a4ad`** | **20.4** | bracket — clears everything |
+
+| value | hex | numbers | verdict |
+| --- | --- | --- | --- |
+| `mauve` | `#c0a4ad` | L\* 70.0, C\* 11.8, h356, 8.29:1 | **SELECTED.** worst 20.4 vs bracket |
+| `mauve_bright` | `#d2abbf` | L\* 74.0, C\* 18, h345, 9.34:1 | worst 20.7, more present |
+| `lavender` | `#b9b2d2` | L\* 74.0, C\* 18, h300, 9.38:1 | cooler, but worst 17.0 vs body |
+| `body` | `#b1bebf` | dE 0.0 from `@variable` | what it was; no identity |
+
+Keys are **dense** — 61 glyphs / 22.8% of an object-heavy TSX file — so chroma
+stays modest per rule 3, and they sit just below body text: a key is structure,
+body is content.
+
+`false` in the base palette keeps keys linked to `@variable` in the snapshot
+builds.
 
 ## string
 

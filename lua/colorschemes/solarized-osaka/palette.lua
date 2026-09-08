@@ -78,10 +78,6 @@ local variants = {
   -- synthesised on the theme's grey axis. Ladder + rejected colour sweep in the
   -- doc; do not rebuild it.
   delimiter = {
-    -- The hue gap between keyword (310) and salmon (40) is the only empty space
-    -- left, and a near-neutral there beats every blue-grey: same lightness as
-    -- kanagawa_mid, HALF the chroma, and worst-neighbour 14.2 -> 20.4.
-    mauve_grey = "#c0a4ad", -- L*70.0 C*12.0 h355 8.29:1 | SELECTED 2026-09-08, worst 20.4 vs tag wrapper
     kanagawa_mid = "#96abd3", -- L*69.7 C*22.7 h275 8.21:1 | ran 2026-09-07/08; worst 14.2 vs func
     kanagawa_green = "#8db488",
     kanagawa_saturated = "#90abdd",
@@ -195,6 +191,26 @@ local variants = {
     tokyonight = "#ff9e64", -- L*74.0 C*54.6 h55.6 9.35:1 | TN as shipped; dE 23.7 / 16deg, same hue problem and -2.1 L* vs body
   },
 
+  -- Object-literal and type-literal KEYS (`@variable.member.key`, produced by the
+  -- after/queries files). NOT the same role as `member`: a key is a name being
+  -- DEFINED, member access is one being read.
+  --
+  -- The hue gap between keyword (310) and salmon (40) is the only empty space
+  -- left in this palette, which is why these are all mauve/pink. Every colour
+  -- other themes use for keys is a bright blue or teal and collides here:
+  -- VS Code's #9cdcfe is dE 13.8 from type, tokyonight's #73daca is 13.9 from
+  -- the string green, its #89ddff is 11.9 from type.
+  --
+  -- Keys are DENSE -- up to 22% of an object-heavy file -- so chroma stays
+  -- modest per rule 3, and they sit just below body text: a key is structure,
+  -- body is content.
+  key = {
+    mauve = "#c0a4ad", -- L*70.0 C*11.8 h356 8.29:1 | SELECTED: worst 20.4 vs bracket
+    mauve_bright = "#d2abbf", -- L*74.0 C*18 h345 9.34:1 | worst 20.7, more present
+    lavender = "#b9b2d2", -- L*74.0 C*18 h300 9.38:1 | cooler, but worst 17.0 vs body
+    body = "#b1bebf", -- what it was 2026-09-08; dE 0.0 from @variable, i.e. no identity
+  },
+
   -- String values (`String`, which `@string` links to). NOT the theme's shared
   -- `cyan500`: that hex is also DiagnosticHint, Question, WhichKey, healthSuccess
   -- and ~45 more UI groups, so only the String group is painted. `@number` and
@@ -282,6 +298,8 @@ return {
   bracket = variants.delimiter.mid_high,
   -- `false` keeps the theme's own String, so the numbered snapshot builds are
   -- unchanged; only `custom-latest` moves it.
+  -- `false` keeps keys linked to @variable in the snapshot builds.
+  key = false,
   string = false,
   func = variants.func.azure,
   type = variants.type.tokyonight,

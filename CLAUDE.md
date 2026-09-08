@@ -117,7 +117,8 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | role | value | note |
 | --- | --- | --- |
 | body / `@variable` | `#b1bebf` | |
-| brackets / delimiters / operators | `#c0a4ad` | near-neutral in the empty keyword-to-salmon hue gap; half the chroma of the blue-grey it replaced |
+| delimiters / operators | `#7f9195` | the maximin grey rung |
+| brackets | `#9eabac` | `base0`, one rung up; same value as the tag wrapper |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, by explicit request |
 | function / `@property` | `#359ee9` | `@property` is unstyled and duplicates this |
 | type | `#17bbd6` | dimmed 2026-09-08; it was the brightest accent on screen |
@@ -127,7 +128,7 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | comment | `#576d74` | upstream; `comment.subtle` exists but is not applied |
 | string (`@string`) | `#5aad8b` | green, rotated out of the cyan band and lifted to 7.05:1 |
 | `@number` | `#29a298` | theme cyan; no longer equals string |
-| object + type-literal keys | `#b1bebf` | `@variable.member.key`, normalised via `after/queries/`; bare vs quoted used to differ |
+| object + type-literal keys | `#c0a4ad` | `@variable.member.key`; mauve, the only empty hue left. Body text was tried and had dE 0.0 from `@variable` |
 
 **ONE ACCENT HUE ON THE WARM SIDE.** This is the rule that keeps being broken.
 Confirmed again 2026-09-08: yellow punctuation beside a salmon `member` was

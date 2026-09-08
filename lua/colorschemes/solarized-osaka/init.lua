@@ -258,7 +258,11 @@ return {
       -- NOT the delimiter grey, which scores better on paper: keys would then
       -- match the braces and colons around them, so `{ Cash: 1 }` merges.
       -- Keys do equal `@variable` now, which is fair -- a key IS a name.
-      hl["@variable.member.key"] = { link = "@variable" }
+      if palette.key then
+        hl["@variable.member.key"] = { fg = palette.key }
+      else
+        hl["@variable.member.key"] = { link = "@variable" }
+      end
 
       -- `@property` is a DIFFERENT group and still at the theme default, where it
       -- exactly duplicates Function: struct-literal keys, object/dict keys and
