@@ -297,6 +297,15 @@ return {
       -- CursorLine -> OilCursorLine via winhighlight.
       hl.OilCursorLine = { bg = c.base02 }
 
+      -- Picker cursor row on the SAME band as oil's, i.e. the theme's own faded
+      -- cyan. snacks paints the focused list row with
+      -- `SnacksPickerListCursorLine` (picker/core/list.lua), which is undefined
+      -- by default and therefore fell through to `Visual` -- a Tokyo Night
+      -- leftover at #3b4261, hue 287, that reads violet against a solarized
+      -- background. base02 is what upstream solarized-osaka uses for `Visual`.
+      -- One band colour now covers oil, the pickers and the popup menu.
+      hl.SnacksPickerListCursorLine = { bg = c.base02 }
+
       -- Markdown headings only. The GENERIC @markup.heading links to `Title`,
       -- which help files, pickers and `:set all` share -- so override the
       -- markdown-specific variants instead. render-markdown leaves heading fg to
