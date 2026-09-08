@@ -128,7 +128,7 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | comment | `#576d74` | upstream; `comment.subtle` exists but is not applied |
 | string (`@string`) | `#5aad8b` | green, rotated out of the cyan band and lifted to 7.05:1 |
 | `@number` | `#29a298` | theme cyan; no longer equals string |
-| object + type-literal keys | `#c0a4ad` | `@variable.member.key`; mauve, the only empty hue left. Body text was tried and had dE 0.0 from `@variable` |
+| object + type-literal keys | `#b1bebf` | `@variable.member.key`, links `@variable`. **Open question** — cyan collided with type, mauve was rejected as pink, body has no identity |
 
 **ONE ACCENT HUE ON THE WARM SIDE.** This is the rule that keeps being broken.
 Confirmed again 2026-09-08: yellow punctuation beside a salmon `member` was

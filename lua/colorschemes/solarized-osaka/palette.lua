@@ -202,13 +202,18 @@ local variants = {
   -- the string green, its #89ddff is 11.9 from type.
   --
   -- Keys are DENSE -- up to 22% of an object-heavy file -- so chroma stays
-  -- modest per rule 3, and they sit just below body text: a key is structure,
-  -- body is content.
+  -- modest per rule 3.
+  --
+  -- STATUS: unresolved, and body text is the least-bad option. Cyan collided
+  -- with the type colour, mauve measured best of anything but was rejected on
+  -- looks as pink, and body has no identity at all (dE 0.0 from @variable).
+  -- Judge the next candidate ON LOOKS -- the numbers have not picked a winner
+  -- here, and at this dose a coloured key shows up immediately.
   key = {
-    mauve = "#c0a4ad", -- L*70.0 C*11.8 h356 8.29:1 | SELECTED: worst 20.4 vs bracket
+    mauve = "#c0a4ad", -- L*70.0 C*11.8 h356 8.29:1 | best separation (20.4) but REJECTED ON LOOKS 2026-09-08: reads pink
     mauve_bright = "#d2abbf", -- L*74.0 C*18 h345 9.34:1 | worst 20.7, more present
     lavender = "#b9b2d2", -- L*74.0 C*18 h300 9.38:1 | cooler, but worst 17.0 vs body
-    body = "#b1bebf", -- what it was 2026-09-08; dE 0.0 from @variable, i.e. no identity
+    body = "#b1bebf", -- LIVE (via `key = false` -> link @variable). dE 0.0 from @variable, so keys have no identity of their own -- known, and still preferred to every coloured candidate tried
   },
 
   -- String values (`String`, which `@string` links to). NOT the theme's shared

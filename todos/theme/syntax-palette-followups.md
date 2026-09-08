@@ -39,6 +39,15 @@ dose, which is the metric this palette exists to minimise.
 
 **Still open, deliberately, for the 2027-04 review:**
 
+- **Object-key colour is unresolved.** `@variable.member.key` links to
+  `@variable`, so a key is byte-identical to a plain variable. Three candidates
+  failed on 2026-09-08: `@string` cyan collided with the type colour (an
+  interface block read as one colour), `key.mauve` `#c0a4ad` measured best of
+  anything at worst-neighbour 20.4 but was rejected on looks as pink, and body
+  text has no identity at all. The mauve/pink gap is the only hue with room
+  left, and it reads wrong — so judge the next candidate ON LOOKS. Candidates
+  stay wired in `palette.variants.key`.
+
 - `@number` still equals `@string` (both `#29a298`). One-liner is
   `hl.Number = { fg = palette.boolean }`; measured cost is amber rising to
   16-22% of numeric/config files with fragmented runs, so it was declined.

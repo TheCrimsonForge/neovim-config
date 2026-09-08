@@ -37,7 +37,6 @@ local builds = {
     palette = {
       type = palette.variants.type.nvim_type_dim,
       string = palette.variants.string.green_bright,
-      key = palette.variants.key.mauve,
       delimiter = palette.variants.delimiter.mid_high,
       bracket = palette.variants.body.base0,
       func = palette.variants.func.vivid,

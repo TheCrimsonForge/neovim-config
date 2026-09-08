@@ -52,7 +52,7 @@ higher.
 | type | `#17bbd6` | `type.nvim_type_dim` (custom-latest) | dimmed 2026-09-08 from `nvim_type` `#2ac3de`; base build uses `tokyonight` `#7dcfff` |
 | boolean (`true`/`false`) | `#d19c59` | `boolean.amber` (custom-latest) | **added 2026-09-08**; was cyan, identical to String and `@number` |
 | `@constant` + `@constant.macro` | `#d19c59` | shares the `boolean` value | **added 2026-09-08**; SCREAMING_SNAKE names were cyan, identical to String. `@constant.macro` was `#db302d`, the error red |
-| `@variable.member.key` (object + type keys) | `#c0a4ad` | `key.mauve` (custom-latest) | own role since 2026-09-08; was body text, which gave it no identity |
+| `@variable.member.key` (object + type keys) | `#b1bebf` | `key = false` → links `@variable` | **UNRESOLVED** — every coloured candidate was rejected; see [key](#key) |
 | `@number` | `#29a298` | theme `Constant` | **no longer identical to String** — string moved to green, so this separated by itself (dE 8.9). `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
 | punctuation / parameter / member | `#cd735d` | `punctuation.explored.salmon` (custom-latest) | base default is `keyword.subdued` `#aea134`; salmon taken up 2026-09-08 |
 | keyword | `#a17bcc` | `keyword.warm_violet` | base value; a copper keyword was tried on 2026-09-08 and reverted — see [the copper keyword](#the-copper-keyword-2026-09-08) |
@@ -593,14 +593,27 @@ is a bright blue or teal, and all of them collide:
 
 | value | hex | numbers | verdict |
 | --- | --- | --- | --- |
-| `mauve` | `#c0a4ad` | L\* 70.0, C\* 11.8, h356, 8.29:1 | **SELECTED.** worst 20.4 vs bracket |
+| `mauve` | `#c0a4ad` | L\* 70.0, C\* 11.8, h356, 8.29:1 | best separation of anything tried (20.4) but **REJECTED ON LOOKS** — reads pink |
 | `mauve_bright` | `#d2abbf` | L\* 74.0, C\* 18, h345, 9.34:1 | worst 20.7, more present |
 | `lavender` | `#b9b2d2` | L\* 74.0, C\* 18, h300, 9.38:1 | cooler, but worst 17.0 vs body |
-| `body` | `#b1bebf` | dE 0.0 from `@variable` | what it was; no identity |
+| `body` | `#b1bebf` | dE 0.0 from `@variable` | **LIVE.** No identity of its own, and still preferred to every coloured candidate |
 
-Keys are **dense** — 61 glyphs / 22.8% of an object-heavy TSX file — so chroma
-stays modest per rule 3, and they sit just below body text: a key is structure,
-body is content.
+Keys are **dense** — 61 glyphs / 22.8% of an object-heavy TSX file — which is
+why a coloured key shows up immediately and why chroma has to stay modest.
+
+**STATUS: unresolved, and body text is the least-bad option.** Three were tried
+on 2026-09-08 and all three failed for different reasons:
+
+1. `@string` cyan — collided with the type colour; an interface block read as
+   one colour (dE 15.2, and cyan + type was 38.8% of a real file).
+2. `body` `#b1bebf` — dE **0.0** from `@variable`, so keys have no identity.
+3. `key.mauve` `#c0a4ad` — measured **best of anything** at worst 20.4, and was
+   rejected on looks as pink.
+
+So the numbers have not picked a winner here: the only hue with room is the
+mauve/pink gap, and that reads wrong. **Judge the next candidate on looks, not
+on separation** — this is one of the roles where the measurement is not the
+deciding input.
 
 `false` in the base palette keeps keys linked to `@variable` in the snapshot
 builds.
