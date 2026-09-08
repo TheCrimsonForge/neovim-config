@@ -41,3 +41,21 @@
 ; No `property_signature` pattern here: that node is TypeScript-only, and an
 ; unknown node name makes the WHOLE query error out rather than just that
 ; pattern, which would silently drop this file's operator rules too.
+
+; PascalCase IS NOT A TYPE. The ecma queries capture every capitalised bare
+; identifier as @type (`#lua-match? "^[A-Z]"`), so an imported component and a
+; plain reference to one rendered in the type colour: `import { ReportMenuCard }`
+; and `export default ReportMenu` both read as types when neither is one.
+;
+; Only the two bare-identifier positions are re-captured. Real types are
+; (type_identifier) nodes, not (identifier), so `type CardProps` and `: Plan`
+; keep the type colour untouched. JSX usage keeps @tag, and `const Foo = () =>`
+; is already caught as @function by the base queries.
+;
+; Keep the three ecma files in sync (typescript / tsx / javascript); see the note
+; at the top of this file on why each language needs its own copy.
+(import_specifier
+  name: (identifier) @variable)
+
+(export_statement
+  value: (identifier) @variable)
