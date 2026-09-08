@@ -53,9 +53,10 @@ higher.
 | boolean (`true`/`false`) | `#d19c59` | `boolean.amber` (custom-latest) | **added 2026-09-08**; was cyan, identical to String and `@number` |
 | `@constant` + `@constant.macro` | `#d19c59` | shares the `boolean` value | **added 2026-09-08**; SCREAMING_SNAKE names were cyan, identical to String. `@constant.macro` was `#db302d`, the error red |
 | `@variable.member.key` (object + type keys) | `#b1bebf` | linked to `@variable` | normalised 2026-09-08; bare and quoted keys were two different colours |
-| `@number` | `#29a298` | theme `Constant` | **unstyled** — still identical to String. `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
+| `@number` | `#29a298` | theme `Constant` | **no longer identical to String** — string moved to green, so this separated by itself (dE 8.9). `Number` links to `Constant`, so `hl.Number = { fg = palette.boolean }` moves it to the constant colour (what Tokyo Night does) |
 | punctuation / parameter / member | `#cd735d` | `punctuation.explored.salmon` (custom-latest) | base default is `keyword.subdued` `#aea134`; salmon taken up 2026-09-08 |
 | keyword | `#a17bcc` | `keyword.warm_violet` | base value; a copper keyword was tried on 2026-09-08 and reverted — see [the copper keyword](#the-copper-keyword-2026-09-08) |
+| string (`@string`) | `#4da180` | `string.green_mid` (custom-latest) | rotated out of cyan 2026-09-08; base/snapshot builds keep `cyan500` `#29a298` |
 | comment | `#576d74` | theme default (upstream) | `comment.subtle` `#637981` exists but its line is commented out in `custom-latest` |
 | `@variable.member` | `#cd735d` | shares salmon with punctuation above | **paint line re-enabled 2026-09-08** — it was a silent no-op before |
 | `@property` (object/dict keys, JSX attrs) | `#359ee9` | theme default | **unstyled** — exactly duplicates Function; see [member](#member) |
@@ -568,6 +569,47 @@ on the warm side across three hues (salmon 27.38 + amber 4.48 + type 14.75)
 against today's 31.86% across two, it is dE 15.1 from the amber boolean so the
 boolean gets squeezed again, and at C\* 56.3 it is *more* saturated than the
 value it would replace — the opposite of the goal.
+
+## string
+
+`String`, which `@string` links to. Moved off the theme's cyan on 2026-09-08.
+
+**Only the `String` group is painted, never the shared `cyan500`.** That hex is
+also `DiagnosticHint`, `Question`, `WhichKey`, `healthSuccess`, the blink-cmp
+kind icons and ~45 other UI groups — repainting it would drag the whole UI along.
+
+A useful side effect: `@number` and `@character` link to `Constant`, not to
+`String`, so they stayed cyan. That **separated number from string by itself** —
+those two had been dE2000 0.0, one of the palette's last duplicates.
+
+### Why green, and why h164
+
+String's tightest pair used to be **`type` at dE 15.2** — both sat in the cyan
+band 33° apart. The green band (h120–180) was completely empty, so rotating into
+it is nearly free separation. **Lightness and chroma are unchanged** (L\* 60.4,
+C\* 34.9 vs 34.7), which matters because string is 16–22% of a real TS file:
+nothing got louder, only different.
+
+| option | hex | hue | vs type | vs git-add green | shift from cyan |
+| --- | --- | --- | --- | --- | --- |
+| `cyan500` (was) | `#29a298` | 187 | **15.2** | 30.6 | — |
+| `green_soft` | `#41a288` | 172 | 21.0 | 25.7 | dE 6.1 |
+| **`green_mid`** | **`#4da180`** | **164** | **23.7** | **23.4** | **dE 8.9** |
+| `green_full` | `#58a078` | 156 | 26.5 | 21.0 | dE 11.6 |
+| `green_vivid` | `#3ea37d` | 164 | 24.9 | 23.4 | dE 9.7 — C\* 40.2, louder, declined |
+
+h164 is the **balance point**: type separation and git-add-green separation cross
+there (23.7 / 23.4). Rotating further toward green buys type and spends git —
+`GitSignsAdd` is `#849900`, and markdown H1 uses it too.
+
+Every theme green considered was rejected on **lightness**, not hue: tokyonight
+`#9ece6a` (L\* 77.6), kanagawa `#98bb6c` (71.8), catppuccin `#a6e3a1` (84.8),
+everforest `#a7c080` (74.5) are all far brighter than L\* 60, which rule 3
+forbids for a role at 16–22% dose. Solarized's own green `#859900` is dE **0.2**
+from the git-add sign colour — unusable.
+
+Kept at `false` in the base palette so the numbered snapshot builds and
+`original` still render the theme's cyan; only `custom-latest` moves it.
 
 ## member
 

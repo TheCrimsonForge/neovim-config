@@ -191,6 +191,27 @@ local variants = {
     tokyonight = "#ff9e64", -- L*74.0 C*54.6 h55.6 9.35:1 | TN as shipped; dE 23.7 / 16deg, same hue problem and -2.1 L* vs body
   },
 
+  -- String values (`String`, which `@string` links to). NOT the theme's shared
+  -- `cyan500`: that hex is also DiagnosticHint, Question, WhichKey, healthSuccess
+  -- and ~45 more UI groups, so only the String group is painted. `@number` and
+  -- `@character` stay on `Constant`, which is why moving string also SEPARATES
+  -- number from string -- they were dE2000 0.0 before.
+  --
+  -- Rotated out of the crowded blue band into the empty green one. String's
+  -- tightest pair used to be `type` at dE 15.2, because both sat in cyan 33
+  -- degrees apart. Lightness and chroma are deliberately unchanged, so nothing
+  -- got louder -- string is 16-22% of a real TS file.
+  --
+  -- h164 is the balance point: type separation and git-add-green separation
+  -- cross there (23.7 / 23.4). Further toward green buys type and spends git.
+  string = {
+    green_mid = "#4da180", -- L*60.4 C*34.9 h164 6.09:1 | SELECTED: vs type 23.7, vs git-add 23.4
+    green_soft = "#41a288", -- h172 | subtler shift (dE 6.1); vs type 21.0, vs git 25.7
+    green_full = "#58a078", -- h156 | most green; vs type 26.5 but vs git only 21.0
+    green_vivid = "#3ea37d", -- h164 C*40.2 | same hue, MORE chroma -- louder, declined
+    cyan500 = "#29a298", -- the theme's own; tightest pair was type at 15.2
+  },
+
   -- Member fields (`@variable.member`), APPLIED since 2026-09-08. Before that
   -- init.lua painted nothing with it, so setting `member` in a build silently did
   -- nothing. `@property` (object/dict keys, JSX attrs) is a separate group and
@@ -254,6 +275,9 @@ return {
   -- `Operator`, which is what lets a yellow name sit inside neutral punctuation.
   -- Separate from `delimiter` so a build can split the two; custom-latest does.
   bracket = variants.delimiter.mid_high,
+  -- `false` keeps the theme's own String, so the numbered snapshot builds are
+  -- unchanged; only `custom-latest` moves it.
+  string = false,
   func = variants.func.azure,
   type = variants.type.tokyonight,
   -- Booleans. Painted by `hl.Boolean` in init.lua, which `@boolean` links to.

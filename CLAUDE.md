@@ -125,7 +125,8 @@ elsewhere is a snapshot and drifts. To read the truth from a running editor:
 | boolean / `@constant` | `#d19c59` | amber; Tokyo Night's orange at our lightness |
 | keyword | `#a17bcc` | violet |
 | comment | `#576d74` | upstream; `comment.subtle` exists but is not applied |
-| `@string` / `@number` | `#29a298` | still share one value |
+| string (`@string`) | `#4da180` | green, rotated out of the cyan band 2026-09-08 |
+| `@number` | `#29a298` | theme cyan; no longer equals string |
 | object + type-literal keys | `#b1bebf` | `@variable.member.key`, normalised via `after/queries/`; bare vs quoted used to differ |
 
 **ONE ACCENT HUE ON THE WARM SIDE.** This is the rule that keeps being broken.

@@ -208,6 +208,16 @@ return {
       -- @type.definition, Typedef, Structure and every @lsp.type.* link to it.
       hl.Type = { fg = palette.type }
 
+      -- String values. Painted on the `String` group only, NOT on the theme's
+      -- shared cyan500 -- that hex is also DiagnosticHint, Question, WhichKey and
+      -- ~45 other UI groups. `@string` links to String and follows; `@number` and
+      -- `@character` link to `Constant` and deliberately do not, which is what
+      -- finally separates a number from a string (they were dE2000 0.0).
+      if palette.string then
+        hl.String = { fg = palette.string }
+        hl["@string.documentation"] = { fg = palette.string }
+      end
+
       -- Booleans. Assigned to the BASE group because the whole chain is bare
       -- string links (`@boolean` -> `Boolean` -> `Constant`) and `paint` skips
       -- strings by design. Setting `Boolean` breaks that link, so `@number` and

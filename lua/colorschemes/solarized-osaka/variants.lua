@@ -36,6 +36,7 @@ local builds = {
   ["custom-latest"] = {
     palette = {
       type = palette.variants.type.nvim_type_dim,
+      string = palette.variants.string.green_mid,
       delimiter = palette.variants.delimiter.kanagawa_mid,
       bracket = palette.variants.delimiter.kanagawa_mid,
       func = palette.variants.func.vivid,
