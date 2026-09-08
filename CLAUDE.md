@@ -209,6 +209,35 @@ c.base03 }` directly and links `WinBar` to it, so `WinBar` is handled in
 `on_highlights` instead), and anything needing the background at runtime should
 read `Normal`'s `bg` rather than requiring the module.
 
+## NEXT SESSION STARTS HERE — deep config review (queued 2026-09-09)
+
+**Read [`todos/deep-config-review.md`](todos/deep-config-review.md) and begin at
+phase 0. Do not improvise a different approach; the plan exists because the last
+attempt was too shallow.**
+
+Context, so nothing needs re-explaining:
+
+- On 2026-09-09 a **pattern sweep** was run over the config — grep for a fixed
+  list of failure classes plus a startup measurement. It found nothing critical
+  **within that scope**, but it covered only ~800 of 12,613 lines (~5%), never
+  opened the four biggest live files, and did no correctness review at all. Its
+  findings are in [`todos/config-audit-2026-09-09.md`](todos/config-audit-2026-09-09.md),
+  which leads with its own scope caveat.
+- The real review is **4 sessions, ~10,400 lines** after skipping what sits
+  behind disable-gates. Per-file targets, the phase-0 baseline step, and the repo
+  traps that produce confident wrong findings are all in the plan.
+- Findings go to `todos/deep-config-review-findings.md`. **Findings, not fixes** —
+  fixing is a separate agreed pass.
+- Baselines already measured, do not re-derive: startup **~50 ms** headless
+  (slowest entry `require('config.lazy')` at 23.7 ms); exactly one `<MouseMove>`
+  handler, one `CursorMoved`/`CursorMovedI` pair, two `CursorHold`, and no
+  `WinScrolled`/`TextChanged`/`InsertCharPre` outside disabled plugins.
+
+Also outstanding, smaller: **`README.md` is stale** in six specific ways, listed
+at the end of the sweep todo (four dead theme hexes, palette described as closed,
+LSP debounce `300` vs the real `200`, `<C-k>` vs `<M-k>`, Copilot presented as
+active and its subscription listed as a requirement).
+
 ## One loose end from the freeze session (review by ~2026-10-20)
 
 LOW priority, non-blocking. The pre-freeze build-out is committed + pushed; this is the
