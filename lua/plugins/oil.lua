@@ -623,20 +623,7 @@ return {
     -- buffer and put itself in the window fullscreen. Left alone that sits
     -- behind the popup, and closing the popup would drop you into fullscreen
     -- Oil instead of an empty editor -- so the directory buffer is swapped for
-    -- a blank one first.
-    --
-    -- That blank is an UNLISTED SCRATCH buffer, and both halves matter -- it was
-    -- a normal listed buffer until 2026-09-08 and showed up as a `[Scratch]`
-    -- row in the smart picker on every `nvim <dir>` start. Two reasons it got
-    -- through: snacks names an unnamed buffer `[Scratch]`, and its `buffers`
-    -- source only drops the CURRENT buffer, which this is not while the popup
-    -- holds focus. `hidden = true` on our smart source (lua/plugins/snacks.lua)
-    -- defeats the `buflisted` check, so `buftype = "nofile"` -- what `scratch`
-    -- sets -- is the only property that excludes it. Unlisted on top of that
-    -- keeps it out of `:ls` and the plain buffers picker too.
-    --
-    -- Costs nothing: `:w` on this buffer already failed as E32 (no file name)
-    -- when it was a normal buffer, and `:w <name>` still works on a scratch.
+    -- a blank listed one first.
     --
     -- Only the plain single-directory start is claimed. File arguments, stdin
     -- and `:restart`'s session restore are left alone (init.lua already clears
@@ -662,7 +649,7 @@ return {
           vim.schedule(function()
             local dir_buf = vim.api.nvim_get_current_buf()
             if vim.bo[dir_buf].filetype == "oil" then
-              local blank = vim.api.nvim_create_buf(false, true)
+              local blank = vim.api.nvim_create_buf(true, false)
               vim.api.nvim_win_set_buf(0, blank)
               pcall(vim.api.nvim_buf_delete, dir_buf, { force = true })
             end

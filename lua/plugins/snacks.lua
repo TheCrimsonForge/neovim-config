@@ -249,7 +249,19 @@ return {
         ---@class snacks.picker.smart.Config: snacks.picker.Config
         smart = {
           multi = {
-            { source = "buffers", hidden = true, current = false },
+            -- `filter.filter` drops UNNAMED buffers. Snacks renders one as a
+            -- `[Scratch]` row with no path, which is not a file and does
+            -- nothing useful when picked. The one you always had was oil's
+            -- startup landing pad (lua/plugins/oil.lua): on `nvim <dir>` it sits
+            -- behind the popup, and `current = false` cannot drop it because the
+            -- popup -- not the pad -- holds focus. `hidden = true` below also
+            -- defeats the source's own `buflisted` check, so this is the filter
+            -- that removes it. Fixed here rather than in oil, because making
+            -- that pad a scratch buffer stops `:w <name>` from associating it
+            -- with the file, which breaks writing a new file from a fresh start.
+            { source = "buffers", hidden = true, current = false, filter = { filter = function(item)
+              return item.name ~= ""
+            end } },
             { source = "recent", filter = { cwd = true } },
             { source = "files" },
           },

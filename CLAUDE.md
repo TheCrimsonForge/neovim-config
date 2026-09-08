@@ -24,15 +24,6 @@ On `nvim <dir>` a `VimEnter` hook swaps oil's directory buffer for a blank
 `[No Name]` one and opens the popup over it, so closing the popup lands you on an
 empty buffer instead of fullscreen oil.
 
-That blank must stay an **unlisted scratch** buffer (`nvim_create_buf(false,
-true)`). It was a normal listed buffer until 2026-09-08, which put a `[Scratch]`
-row in the smart picker on every `nvim <dir>` start: snacks names an unnamed
-buffer `[Scratch]`, and its `buffers` source only drops the *current* buffer,
-which this is not while the popup holds focus. Because `hidden = true` on our
-smart source defeats the `buflisted` check, `buftype = "nofile"` is the only
-property that excludes it. Costs nothing — `:w` on it already failed as E32, and
-`:w <name>` still works.
-
 The snacks browser that held `<leader>e` from 2026-08-21 is **retired, not
 deleted**: `lua/plugins/snacks-file-browser.lua` with `ENABLED = false`. It was
 kept for a week of real use and worked, but never felt as smooth as oil. Flip
@@ -108,7 +99,7 @@ two retired browsers:
 
 Full reasoning, measurements and the rejected alternatives:
 [`notes/popup-backdrop-darkening-investigation.md`](notes/popup-backdrop-darkening-investigation.md)
-and [`todos/ui/snacks-explorer-as-file-browser.md`](todos/ui/snacks-explorer-as-file-browser.md).
+and [`todos/snacks-explorer-as-file-browser.md`](todos/snacks-explorer-as-file-browser.md).
 
 ## Syntax palette: Kanagawa midpoint with neutral tag wrappers, 2026-09-07
 
