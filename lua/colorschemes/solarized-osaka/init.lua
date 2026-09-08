@@ -230,6 +230,18 @@ return {
       -- of String (dE2000 0.0).
       hl["@variable.member"] = { fg = palette.member }
 
+      -- Object-literal and type-literal KEYS, normalised. The base ecma queries
+      -- file a bare key as @variable.member and a quoted key as @string, so
+      -- `{ Cash: 1, 'Credit Card': 2 }` showed its two keys in two colours for
+      -- no reason but the quoting. `after/queries/{typescript,tsx,javascript}`
+      -- re-capture the key position as @variable.member.key; member ACCESS
+      -- (`obj.attr`) keeps @variable.member and stays on the member colour.
+      --
+      -- Linked to @string so keys sit with the values they introduce. The
+      -- alternative is `{ link = "@variable.member" }`, which puts keys on the
+      -- member colour instead and keeps key and value distinct -- one-line swap.
+      hl["@variable.member.key"] = { link = "@string" }
+
       -- `@property` is a DIFFERENT group and still at the theme default, where it
       -- exactly duplicates Function: struct-literal keys, object/dict keys and
       -- JSX attributes (`@tag.attribute` links to it). So a TS `mode: 'x'` still

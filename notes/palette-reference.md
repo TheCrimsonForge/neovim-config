@@ -694,6 +694,34 @@ the winner. Each of these is a per-language pin, not a preference.
   and same fix shape as `@keyword.import` and `@module` above.
 - **`@constant.macro` had the identical problem**, via `Define` -> `PreProc`.
   Fixed alongside the named-constant change and pointed at `palette.boolean`.
+- **Object keys were two colours depending on quoting** (fixed 2026-09-08). The
+  base ecma queries file a BARE key as `@variable.member` and a QUOTED key as
+  `@string`, so `{ Cash: 1, 'Credit Card': 2 }` rendered its two keys in salmon
+  and cyan for no reason but the quotes. The same split exists in Lua
+  (`@property` vs `@string`) and Terraform (`@variable.member` vs `@string`);
+  YAML is the only language that was already consistent.
+
+  It **cannot** be fixed with a highlight override, because the grammar gives an
+  object key and a member *access* the same capture name. So
+  `after/queries/{typescript,tsx,javascript,lua,terraform}/highlights.scm`
+  re-capture the key position as `@variable.member.key`, which `init.lua` links
+  to `@string`. Member access (`obj.attr`, `var.environment`,
+  `aws_s3_bucket.artifacts.arn`, `t.field`) keeps `@variable.member` and stays on
+  the member colour — verified per language.
+
+  Two mechanics worth remembering: a capture on a **wrapper** node does not
+  override a deeper one (Terraform's `object_elem key:` had to be captured at the
+  `identifier` / `string_lit` leaf), and an **unknown node name makes the whole
+  query file error out**, not just that pattern — which is why the javascript
+  file has no `property_signature` rule (TypeScript-only node).
+
+  Keys are linked to `@string` so a key sits with the value it introduces; the
+  one-line alternative is `{ link = "@variable.member" }`, which puts keys on the
+  member colour and keeps key and value distinct.
+
+  Python and Go were left alone deliberately: there the quoted form is a genuine
+  string literal used as a key (`d = {'a': 1}`, `map[string]int{"a": 1}`) rather
+  than a quoted identifier, so it is a different case.
 - **Markdown is prose, not a programming language**, so it keeps the theme's own
   colours. Deliberately left out of every painted list: `@markup.list`,
   `@markup.link`, `@markup.list.checked`, `@punctuation.special.markdown`,
