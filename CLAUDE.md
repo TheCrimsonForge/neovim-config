@@ -101,12 +101,12 @@ Full reasoning, measurements and the rejected alternatives:
 [`notes/popup-backdrop-darkening-investigation.md`](notes/popup-backdrop-darkening-investigation.md)
 and [`todos/snacks-explorer-as-file-browser.md`](todos/snacks-explorer-as-file-browser.md).
 
-## Syntax palette: salmon warm side, FROZEN 2026-09-08 → review ~2027-04
+## Syntax palette: yellow warm side, retuned 2026-09-09
 
-**Settled. The owner has committed to this combination for 6-8 months.** Apply
-the change gate before reopening any colour; three items are deliberately left
-open and are listed in `todos/theme/syntax-palette-followups.md`.
-
+**Settled, but no longer the frozen 2026-09-08 combination.** That freeze put
+salmon on the warm side; it was replaced the next day. Apply the change gate
+before reopening any colour. Open items are in
+`todos/theme/syntax-palette-followups.md`.
 
 **Live values are decided by `custom-latest` in
 `lua/colorschemes/solarized-osaka/variants.lua`, not by this table and not by
@@ -114,44 +114,49 @@ comments in `palette.lua`.** That build is the authority; anything written down
 elsewhere is a snapshot and drifts. To read the truth from a running editor:
 `:lua =vim.api.nvim_get_hl(0,{name='@boolean',link=false})`
 
+Verified live 2026-09-09:
+
 | role | value | note |
 | --- | --- | --- |
 | body / `@variable` | `#b1bebf` | |
-| brackets / delimiters / operators | `#96abd3` | Kanagawa LCh midpoint |
+| brackets / delimiters / operators | `#7f9195` | the maximin grey rung; was `#96abd3` until 2026-09-09 |
 | HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, by explicit request |
-| function / `@property` | `#359ee9` | `@property` is unstyled and duplicates this |
+| function / `@property` / `@function.builtin` | `#359ee9` | `@property` is unstyled and duplicates this |
 | type | `#2ac3de` | |
-| punctuation / parameter / **member** | `#cd735d` | salmon, replaced subdued yellow `#aea134` |
-| boolean / `@constant` | `#d19c59` | amber; Tokyo Night's orange at our lightness |
+| punctuation / parameter | `#baac0d` | the accent yellow; also `@attribute`, `@keyword.import`, `@string.escape` |
+| **Go** `@variable.member` / `@property` | `#baac0d` | Go fields only, language-scoped in `init.lua` |
+| every other `@variable.member` | `#29a298` | theme default, same as `@string`; the `member` role is `false` |
+| boolean / `@constant` / `@number` | `#ed8e55` | `tokyonight_dim`; was amber `#d19c59` |
 | keyword | `#a17bcc` | violet |
-| comment | `#576d74` | upstream; `comment.subtle` exists but is not applied |
-| `@string` / `@number` | `#29a298` | still share one value |
+| comment | `#5f767d` | two stops below the AA value, by preference; upstream is `#576d74` |
+| `@string` | `#29a298` | `@number` no longer shares it |
 
 **ONE ACCENT HUE ON THE WARM SIDE.** This is the rule that keeps being broken.
-Confirmed again 2026-09-08: yellow punctuation beside a salmon `member` was
-rejected on sight, and the census showed total warm ink was *identical* either
-way (31.86% of `api.ts` both ways) — the problem is splitting one warm field
-across three hues, not the amount. Keep the warm side to one dominant hue plus at
-most one low-dose accent (`boolean`, 0.65–4.48%).
+The warm side is now one dominant hue (the yellow) plus one low-dose accent
+(`boolean`). Splitting the warm field across three hues is what gets rejected on
+sight, not the amount of warm ink: the 2026-09-08 census measured total warm ink
+as *identical* (31.86% of `api.ts`) either way.
 
 Salmon vs yellow, measured honestly: yellow is the better single value (7.20:1
-vs 5.62:1, wider worst-neighbour), but salmon carries 30% less chroma at the same
-dose, which is the metric this palette was built to minimise. Unifying
-punctuation + parameter + member on one salmon is what frees the warm band. The
-combination to avoid is yellow punctuation with a salmon member.
+vs 5.62:1, wider worst-neighbour), salmon carries 30% less chroma at the same
+dose. Salmon ran for one day and was dropped, because a dedicated member colour
+floods object-literal files in TS/JS. Yellow won on both counts in daily use.
 
-Fixed the same day, all previously falling through to an alarm red or a duplicate:
-`@variable.member` (paint line had been commented out, so the role was a silent
-no-op), `@constant` + `@constant.macro` (were the string cyan / the error red),
-`@attribute` — decorators, Python and NestJS/Angular, had rendered in
-`#db302d`, **byte-identical to `DiagnosticError`**.
+Roles fixed on 2026-09-08/09, all previously falling through to an alarm red or a
+duplicate: `@variable.member` (its paint line had been commented out, so the role
+was a silent no-op), `@constant` + `@constant.macro`, `@attribute` (decorators
+rendered in `#db302d`, **byte-identical to `DiagnosticError`**), `@string.escape`
+(2.87:1, the lowest contrast in the palette), `@function.builtin` (builtin calls
+were accent-coloured while user calls beside them were blue), and Terraform/HCL
+attribute names (keys and values were one colour).
 
-Still unstyled and duplicating another role: `@number` (= `@string`) and
-`@property` (= `Function`, which is why YAML keys are function-blue).
+Still unstyled and duplicating another role: `@property` (= `Function`, which is
+why YAML keys are function-blue).
 
 Full role tables, candidate verdicts and measurements:
 [`notes/palette-reference.md`](notes/palette-reference.md); deep archive in
 [`notes/syntax-palette-decisions.md`](notes/syntax-palette-decisions.md).
+**Both predate the 2026-09-09 retune and still describe the salmon build.**
 
 ## Silent-failure surfaces — read before debugging "my change did nothing"
 
