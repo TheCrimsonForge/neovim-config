@@ -5,6 +5,12 @@
 -- bg_sidebar, and the runtime-derived groups (oil's invisible border, the
 -- explorer's blank/border groups) follow.
 --
+-- WHAT IS LIVE RIGHT NOW: `reference.ghostty_background` (#031219), NOT a
+-- `candidates` key -- the ladder below was explored and then the Ghostty value
+-- was kept. That is deliberate: matching the terminal exactly is what made going
+-- opaque invisible. So `bg` legitimately points outside `candidates`; do not
+-- "fix" it back into the list. Verify with `nvim_get_hl(0, {name = "Normal"}).bg`.
+--
 -- Need the background AT RUNTIME? Read `Normal`'s bg, not this module: that
 -- follows what the colorscheme actually applied, and is correctly nil under
 -- transparency. `nvim_get_hl(0, { name = "Normal" }).bg`
@@ -37,7 +43,7 @@ local candidates = {
   -- R=0 family -- teal preserved. Green and blue move together, red stays out.
   teal_lightest = "#001116", -- L* 4.14  C* 6.01  113% teal  untried; more teal than the "too teal" mark
   teal_light = "#001014", ----- L* 3.80  C* 5.28   99% teal  untried; the full original teal, one rung lighter
-  teal = "#000f13", ---------- L* 3.51  C* 4.91   92% teal  CURRENT; 0.81 L* below the start, just under a JND
+  teal = "#000f13", ---------- L* 3.51  C* 4.91   92% teal  tried; 0.81 L* below the start, just under a JND
   teal_dark = "#000e12", ----- L* 3.23  C* 4.55   85% teal  tried; 1.09 L* below the start, read as "very dark"
   teal_darker = "#000d11", --- L* 2.97  C* 4.21   79% teal  untried; below the floor, so teal starts dropping
   teal_darkest = "#000c10", -- L* 2.71  C* 3.89   73% teal  untried; below the floor, and no more teal than greyed_dark
@@ -55,6 +61,8 @@ local reference = {
   -- over a dark desktop (measured: flat #031116 across 600/600 px). The first
   -- opaque value matched that, confirmed by transparent rendering #031116 against
   -- opaque #031216 -- one unit apart, so going opaque changed nothing visible.
+  -- LIVE: this is what `bg` points at, so the editor and the terminal are the
+  -- same colour by construction rather than by a matching pick.
   ghostty_background = "#031219",
 
   -- The completion menu's panel (`bg_popup`/base04), deliberately NOT the shared

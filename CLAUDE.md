@@ -36,12 +36,17 @@ Things a new session must know before touching `oil.lua`, `snacks.lua`, or the
 two retired browsers:
 
 - **The theme is OPAQUE now (2026-09-04), which is the precondition for
-  everything below.** `transparent = false` and `bg = #000f13` in
-  `lua/colorschemes/solarized-osaka/init.lua`. That hex is the colour Ghostty was
-  already emitting (its `background = #031219` blended at `background-opacity =
-  0.9` over a dark desktop), measured off a screenshot, so the editor looks the
-  same and no longer depends on the terminal. Ghostty's opacity and blur now
-  reach only the window padding. **`transparent` must be an explicit `false` —
+  everything below.** `transparent = false` lives in
+  `lua/colorschemes/solarized-osaka/init.lua`; the background itself is
+  `bg = #031219` in `lua/config/ui.lua`, which `on_colors` reads. That hex is
+  Ghostty's own `background` setting, so the editor and the terminal are the same
+  colour by construction, not by a matching pick. (At `background-opacity = 0.9`
+  Ghostty composites it to `#031116` over a dark desktop, which is what the
+  pre-opaque screenshots measured. `#031116` is a `candidates` entry named
+  `greyed_light`, NOT the live value.) The editor no longer depends on the
+  terminal, and Ghostty's opacity and blur now reach only the window padding.
+  The `candidates` ladder in `ui.lua` was explored and then abandoned in favour
+  of the Ghostty value, so `bg` points outside that list on purpose. **`transparent` must be an explicit `false` —
   the plugin's own default is `true`, so commenting the line out re-enables it.**
 - **The oil popup backdrop is ON, and with an opaque background it is a real
   dim.** `USE_BACKDROP = true` in `oil.lua`, strength in `BACKDROP_BLEND`. The old
@@ -118,9 +123,9 @@ Verified live 2026-09-09:
 
 | role | value | note |
 | --- | --- | --- |
-| body / `@variable` | `#b1bebf` | |
+| body / `@variable` | `#a7b4b5` | `body.midpoint`; was `#b1bebf` until 2026-09-09 |
 | brackets / delimiters / operators | `#7f9195` | the maximin grey rung; was `#96abd3` until 2026-09-09 |
-| HTML/JSX/TSX/Vue tag wrappers | `#9eabac` | theme `base0`, by explicit request |
+| HTML/JSX/TSX/Vue tag wrappers | `#a7b4b5` | TRACKS body since 2026-09-09; was pinned to `base0` `#9eabac` |
 | function / `@property` / `@function.builtin` | `#359ee9` | `@property` is unstyled and duplicates this |
 | type | `#2ac3de` | |
 | punctuation / parameter | `#baac0d` | the accent yellow; also `@attribute`, `@keyword.import`, `@string.escape` |
