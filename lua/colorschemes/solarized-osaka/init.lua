@@ -155,15 +155,21 @@ return {
         "@tag.builtin.javascript",
       }, palette.punctuation)
 
-      -- Tag wrappers (`<`, `>`, `/`) stay on base0 by user preference, so dense
-      -- markup gets a quieter frame. Keep language-scoped: ordinary comparison
-      -- and division operators still follow the syntax palette.
+      -- Tag wrappers (`<`, `>`, `/`) FOLLOW BODY TEXT, so dense markup gets a
+      -- quieter frame. They were pinned to `c.base0` while body was base0 too;
+      -- when body moved to `body.midpoint` (2026-09-09) that left the two only
+      -- dE00 2.6 apart -- a pair that looks identical but is not, which is worse
+      -- than either sharing or clearly differing. Tracking `palette.body` keeps
+      -- the original intent and cannot drift again.
+      --
+      -- Keep language-scoped: ordinary comparison and division operators still
+      -- follow the syntax palette.
       paint({
         "@tag.delimiter.tsx",
         "@tag.delimiter.vue",
         "@tag.delimiter.html",
         "@tag.delimiter.javascript",
-      }, c.base0)
+      }, palette.body or c.base0)
 
       -- This group is `,` `;` `:` AND the `.` of every member access, so on the
       -- keyword colour it put an accent mark on nearly every line of Go and TS.
