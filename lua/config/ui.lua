@@ -72,7 +72,8 @@ local reference = {
 }
 
 return {
-  bg = reference.ghostty_background,
+  -- bg = reference.ghostty_background,
+  bg = candidates.teal_light,
   candidates = candidates,
   reference = reference,
 }
