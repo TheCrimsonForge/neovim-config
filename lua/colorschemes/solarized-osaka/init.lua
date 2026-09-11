@@ -384,14 +384,32 @@ return {
       -- CursorLine -> OilCursorLine via winhighlight.
       hl.OilCursorLine = { bg = c.base02 }
 
-      -- Picker cursor row on the SAME band as oil's, i.e. the theme's own faded
-      -- cyan. snacks paints the focused list row with
-      -- `SnacksPickerListCursorLine` (picker/core/list.lua), which is undefined
-      -- by default and therefore fell through to `Visual` -- a Tokyo Night
-      -- leftover at #3b4261, hue 287, that reads violet against a solarized
-      -- background. base02 is what upstream solarized-osaka uses for `Visual`.
-      -- One band colour now covers oil, the pickers and the popup menu.
-      hl.SnacksPickerListCursorLine = { bg = c.base02 }
+      -- `SnacksPickerListCursorLine` is deliberately NOT defined here. Leaving it
+      -- alone is what restores the pre-2026-09-09 picker cursor row: snacks
+      -- creates it as a `default = true` link to `Visual` (picker/core/list.lua:86
+      -- via util/highlight.lua `winhl`), so the focused list row lands on
+      -- `Visual` -- #3b4261, violet, hue 287 -- which is what every month up to
+      -- then looked like.
+      --
+      -- It was pinned to base02 on 2026-09-09 to share oil's band, and reverted
+      -- 2026-09-11: base02 is a dark TEAL, the same hue family as the explorer's
+      -- active-file band (#003f52), so the focused row and the open file read as
+      -- one thing. Violet against that teal is the separation.
+      --
+      -- WARN: SILENT FAILURE -- this CANNOT be scoped to the explorer alone, and
+      -- both ways of trying look like they work until you look at the window:
+      --   * a per-window `winhighlight` is overwritten on EVERY render.
+      --     `update_cursorline` (list.lua:538) rewrites the CursorLine entry of
+      --     whatever the window already has.
+      --   * a window highlight namespace (`nvim_win_set_hl_ns`) is the same slot
+      --     as `winhighlight`, not an addition to it. Measured on 0.12.5: with a
+      --     namespace attached, the mapped target group is never consulted, and a
+      --     group MISSING from the namespace renders with NO highlight rather
+      --     than falling back to the global one -- so the explorer would lose its
+      --     Normal, border and title colours unless the namespace redefined all
+      --     of them.
+      -- An explorer-only band has to be an extmark, which is how the active-file
+      -- band in `lua/plugins/snacks.lua` does it.
 
       -- Markdown headings only. The GENERIC @markup.heading links to `Title`,
       -- which help files, pickers and `:set all` share -- so override the
