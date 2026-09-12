@@ -76,3 +76,26 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 require("config.mouse-hover").setup()
+
+-- ── Markdown: no spell check ─────────────────────────────────────────────
+-- LazyVim's `wrap_spell` autocmd turns `wrap` AND `spell` on for text, plaintex,
+-- typst, gitcommit and markdown. In a .md file spell squiggles every file name,
+-- flag and code term (`nvim`, `tmux`, `fzf`) -- noise, not typos.
+--
+-- Only the markdown half of `spell` is switched back off here. LazyVim keeps
+-- owning `wrap` and the other four filetypes, so any upstream change to that
+-- list is still inherited. This runs last because user config loads after
+-- LazyVim's defaults; an `after/ftplugin/markdown.lua` cannot do it, since
+-- ftplugins are sourced BEFORE user FileType autocmds and LazyVim would just
+-- switch spell straight back on (measured, not assumed).
+--
+-- FileType fires once per buffer, never per keystroke, and the pattern is
+-- matched in C, so opening any other file costs nothing.
+-- `:setlocal spell` still turns it on for a single buffer.
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("markdown_nospell", { clear = true }),
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.spell = false
+  end,
+})
