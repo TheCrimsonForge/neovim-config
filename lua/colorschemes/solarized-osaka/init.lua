@@ -434,6 +434,26 @@ return {
         end
       end
 
+      -- Markdown pipe tables, all four pieces painted in body text. A table is
+      -- structure, not a heading, and it was reading in picker-title red because
+      -- three separate defaults all landed on `Title`:
+      --   * `RenderMarkdownTableHead` links to the GENERIC `@markup.heading`
+      --     (the plugin's own default) -- the same red trap as the JSX headings
+      --     above. `TableRow` already defaults to `Normal`; named here so the two
+      --     halves of one frame cannot drift apart.
+      --   * header CELL TEXT is captured `@markup.heading` with no level by the
+      --     markdown query, so it never reaches the green `.1`-`.6` rules above.
+      --     Scoped `.markdown` so help files and picker titles keep `Title`, and
+      --     no level variant is shadowed.
+      --   * the theme paints `@punctuation.special.markdown` red-bold; in this
+      --     query that is the table pipes and `---` delimiter cells (plus a
+      --     thematic break, which render-markdown draws as its own rule anyway).
+      local table_fg = palette.body or c.fg
+      hl.RenderMarkdownTableHead = { fg = table_fg }
+      hl.RenderMarkdownTableRow = { fg = table_fg }
+      hl["@markup.heading.markdown"] = { fg = table_fg }
+      hl["@punctuation.special.markdown"] = { fg = table_fg }
+
       -- LSP doc surface (hover, signature, diagnostic floats, blink docs).
       -- Deliberately NOT applied to NormalFloat, which would repaint the snacks
       -- picker; reached only via winhighlight in config/keymaps.lua.
