@@ -6,7 +6,7 @@
 
 *Reads and navigates large codebases like an IDE — and keeps every keystroke instant.*
 
-`~40ms cold start` · `solarized-osaka` · `version-frozen`
+`~50ms cold start` · `solarized-osaka` · `version-frozen`
 
 </div>
 
@@ -44,14 +44,14 @@ What makes this feel less like vanilla Neovim:
 | | |
 |---|---|
 | 🖱️ **Hover docs on mouse-over** | LSP documentation appears when the pointer rests on a symbol (Zed/WebStorm parity), behind a throttled handler that's free while you type. |
-| 🤖 **AI inline + Next Edit Suggestions** | `copilot.lua` ghost text plus `copilot-lsp` NES — jump-and-apply multi-line edits with `<Tab>`, coexisting with the completion menu. |
-| 💬 **CodeCompanion (inline · agentic · chat)** | `<leader>ai` rewrites the line/selection in place; `<leader>aa` opens an agentic chat that applies edits as accept/reject diffs; `<leader>af` is a plain chat. Inline runs on Copilot, chat on the `claude_code` adapter (Sonnet) — both key-free, lazy-loaded for zero startup cost. |
+| 🤖 **AI inline + Next Edit Suggestions** *(off)* | `copilot.lua` ghost text plus `copilot-lsp` NES — jump-and-apply multi-line edits with `<Tab>`, coexisting with the completion menu. `enabled = false` while the subscription is inactive. |
+| 💬 **CodeCompanion (inline · agentic · chat)** | `<leader>ai` rewrites the line/selection in place; `<leader>aa` opens an agentic chat that applies edits as accept/reject diffs; `<leader>af` is a plain chat. Chat runs on the `codex` adapter (`gpt-5.5`), inline on Copilot — both key-free, lazy-loaded for zero startup cost. |
 | 📋 **AI prompt-copy system** | `<leader>ac…` copies a context-aware prompt (commit, codebase analysis, explain, refactor, review) to the clipboard for an external CLI agent — or `<leader>aci` to pick a template / ask freeform interactively. |
 | 📌 **Persistent quickfix curation** | Mark lines with `<leader>m` while reading code; the list survives restarts, scoped per project. |
 | 🗂️ **Symbols outline** | `<leader>cs` opens an IDE-style structure pane that follows your cursor. |
 | 📂 **Edit-the-filesystem file browser** | `<leader>e` opens **oil.nvim** as a centred popup — including on `nvim <dir>` — with the path rendered in the border and a dimmed backdrop behind it. Rename, create and delete by editing the buffer and `:w`. Oil also owns netrw, so `:e <dir>` lands in the same place. |
 | 🔍 **In-buffer git blame** | `<leader>gw` / `<leader>gb` show compact and full blame as floats, without leaving the file. |
-| 📝 **Rendered markdown in-buffer** | `.md` files render inline (headings, code blocks, inline code) with flat no-highlight styling; `<leader>uh` flips the buffer back to raw for editing. Same renderer polishes LSP hover popups and Avante windows. |
+| 📝 **Rendered markdown in-buffer** | `.md` files render inline (headings, code blocks, inline code) with flat no-highlight styling; `<leader>uh` flips the buffer back to raw for editing. Tables render in body text, spell check is off, and `<leader>ui` opens a browser preview. Same renderer polishes LSP hover popups. |
 
 ---
 
@@ -60,7 +60,7 @@ What makes this feel less like vanilla Neovim:
 | Category | Plugin |
 |----------|--------|
 | **Completion** | blink.cmp — LSP · local snippets · path · buffer |
-| **AI** | copilot.lua (inline) + copilot-lsp (NES) + CodeCompanion (inline/agentic/chat) + prompt-copy system |
+| **AI** | CodeCompanion (inline/agentic/chat, chat on `codex`) + prompt-copy system · copilot.lua + copilot-lsp `enabled = false` |
 | **File nav** | oil.nvim (`<leader>e`, centred popup, owns netrw) · Snacks — picker · explorer (`<leader>r` sidebar) · dashboard · terminal |
 | **Code nav** | Trouble (symbols outline + quickfix views) · treesitter textobjects |
 | **Git** | gitsigns (hunks) + diffview.nvim + custom blame floats |
@@ -69,7 +69,7 @@ What makes this feel less like vanilla Neovim:
 | **Folding** | nvim-ufo — treesitter + indent, async |
 | **Formatting** | conform.nvim — prettierd for web/JSON/Markdown, goimports/gofumpt for Go, shfmt for shell |
 | **Languages** | TypeScript/React daily driver, Go + Python enabled, DevOps filetypes (YAML · Docker · Terraform · Helm) enabled, Rust lazy/deferred |
-| **Markdown** | render-markdown.nvim — `.md` files · LSP hover popups · Avante (flat, no-highlight) |
+| **Markdown** | render-markdown.nvim — `.md` files · LSP hover popups (flat, no-highlight) · markdown-preview.nvim (`<leader>ui`) |
 | **UI** | lualine · noice (cmdline only) · fidget · which-key |
 | **Theme** | solarized-osaka, customized — `solarized-osaka-custom-latest` (default: violet keyword, one warm accent, neutral punctuation on a single grey rung, raised body text) · `-custom-v1` (the copper build it replaced, 2026-08-11 to 2026-09-05) · `-custom-v2` (v1 + warm/yellow keyword) · `-custom-v3` (v1 + softer terracotta punctuation) · `-original` (untouched upstream, kept to diff against). `custom-latest` is a moving name; the numbered builds are frozen snapshots. See [Theme](#theme) below. |
 
@@ -150,7 +150,7 @@ language server scan the whole home directory.
 | `<M-/>` | Toggle comment (line / selection) |
 | `ys` · `ds` · `cs` · `s` (visual) | Surround |
 | `zm` · `zn` | Toggle all folds — keep current open · fold all |
-| `<leader>uh` | Toggle markdown render — raw ⇄ rendered (current buffer) |
+| `<leader>uh` · `<leader>ui` | Toggle markdown render — raw ⇄ rendered · open browser preview |
 | `zR` · `zM` · `zv` | Open all · close all · toggle function folds |
 | `K` · `<M-i>` | Hover docs · signature help |
 
@@ -164,7 +164,7 @@ language server scan the whole home directory.
 | `<C-;>` | Accept suggestion + trigger next |
 | `<C-l>` | Accept blink completion item |
 | `<C-j>` | Trigger / cycle suggestion |
-| `<C-k>` · `<leader>ad` | Toggle Copilot suggestions |
+| `<M-k>` · `<leader>ad` | Toggle Copilot suggestions |
 | `<M-w>` · `<M-l>` | Accept word · line |
 | `<M-]>` · `<M-[>` | Cycle suggestions |
 | `<leader>ab` · `<C-b>` | Toggle blink completion menu |
@@ -228,7 +228,7 @@ The whole point. What's tuned, and what's off on purpose.
 - treesitter-context off; treesitter highlight stops above 100KB files
 - LSP semantic tokens · `document_color` · inlay hints off; `update_in_insert = false`
 - lualine statusline throttled to 400ms (tabline/winbar 1000ms); git-diff component removed
-- LSP `debounce_text_changes = 300ms` applied globally through `vim.lsp.config("*", ...)`
+- LSP `debounce_text_changes = 200ms` applied globally through `vim.lsp.config("*", ...)`
 - Python/Go LSP roots guard against `$HOME/.git` workspace scans
 - noice restricted to the cmdline popup; python/ruby/perl/node providers disabled
 
@@ -249,39 +249,46 @@ rationale, cadence, and escape hatch.
 one command away (`:colorscheme solarized-osaka-original`) so the difference this
 repo makes is always a precise thing rather than a vague one.
 
-The syntax colours are **closed as of 2026-09-06**. Every role was checked twice:
-by hand on real files in all four daily languages — **JSX/TSX, JS/TS, Go and
-Lua** — and programmatically, by measuring the rendered pixels of screenshots of
-those same files rather than judging by eye.
+The syntax colours were **retuned on 2026-09-09** and are settled again. Every
+role is checked twice: by hand on real files in all four daily languages —
+**JSX/TSX, JS/TS, Go and Lua** — and programmatically, by measuring the rendered
+pixels of screenshots of those same files rather than judging by eye.
+
+Live values, measured against the current background `#001014`:
 
 | role | value | L\* | contrast |
 |---|---|---|---|
-| type | `#7dcfff` | 79.7 | 11.36:1 |
-| body / `@variable` | `#b1bebf` | 76.0 | 10.19:1 |
-| names — params, `new X()`, JSX tags, `${}` | `#aea134` | 65.5 | 7.37:1 |
-| string | `#29a298` | 60.4 | 6.23:1 |
-| function | `#1d98cd` | 59.1 | 5.96:1 |
-| punctuation — delimiters and brackets | `#7f9195` | 58.9 | 5.93:1 |
-| keyword | `#a17bcc` | 58.1 | 5.77:1 |
-| comment | `#576d74` | 44.6 | 3.57:1 |
+| type | `#2ac3de` | 72.8 | 9.19:1 |
+| body / `@variable` | `#a7b4b5` | 72.4 | 9.07:1 |
+| names — params, `${}`, punctuation | `#baac0d` | 69.5 | 8.30:1 |
+| boolean / constant / number | `#ed8e55` | 68.0 | 7.93:1 |
+| function | `#359ee9` | 62.6 | 6.66:1 |
+| string / object members | `#29a298` | 60.4 | 6.19:1 |
+| punctuation — delimiters and brackets | `#7f9195` | 58.9 | 5.89:1 |
+| keyword | `#a17bcc` | 58.1 | 5.74:1 |
+| comment | `#5f767d` | 48.1 | 4.03:1 |
 
 The shape, and the thing to preserve if any single value is ever retuned:
-**three lightness steps ordered by how much the thing means, and one warm accent
-hue rather than two.** Punctuation carries no hue at all — it is the maximin rung
-on the theme's own grey ramp, the crossover where separation from body text above
-and comments below is balanced. Brackets and delimiters share it: a two-rung split
-was tried for a day and measured at dE 3.5, below the threshold this palette
-already treats as invisible.
+**lightness steps ordered by how much the thing means, and one dominant warm hue
+plus one low-dose accent rather than three.** Punctuation carries no hue at all —
+it is the maximin rung on the theme's own grey ramp, the crossover where
+separation from body text above and comments below is balanced. Brackets and
+delimiters share it: a two-rung split was tried for a day and measured at dE 3.5,
+below the threshold this palette already treats as invisible.
 
-**No further tweaking is planned or needed.** Three tempting changes — colouring
-the punctuation, splitting brackets from delimiters, and brightening operators so
+**`custom-latest` in `variants.lua` is the only authority for what runs** — this
+table is a snapshot and drifts. Three tempting changes — colouring the
+punctuation, splitting brackets from delimiters, and brightening operators so
 `+ - * < > & == !=` "don't disappear" — were each tried and rejected with
 measurements. The reasoning, the rejected candidates and the numbers are in
+[`notes/palette-reference.md`](notes/palette-reference.md) and
 [`notes/syntax-palette-decisions.md`](notes/syntax-palette-decisions.md).
 
 Background and panel colours live in `lua/config/ui.lua`, which holds the whole
 ladder of values that were tried along with why each was rejected, so an
-experiment there is one word and nothing gets re-measured.
+experiment there is one word and nothing gets re-measured. The live value is
+`candidates.teal_light` (`#001014`); `on_colors` reads it and assigns the float,
+sidebar and popup backgrounds from it, so every panel matches the editor.
 
 ---
 
@@ -322,7 +329,9 @@ docs/               agent instructions (docs/CLAUDE.md is canonical) · parked p
 ## Requirements
 
 Neovim **0.12+**, a Nerd Font, `ripgrep` & `fd` (pickers/grep), `prettierd`
-(web formatting, via Mason), Go/Python tooling installed through Mason for the
-enabled language extras, and a GitHub Copilot subscription for the AI features.
+(web formatting, via Mason), and Go/Python tooling installed through Mason for
+the enabled language extras. The AI layer needs no paid API key: CodeCompanion
+chat runs on the `codex` bridge with a ChatGPT login. A Copilot subscription is
+optional, and currently inactive, so `copilot.lua` is `enabled = false`.
 Tuned for the [Ghostty](https://ghostty.org) terminal on macOS; works elsewhere,
 but some `<M-…>`/`<D-…>` keymaps assume Ghostty's key encoding.
